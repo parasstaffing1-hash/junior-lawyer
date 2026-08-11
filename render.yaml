@@ -1,0 +1,49 @@
+services:
+  # ==========================================
+  # Backend API Service (FastAPI)
+  # ==========================================
+  - type: web
+    name: junior-lawyer-api
+    env: docker
+    rootDir: apps/api
+    dockerfilePath: ./Dockerfile.production
+    plan: free
+    healthCheckPath: /api/v1/health/liveness
+    envVars:
+      # Database connection (Will be configured securely in dashboard)
+      - key: DATABASE_URL
+        sync: false
+        
+      # LLM APIs (Will be configured securely in dashboard)
+      - key: GEMINI_KEYS
+        sync: false
+      - key: GROQ_KEYS
+        sync: false
+      - key: OPENROUTER_KEYS
+        sync: false
+        
+      # General settings
+      - key: APP_ENV
+        value: production
+      - key: DEBUG
+        value: false
+      - key: FRONTEND_ORIGINS
+        # Replace with your actual frontend Render URL after deployment
+        value: https://junior-lawyer-web.onrender.com
+
+  # ==========================================
+  # Frontend Web Service (Next.js)
+  # ==========================================
+  - type: web
+    name: junior-lawyer-web
+    env: node
+    rootDir: apps/web
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    plan: free
+    envVars:
+      # Next.js will automatically detect this during build
+      - key: NEXT_PUBLIC_API_URL
+        value: https://junior-lawyer-api.onrender.com
+      - key: NODE_ENV
+        value: production

@@ -1,0 +1,23 @@
+{
+  "title": "Mutual Non-Disclosure Agreement",
+  "contract_type": "nda",
+  "language": "en",
+  "risk_profile": "balanced",
+  "jurisdiction": "India",
+  "governing_state": "Karnataka",
+  "party_a_name": "Example Company A Pvt Ltd",
+  "party_b_name": "Example Company B Pvt Ltd",
+  "effective_date": "2026-08-08",
+  "questionnaire_json": {
+    "party_a_address": "Bengaluru, Karnataka, India",
+    "party_b_address": "Bengaluru, Karnataka, India",
+    "effective_date": "2026-08-08",
+    "governing_state": "Karnataka",
+    "dispute_mode": "courts",
+    "arbitration_city": "Bengaluru",
+    "notice_days": 30,
+    "purpose": "Evaluation of a potential commercial partnership",
+    "confidentiality_term_months": 36,
+    "mutual": true
+  }
+}

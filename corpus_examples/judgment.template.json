@@ -1,0 +1,30 @@
+{
+  "type": "judgment",
+  "source_code": "supreme_court",
+  "external_id": "official-source-id",
+  "case_title": "Case title from official source",
+  "case_number": null,
+  "neutral_citation": null,
+  "reported_citations": [],
+  "court_name": "Supreme Court of India",
+  "court_level": "supreme_court",
+  "jurisdiction": "India",
+  "decision_date": null,
+  "judges": [],
+  "bench_strength": null,
+  "acts": [],
+  "sections": [],
+  "language": "en",
+  "source_url": "https://www.sci.gov.in/",
+  "metadata": {
+    "import_note": "Replace this template with verified official judgment metadata."
+  },
+  "paragraphs": [
+    {
+      "paragraph_number": "1",
+      "text": "Official paragraph text goes here.",
+      "language": "en",
+      "metadata": {}
+    }
+  ]
+}

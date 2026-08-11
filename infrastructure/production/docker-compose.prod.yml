@@ -1,0 +1,222 @@
+name: junior-lawyer-production
+
+x-api-env: &api-env
+  APP_ENV: production
+  DEBUG: "false"
+  APP_VERSION: ${APP_VERSION:-0.29.0-rc.1}
+  BUILD_REF: ${BUILD_REF:-local-production}
+  COMMIT_REF: ${COMMIT_REF:-unknown}
+  API_DOCS_ENABLED: "false"
+  DATABASE_URL: postgresql+asyncpg://junior_lawyer:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@postgres:5432/junior_lawyer
+  FRONTEND_ORIGINS: https://${APP_DOMAIN:?Set APP_DOMAIN}
+  STORAGE_BACKEND: s3
+  STORAGE_ROOT: /data/staging
+  STORAGE_CACHE_ROOT: /data/storage-cache
+  STORAGE_S3_ENDPOINT_URL: http://minio:9000
+  STORAGE_S3_REGION: ${STORAGE_S3_REGION:-us-east-1}
+  STORAGE_S3_BUCKET: ${MINIO_DOCUMENT_BUCKET:-junior-lawyer-documents}
+  STORAGE_S3_ACCESS_KEY: ${MINIO_APP_USER:?Set MINIO_APP_USER}
+  STORAGE_S3_SECRET_KEY: ${MINIO_APP_PASSWORD:?Set MINIO_APP_PASSWORD}
+  STORAGE_S3_SECURE: "false"
+  BACKUP_ROOT: /data/backups
+  OCR_LANGUAGES: eng+hin
+  BACKGROUND_JOBS_ENABLED: "true"
+  STRUCTURED_LOGGING_ENABLED: "true"
+  SECURITY_ENFORCE_AUTH: "true"
+  SECURITY_COOKIE_SECURE: "true"
+  SECURITY_COOKIE_SAMESITE: lax
+  SECURITY_AUDIT_HMAC_KEY: ${SECURITY_AUDIT_HMAC_KEY:?Set SECURITY_AUDIT_HMAC_KEY}
+  SECURITY_PRIVACY_HASH_KEY: ${SECURITY_PRIVACY_HASH_KEY:?Set SECURITY_PRIVACY_HASH_KEY}
+  SECURITY_BOOTSTRAP_SECRET: ${SECURITY_BOOTSTRAP_SECRET:-}
+  LEGAL_DATA_IMPORT_ROOT: /data/legal-imports
+  LEGAL_DATA_MAX_MANIFEST_MB: ${LEGAL_DATA_MAX_MANIFEST_MB:-50}
+  LEGAL_DATA_STALE_SWEEP_MINUTES: ${LEGAL_DATA_STALE_SWEEP_MINUTES:-60}
+
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE:-postgres:17-alpine}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: junior_lawyer
+      POSTGRES_USER: junior_lawyer
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U junior_lawyer -d junior_lawyer"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [backend]
+
+  minio:
+    image: ${MINIO_IMAGE:-minio/minio:latest}
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Set MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD}
+    volumes:
+      - object_storage:/data
+    networks: [backend]
+
+  minio-init:
+    image: ${MINIO_MC_IMAGE:-minio/mc:latest}
+    depends_on:
+      minio:
+        condition: service_started
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Set MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD}
+      MINIO_DOCUMENT_BUCKET: ${MINIO_DOCUMENT_BUCKET:-junior-lawyer-documents}
+      MINIO_APP_USER: ${MINIO_APP_USER:?Set MINIO_APP_USER}
+      MINIO_APP_PASSWORD: ${MINIO_APP_PASSWORD:?Set MINIO_APP_PASSWORD}
+    entrypoint: ["/bin/sh", "-ec"]
+    command: >-
+      until mc alias set local http://minio:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD"; do sleep 2; done;
+      mc mb --ignore-existing "local/$$MINIO_DOCUMENT_BUCKET";
+      mc anonymous set none "local/$$MINIO_DOCUMENT_BUCKET";
+      mc admin user add local "$$MINIO_APP_USER" "$$MINIO_APP_PASSWORD" || true;
+      mc admin policy attach local readwrite --user "$$MINIO_APP_USER";
+    restart: "no"
+    networks: [backend]
+
+  volume-init:
+    image: ${ALPINE_IMAGE:-alpine:3}
+    user: "0:0"
+    command: ["sh", "-ec", "chown -R 10001:10001 /data/staging /data/backups /data/api-cache /data/worker-cache"]
+    volumes:
+      - shared_app_files:/data/staging
+      - backup_staging:/data/backups
+      - api_cache:/data/api-cache
+      - worker_cache:/data/worker-cache
+    restart: "no"
+    networks: [backend]
+
+  migrate:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile.production
+    environment:
+      <<: *api-env
+    command: ["python", "scripts/run_migrations.py"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+      volume-init:
+        condition: service_completed_successfully
+    restart: "no"
+    networks: [backend]
+
+  api:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile.production
+    restart: unless-stopped
+    environment:
+      <<: *api-env
+    volumes:
+      - api_cache:/data/storage-cache
+      - shared_app_files:/data/staging
+      - backup_staging:/data/backups
+      - ${LEGAL_DATA_IMPORT_HOST_PATH:-./legal-imports}:/data/legal-imports:ro
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks: [backend]
+
+  worker:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile.production
+    restart: unless-stopped
+    environment:
+      <<: *api-env
+      WORKER_ORGANIZATION_ID: ${WORKER_ORGANIZATION_ID:?Set WORKER_ORGANIZATION_ID}
+    command:
+      - python
+      - scripts/run_worker.py
+      - --organization-id
+      - ${WORKER_ORGANIZATION_ID:?Set WORKER_ORGANIZATION_ID}
+      - --queues
+      - documents,search,evidence,analytics,operations,corpus,bundles,maintenance,default
+    volumes:
+      - worker_cache:/data/storage-cache
+      - shared_app_files:/data/staging
+      - backup_staging:/data/backups
+      - ${LEGAL_DATA_IMPORT_HOST_PATH:-./legal-imports}:/data/legal-imports:ro
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks: [backend]
+
+  scheduler:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile.production
+    restart: unless-stopped
+    environment:
+      <<: *api-env
+      WORKER_ORGANIZATION_ID: ${WORKER_ORGANIZATION_ID:?Set WORKER_ORGANIZATION_ID}
+    command:
+      - python
+      - scripts/run_maintenance_scheduler.py
+      - --organization-id
+      - ${WORKER_ORGANIZATION_ID:?Set WORKER_ORGANIZATION_ID}
+      - --poll
+      - "60"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks: [backend]
+
+  web:
+    build:
+      context: ../../apps/web
+      args:
+        NEXT_PUBLIC_API_URL: /api/v1
+    restart: unless-stopped
+    environment:
+      API_INTERNAL_URL: http://api:8000
+      NODE_ENV: production
+    depends_on:
+      api:
+        condition: service_healthy
+    networks: [backend]
+
+  caddy:
+    image: ${CADDY_IMAGE:-caddy:2-alpine}
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?Set APP_DOMAIN}
+      TLS_EMAIL: ${TLS_EMAIL:?Set TLS_EMAIL}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      web:
+        condition: service_started
+      api:
+        condition: service_healthy
+    networks: [backend]
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  object_storage:
+  api_cache:
+  worker_cache:
+  shared_app_files:
+  backup_staging:
+  caddy_data:
+  caddy_config:

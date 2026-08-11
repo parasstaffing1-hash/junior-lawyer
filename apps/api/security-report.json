@@ -1,0 +1,16 @@
+{
+  "cases": [
+    {
+      "key": "prompt-boundary",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "key": "forbidden-output-evaluator",
+      "passed": true,
+      "reasons": []
+    }
+  ],
+  "critical_failures": 0,
+  "passed": true
+}

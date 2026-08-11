@@ -1,0 +1,14 @@
+{
+  "connection_key": "docusign-primary",
+  "display_name": "DocuSign eSignature",
+  "provider": "docusign",
+  "capabilities": ["envelopes.create", "webhooks.receive"],
+  "config": {
+    "account_id": "YOUR_DOCUSIGN_ACCOUNT_ID",
+    "base_url": "https://demo.docusign.net"
+  },
+  "secrets": [
+    {"secret_key": "access_token", "reference": "env://JL_DOCUSIGN_ACCESS_TOKEN", "required": true},
+    {"secret_key": "webhook_hmac_secret", "reference": "env://JL_DOCUSIGN_WEBHOOK_HMAC", "required": true}
+  ]
+}

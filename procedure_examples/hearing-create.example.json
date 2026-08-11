@@ -1,0 +1,9 @@
+{
+  "matter_id": "00000000-0000-0000-0000-000000000000",
+  "scheduled_for": "2026-08-12T10:30:00+05:30",
+  "court_name": "Example Court",
+  "courtroom": null,
+  "judge_or_bench": null,
+  "purpose": "Arguments",
+  "notes": "Example payload only"
+}

@@ -1,0 +1,53 @@
+name: RC validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+
+jobs:
+  source-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install API
+        working-directory: apps/api
+        run: pip install -e '.[dev]'
+      - name: Install web syntax dependencies
+        working-directory: apps/web
+        run: npm install --no-audit --no-fund
+      - name: RC local/source gate
+        working-directory: apps/api
+        run: python scripts/run_rc_local_gate.py --output ../../rc-local-gate.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rc-local-gate
+          path: rc-local-gate.json
+
+  browser-e2e:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install web
+        working-directory: apps/web
+        run: npm install --no-audit --no-fund
+      - name: Install Chromium
+        working-directory: apps/web
+        run: npx playwright install --with-deps chromium
+      - name: Staging browser E2E
+        working-directory: apps/web
+        env:
+          JL_E2E_BASE_URL: ${{ secrets.JL_E2E_BASE_URL }}
+          JL_E2E_EMAIL: ${{ secrets.JL_E2E_EMAIL }}
+          JL_E2E_PASSWORD: ${{ secrets.JL_E2E_PASSWORD }}
+          JL_E2E_ORG_SLUG: ${{ secrets.JL_E2E_ORG_SLUG }}
+          JL_E2E_LARGE_DOCUMENT_ID: ${{ secrets.JL_E2E_LARGE_DOCUMENT_ID }}
+        run: npm run test:e2e -- --project=chromium-desktop

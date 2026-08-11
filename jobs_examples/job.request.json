@@ -1,0 +1,6 @@
+{
+  "kind": "search.duplicate_scan",
+  "payload": {"limit": 10000},
+  "priority": "normal",
+  "idempotency_key": "nightly-duplicate-scan-2026-08-08"
+}

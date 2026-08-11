@@ -1,0 +1,9 @@
+{
+  "name": "Primary Client Money Account",
+  "currency": "INR",
+  "bank_name": "Example Bank",
+  "bank_account_last4": "4321",
+  "bank_reference": "CLIENT-MONEY-01",
+  "require_separate_approver": true,
+  "notes": "Example only. Verify firm policy before production use."
+}

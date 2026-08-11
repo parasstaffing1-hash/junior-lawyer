@@ -1,0 +1,16 @@
+{
+  "document_version_id": "00000000-0000-0000-0000-000000000002",
+  "provider": "manual",
+  "title": "Execution copy",
+  "signers": [
+    {
+      "name": "Example Client",
+      "email": "client@example.com",
+      "role": "Client",
+      "signing_order": 1
+    }
+  ],
+  "metadata": {
+    "example": true
+  }
+}

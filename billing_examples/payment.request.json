@@ -1,0 +1,9 @@
+{
+  "invoice_id": "00000000-0000-0000-0000-000000000010",
+  "payment_date": "2026-08-08",
+  "amount": "10000.00",
+  "currency": "INR",
+  "method": "bank_transfer",
+  "reference": "BANK-REFERENCE-EXAMPLE",
+  "notes": "Example partial payment"
+}

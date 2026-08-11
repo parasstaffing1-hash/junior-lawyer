@@ -1,0 +1,7 @@
+{
+  "code": "execution_of_agreement",
+  "title": "Whether the agreement was duly executed",
+  "description": "Map originals, signatures, witness testimony and admissions before relying on execution.",
+  "burden_side": "claimant",
+  "priority": 1
+}

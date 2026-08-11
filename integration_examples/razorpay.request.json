@@ -1,0 +1,11 @@
+{
+  "connection_key": "razorpay-live",
+  "display_name": "Razorpay",
+  "provider": "razorpay",
+  "capabilities": ["payment_links.create", "webhooks.receive"],
+  "config": {"key_id": "rzp_test_REPLACE"},
+  "secrets": [
+    {"secret_key": "key_secret", "reference": "env://JL_RAZORPAY_KEY_SECRET", "required": true},
+    {"secret_key": "webhook_secret", "reference": "env://JL_RAZORPAY_WEBHOOK_SECRET", "required": true}
+  ]
+}

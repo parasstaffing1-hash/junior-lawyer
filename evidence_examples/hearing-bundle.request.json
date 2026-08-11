@@ -1,0 +1,7 @@
+{
+  "title": "Hearing bundle — sample",
+  "bundle_type": "hearing",
+  "evidence_item_ids": [],
+  "issue_ids": [],
+  "description": "When no IDs are supplied, the backend includes the matter's evidence register. Review items before finalizing."
+}

@@ -1,0 +1,29 @@
+{
+  "name": "Workora Balanced Services Playbook",
+  "owner_label": "Workora Legal",
+  "contract_type": "services",
+  "risk_profile": "balanced",
+  "settings_json": {
+    "version_label": "2026.08"
+  },
+  "rules": [
+    {
+      "code": "services.liability.required",
+      "clause_type": "liability",
+      "requirement": "required",
+      "preferred_variant": "balanced",
+      "risk_level": "high",
+      "guidance_en": "Do not accept uncapped liability without lawyer approval.",
+      "guidance_hi": "वकील की मंजूरी के बिना असीमित दायित्व स्वीकार न करें।"
+    },
+    {
+      "code": "services.termination.required",
+      "clause_type": "term_termination",
+      "requirement": "required",
+      "preferred_variant": "balanced",
+      "risk_level": "high",
+      "guidance_en": "Review termination rights and notice period.",
+      "guidance_hi": "समाप्ति अधिकार और नोटिस अवधि की समीक्षा करें।"
+    }
+  ]
+}

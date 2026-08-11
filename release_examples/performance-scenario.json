@@ -1,0 +1,9 @@
+{
+  "scenario_key": "universal-search",
+  "target": "/api/v1/search?q=agreement",
+  "concurrency": 20,
+  "requests": 300,
+  "max_p95_ms": 1200,
+  "min_success_rate": 0.99,
+  "max_error_rate": 0.01
+}

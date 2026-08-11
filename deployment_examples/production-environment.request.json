@@ -1,0 +1,10 @@
+{
+  "environment_key": "production-in",
+  "name": "India production",
+  "kind": "production",
+  "base_url": "https://legal.example.com",
+  "strategy": "rolling",
+  "tls_required": true,
+  "object_storage_required": true,
+  "change_window_required": true
+}

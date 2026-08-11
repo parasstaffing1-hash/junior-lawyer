@@ -1,0 +1,15 @@
+{
+  "source_id": "00000000-0000-0000-0000-000000000001",
+  "code": "india-code-central",
+  "name": "India Code — controlled central Acts feed",
+  "jurisdiction": "India",
+  "content_kind": "statute",
+  "mode": "filesystem_drop",
+  "allowed_domains": ["indiacode.nic.in", "www.indiacode.nic.in"],
+  "schedule_interval_minutes": 1440,
+  "stale_after_hours": 72,
+  "import_path": "india-code/central",
+  "metadata": {
+    "operator_reviewed": true
+  }
+}

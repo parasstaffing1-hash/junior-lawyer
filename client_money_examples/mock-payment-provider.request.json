@@ -1,0 +1,10 @@
+{
+  "provider": "mock",
+  "enabled": true,
+  "mode": "sandbox",
+  "public_config": {
+    "label": "Local development mock"
+  },
+  "secret_env_prefix": null,
+  "notes": "Creates example.invalid checkout URLs and performs no network call."
+}

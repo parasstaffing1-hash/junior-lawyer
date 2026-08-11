@@ -1,0 +1,48 @@
+name: Junior Lawyer release gate
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  deterministic-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: System OCR dependencies
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-hin poppler-utils
+      - name: Install API dependencies
+        working-directory: apps/api
+        run: pip install -e '.[dev]'
+      - name: Run source release gate
+        working-directory: apps/api
+        run: python scripts/run_release_source_gate.py --output ../../release-source-gate.json
+      - name: Upload source gate report
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-source-gate
+          path: |
+            release-source-gate.json
+            security-baseline-report.json
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install frontend dependencies
+        working-directory: apps/web
+        run: npm install --no-audit --no-fund
+      - name: Production build
+        working-directory: apps/web
+        run: npm run build

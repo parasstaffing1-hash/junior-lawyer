@@ -1,0 +1,40 @@
+{
+  "source_label": "Controlled official statute export example",
+  "items": [
+    {
+      "kind": "statute",
+      "source_url": "https://www.indiacode.nic.in/",
+      "payload": {
+        "source_code": "india_code",
+        "external_id": "example-act-2026",
+        "title_en": "Example Act, 2026",
+        "title_hi": "उदाहरण अधिनियम, 2026",
+        "short_title": "Example Act",
+        "act_number": "99 of 2026",
+        "act_year": 2026,
+        "enactment_date": "2026-08-01",
+        "jurisdiction": "India",
+        "source_url": "https://www.indiacode.nic.in/",
+        "metadata": {
+          "complete_sections": false,
+          "example_only": true
+        },
+        "sections": [
+          {
+            "section_number": "1",
+            "heading_en": "Short title",
+            "heading_hi": "संक्षिप्त नाम",
+            "text_en": "This Act may be called the Example Act, 2026.",
+            "text_hi": "इस अधिनियम को उदाहरण अधिनियम, 2026 कहा जा सकता है।",
+            "effective_from": "2026-08-01",
+            "version_label": "2026-08-01",
+            "source_url": "https://www.indiacode.nic.in/"
+          }
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "example_only": true
+  }
+}

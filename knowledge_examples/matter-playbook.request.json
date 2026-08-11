@@ -1,0 +1,9 @@
+{
+  "code": "commercial-injunction",
+  "name_en": "Commercial injunction playbook",
+  "name_hi": "वाणिज्यिक निषेधाज्ञा प्लेबुक",
+  "description": "Firm-reviewed workflow skeleton. Link only approved knowledge assets before approval.",
+  "practice_area": "Commercial litigation",
+  "matter_type": "Injunction",
+  "version": 1
+}

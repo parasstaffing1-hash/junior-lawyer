@@ -1,0 +1,58 @@
+{
+  "code": "replace_with_verified_pack_code",
+  "name_en": "Verified procedure pack template",
+  "name_hi": "सत्यापित प्रक्रिया पैक टेम्पलेट",
+  "jurisdiction": "India",
+  "proceeding_type": "replace_me",
+  "court_level": null,
+  "description": "Template only. Replace all authority fields and deadline values after lawyer verification.",
+  "version": 1,
+  "status": "draft",
+  "effective_from": null,
+  "effective_to": null,
+  "source_name": "REPLACE WITH AUTHORITATIVE SOURCE",
+  "source_url": null,
+  "source_citation": "REPLACE WITH RULE / SECTION / ORDER",
+  "verified": false,
+  "metadata_json": {
+    "reviewed_by": null,
+    "reviewed_on": null,
+    "warning": "Do not activate this pack until all deadline rules are independently verified."
+  },
+  "steps": [
+    {
+      "code": "example_filing",
+      "sequence": 10,
+      "name_en": "Example filing",
+      "name_hi": "उदाहरण दाखिला",
+      "description": "Replace with a verified procedural step.",
+      "required": true,
+      "dependency_codes_json": [],
+      "checklist_json": ["Verify controlling rule", "Verify filing requirements"],
+      "metadata_json": {}
+    }
+  ],
+  "deadline_rules": [
+    {
+      "code": "replace_deadline_rule",
+      "name_en": "Replace with verified deadline",
+      "name_hi": "सत्यापित समय-सीमा से बदलें",
+      "trigger_code": "replace_trigger",
+      "offset_days": 0,
+      "day_basis": "calendar",
+      "count_from_next_day": true,
+      "adjustment": "none",
+      "requires_lawyer_review": true,
+      "source_name": "REPLACE",
+      "source_url": null,
+      "source_citation": "REPLACE",
+      "effective_from": null,
+      "effective_to": null,
+      "verified": false,
+      "metadata_json": {
+        "exceptions": [],
+        "notes": "Encode exclusions/extensions only after verification."
+      }
+    }
+  ]
+}

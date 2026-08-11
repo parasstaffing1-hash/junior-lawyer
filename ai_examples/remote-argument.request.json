@@ -1,0 +1,13 @@
+{
+  "matter_id": "REPLACE_WITH_MATTER_UUID",
+  "task_type": "argument_analysis",
+  "query": "Analyze the strongest arguments and counterarguments from the verified matter record and imported authorities.",
+  "output_language": "bilingual",
+  "prefer_local": true,
+  "allow_remote": true,
+  "allow_local_for_high_complexity": false,
+  "include_corpus": true,
+  "max_sources": 12,
+  "max_input_tokens": 6000,
+  "max_output_tokens": 1400
+}

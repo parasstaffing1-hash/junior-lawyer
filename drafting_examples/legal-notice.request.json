@@ -1,0 +1,14 @@
+{
+  "matter_id": "00000000-0000-0000-0000-000000000000",
+  "draft_type": "legal_notice",
+  "language": "bilingual",
+  "questionnaire_json": {
+    "sender_name": "ABC Pvt Ltd",
+    "recipient_name": "XYZ Pvt Ltd",
+    "recipient_address": "New Delhi, India",
+    "subject": "Demand for payment under services arrangement",
+    "demand": "Pay the confirmed outstanding amount and provide written confirmation.",
+    "response_days": "15",
+    "legal_position": "Counsel to insert the reviewed contractual and statutory basis."
+  }
+}

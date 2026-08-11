@@ -1,0 +1,9 @@
+{
+  "portal_access_id": "00000000-0000-0000-0000-000000000020",
+  "matter_id": "00000000-0000-0000-0000-000000000002",
+  "share_type": "invoice",
+  "resource_id": "00000000-0000-0000-0000-000000000010",
+  "title": "Invoice INV/2026/0001",
+  "message": "Issued invoice shared by your legal team.",
+  "can_download": false
+}

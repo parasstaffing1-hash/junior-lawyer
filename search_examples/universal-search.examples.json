@@ -1,0 +1,10 @@
+{
+  "examples": [
+    {"query": "ABC Industries", "expected_scopes": ["matter", "client", "document", "communication"]},
+    {"query": "धारा 138 चेक नोटिस", "expected_scopes": ["statute", "judgment", "precedent"]},
+    {"query": "dhara 138 cheque notice", "expected_scopes": ["statute", "judgment", "precedent"]},
+    {"query": "payment evidence", "expected_scopes": ["fact", "evidence", "document"]},
+    {"query": "next hearing Delhi High Court", "expected_scopes": ["hearing", "matter", "task"]}
+  ],
+  "privacy_rule": "Permission filtering occurs before ranking and snippet generation."
+}

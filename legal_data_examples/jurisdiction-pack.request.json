@@ -1,0 +1,10 @@
+{
+  "pack_key": "india.general",
+  "name": "India — General Practice",
+  "jurisdiction": "India",
+  "languages": ["en", "hi"],
+  "description": "Reviewed corpus release for general India-first workflows.",
+  "metadata": {
+    "requires_human_release_review": true
+  }
+}

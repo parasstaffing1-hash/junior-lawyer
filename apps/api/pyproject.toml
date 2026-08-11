@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "junior-lawyer-api"
+version = "0.29.0-rc.1"
+description = "Deterministic-first bilingual AI Junior Lawyer API"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.34,<1",
+  "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7,<3",
+  "sqlalchemy[asyncio]>=2.0,<2.2",
+  "aiosqlite>=0.20,<1",
+  "asyncpg>=0.30,<1",
+  "python-multipart>=0.0.20,<1",
+  "PyMuPDF>=1.25,<2",
+  "python-docx>=1.1,<2",
+  "Pillow>=11,<13",
+  "pytesseract>=0.3.13,<1",
+  "alembic>=1.14,<2",
+  "boto3>=1.35,<2",
+  "httpx>=0.28,<1",
+  "llama-index>=0.11.0",
+  "llama-index-vector-stores-pinecone>=0.2.0",
+  "llama-index-llms-openai>=0.2.0",
+  "llama-index-embeddings-openai>=0.2.0",
+  "google-api-python-client>=2.0,<3",
+  "google-auth>=2.0,<3",
+]
+
+[tool.setuptools]
+packages = ["app"]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8,<9",
+  "pytest-asyncio>=0.25,<1",
+  "ruff>=0.9,<1",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

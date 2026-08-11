@@ -1,0 +1,4 @@
+{
+  "invite_token": "TOKEN_RETURNED_ONCE_BY_INTERNAL_ACTIVATION_ENDPOINT",
+  "password": "choose-a-strong-client-password"
+}

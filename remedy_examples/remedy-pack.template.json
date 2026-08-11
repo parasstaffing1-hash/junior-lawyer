@@ -1,0 +1,71 @@
+{
+  "code": "india-remedy-template-unverified",
+  "name_en": "India Remedy Rule Pack — TEMPLATE ONLY",
+  "name_hi": "भारत कानूनी उपचार नियम पैक — केवल टेम्पलेट",
+  "jurisdiction": "India",
+  "proceeding_type": null,
+  "court_level": null,
+  "version": 1,
+  "status": "draft",
+  "effective_from": null,
+  "effective_to": null,
+  "source_name": "TEMPLATE — verify against current official law before activation",
+  "source_url": null,
+  "source_citation": null,
+  "verified": false,
+  "metadata_json": {
+    "template_only": true,
+    "warning": "Do not activate this template as law. Replace every placeholder with verified current statutory/procedural authority and lawyer-reviewed maintainability/limitation logic."
+  },
+  "rules": [
+    {
+      "code": "appeal-route-template",
+      "remedy_name_en": "Appeal — template",
+      "remedy_name_hi": "अपील — टेम्पलेट",
+      "description_en": "Template for a verified appellate remedy rule. It deliberately contains no substantive Indian limitation period or maintainability conclusion.",
+      "description_hi": "सत्यापित अपीलीय उपचार नियम के लिए टेम्पलेट। इसमें जानबूझकर कोई वास्तविक सीमा अवधि या पोषणीयता निष्कर्ष नहीं दिया गया है।",
+      "priority": 50,
+      "case_stage_patterns_json": [],
+      "status_patterns_json": [],
+      "court_level_patterns_json": [],
+      "order_type_patterns_json": [],
+      "act_patterns_json": [],
+      "section_patterns_json": [],
+      "requires_final_order": false,
+      "requires_latest_order": true,
+      "forum_json": {
+        "forum": "VERIFY CORRECT APPELLATE FORUM",
+        "note": "Populate from verified statute/rule and jurisdiction hierarchy."
+      },
+      "limitation_json": {
+        "requires_lawyer_review": true,
+        "note": "Populate trigger, days, exclusions, condonation and controlling citation only after verification."
+      },
+      "maintainability_json": {
+        "requirements": [
+          {"field": "latest_order", "operator": "exists", "label": "Order/judgment available for review"}
+        ],
+        "requires_lawyer_review": true,
+        "note": "This check alone does not establish appealability."
+      },
+      "required_documents_json": [
+        {"name": "Impugned order/judgment", "source": "latest_order"},
+        {"name": "Case record / relevant pleadings"}
+      ],
+      "procedural_steps_json": [
+        "Verify the enabling appellate provision and correct forum.",
+        "Verify limitation trigger, exclusions, condonation position and filing rules.",
+        "Collect certified/official copy and required record.",
+        "Prepare grounds and relief for lawyer review."
+      ],
+      "risks_json": [
+        "Appealability, forum and limitation are placeholders until verified.",
+        "Interlocutory/final-order characterization may change the available remedy."
+      ],
+      "drafting_json": {"document_kind": "appeal", "legal_draft_type": "petition"},
+      "verified": false,
+      "metadata_json": {"template_only": true},
+      "authorities": []
+    }
+  ]
+}

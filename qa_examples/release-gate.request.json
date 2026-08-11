@@ -1,0 +1,13 @@
+{
+  "min_overall_score": 0.95,
+  "max_critical_failures": 0,
+  "require_security_zero_failures": true,
+  "require_citation_zero_failures": true,
+  "category_thresholds_json": {
+    "security": 1.0,
+    "citation": 1.0,
+    "deadline": 1.0,
+    "language": 1.0,
+    "drafting": 1.0
+  }
+}

@@ -1,0 +1,19 @@
+SERVICES AGREEMENT
+
+1. Services
+Provider shall perform software implementation and support services described in agreed statements of work.
+
+2. Fees and Payment
+Client shall pay INR 250000 within 45 days after receipt of invoice.
+
+3. Confidentiality
+Each party shall use reasonable efforts to keep the other party's confidential information secret.
+
+4. Limitation of Liability
+Provider shall be liable for all direct and indirect losses without any monetary cap.
+
+5. Termination
+Either party may terminate this Agreement on 3 days' written notice.
+
+6. Governing Law
+This Agreement is governed by the laws applicable in India.

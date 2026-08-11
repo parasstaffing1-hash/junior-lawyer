@@ -1,0 +1,7 @@
+{
+  "name": "Section 138 authorities",
+  "query": "dhara 138 cheque notice",
+  "scopes": ["statute", "judgment", "precedent"],
+  "filters": {},
+  "pinned": true
+}

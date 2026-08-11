@@ -1,0 +1,12 @@
+{
+  "matter_id": "00000000-0000-0000-0000-000000000000",
+  "draft_type": "petition",
+  "language": "bilingual",
+  "questionnaire_json": {
+    "petition_heading": "Petition under the applicable jurisdiction",
+    "grounds": "Counsel-reviewed grounds go here.",
+    "relief_requested": "Counsel-reviewed relief goes here.",
+    "verification_place": "New Delhi"
+  },
+  "authority_refs": []
+}

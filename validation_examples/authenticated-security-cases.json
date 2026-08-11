@@ -1,0 +1,25 @@
+[
+  {
+    "key": "anonymous-security-me",
+    "critical": true,
+    "method": "GET",
+    "path": "/api/v1/security/me",
+    "expected": {"status_in": [200, 401, 403], "forbidden_strings_absent": ["Secret Acquisition Client XYZ"]}
+  },
+  {
+    "key": "restricted-idor-fixture",
+    "critical": true,
+    "method": "GET",
+    "path": "/api/v1/matters/REPLACE_WITH_RESTRICTED_MATTER_UUID",
+    "expected": {"status_in": [403, 404], "forbidden_strings_absent": ["REPLACE_WITH_RESTRICTED_CLIENT_NAME"]}
+  },
+  {
+    "key": "csrf-mutation-without-token",
+    "critical": true,
+    "method": "POST",
+    "path": "/api/v1/search/recent",
+    "json": {"entity_type": "matter", "entity_id": "00000000-0000-0000-0000-000000000000", "title": "probe", "href": "/"},
+    "headers": {"x-csrf-token": "INVALID_FOR_TEST"},
+    "expected": {"status_in": [400, 401, 403, 422]}
+  }
+]

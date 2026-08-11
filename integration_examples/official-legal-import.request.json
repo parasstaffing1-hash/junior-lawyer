@@ -1,0 +1,10 @@
+{
+  "connection_key": "official-india-legal-data",
+  "display_name": "Official India legal imports",
+  "provider": "official_legal_import",
+  "capabilities": ["legal_data.import"],
+  "config": {
+    "allowed_source_domains": ["indiacode.nic.in", "judgments.ecourts.gov.in", "sci.gov.in"]
+  },
+  "secrets": []
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Reduce overdue operational work",
+  "metric_key": "overdue_tasks",
+  "scope_type": "organization",
+  "comparison": "at_most",
+  "target_value": 2,
+  "start_date": "2026-08-08",
+  "end_date": "2026-09-30",
+  "notes": "Management goal only; not an employee-performance rating."
+}

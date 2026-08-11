@@ -1,0 +1,15 @@
+{
+  "scenario_id": "REPLACE_WITH_SCENARIO_UUID",
+  "status": "passed",
+  "duration_ms": 120000,
+  "metrics_json": {
+    "documents": 100000,
+    "success_rate": 0.999,
+    "p95_ms": 680
+  },
+  "details_json": {
+    "environment": "staging",
+    "hardware": "record CPU/RAM/storage/PostgreSQL version here",
+    "data": "synthetic or de-identified only"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "client_id": "00000000-0000-0000-0000-000000000001",
+  "matter_id": "00000000-0000-0000-0000-000000000002",
+  "currency": "INR",
+  "client_address": "Client billing address",
+  "client_gstin": null,
+  "place_of_supply": "To be verified by billing reviewer",
+  "reverse_charge": false,
+  "notes": "Draft invoice — verify tax treatment before issue.",
+  "lines": [
+    {
+      "kind": "fee",
+      "description": "Professional legal services",
+      "service_code": "VERIFY-SERVICE-CODE",
+      "quantity": "1.00",
+      "unit_price": "25000.00",
+      "discount_amount": "0.00",
+      "cgst_rate": "0.00",
+      "sgst_rate": "0.00",
+      "igst_rate": "0.00",
+      "cess_rate": "0.00"
+    }
+  ]
+}

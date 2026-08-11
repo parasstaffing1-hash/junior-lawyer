@@ -1,0 +1,8 @@
+{
+  "organization_name": "Example Law Firm",
+  "organization_slug": "example-law-firm",
+  "admin_email": "owner@example.com",
+  "admin_name": "Firm Owner",
+  "password": "replace-with-a-long-random-password",
+  "bootstrap_secret": "set-the-value-from-SECURITY_BOOTSTRAP_SECRET"
+}

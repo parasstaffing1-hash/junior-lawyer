@@ -1,0 +1,13 @@
+{
+  "matter_id": "REPLACE_WITH_MATTER_UUID",
+  "task_type": "matter_summary",
+  "query": "Prepare a supervising-lawyer summary and identify disputed facts requiring review.",
+  "output_language": "en",
+  "prefer_local": true,
+  "allow_remote": false,
+  "allow_local_for_high_complexity": false,
+  "include_corpus": true,
+  "max_sources": 12,
+  "max_input_tokens": 6000,
+  "max_output_tokens": 1200
+}

@@ -1,0 +1,7 @@
+{
+  "email": "client@example.com",
+  "permissions": {
+    "documents": "view",
+    "messages": true
+  }
+}

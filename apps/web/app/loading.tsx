@@ -1,0 +1,1 @@
+export default function Loading(){return <div className="global-loading" role="status" aria-live="polite"><span className="visually-hidden">Loading…</span><div className="loading-line title"/><div className="loading-line short"/><div className="loading-line"/><div className="loading-line"/><div className="loading-line short"/></div>}

@@ -1,0 +1,15 @@
+{
+  "connection_key": "google-primary",
+  "display_name": "Primary Google Workspace",
+  "provider": "google_workspace",
+  "capabilities": ["gmail.send", "calendar.events.create"],
+  "config": {
+    "client_id": "YOUR_GOOGLE_OAUTH_CLIENT_ID",
+    "sender_email": "lawyer@example.com",
+    "calendar_id": "primary"
+  },
+  "secrets": [
+    {"secret_key": "client_secret", "reference": "env://JL_GOOGLE_CLIENT_SECRET", "required": true},
+    {"secret_key": "refresh_token", "reference": "env://JL_GOOGLE_REFRESH_TOKEN", "required": true}
+  ]
+}

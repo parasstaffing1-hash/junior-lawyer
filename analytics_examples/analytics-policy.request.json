@@ -1,0 +1,22 @@
+{
+  "rolling_window_days": 30,
+  "health_weights_json": {
+    "overdue_task": 12,
+    "high_priority_task": 4,
+    "deadline_due_7d": 8,
+    "open_contradiction": 10,
+    "open_high_draft_finding": 8,
+    "unreviewed_court_change": 6,
+    "open_evidence_gap": 7
+  },
+  "thresholds_json": {
+    "matter_health_high_risk": 60,
+    "matter_health_critical": 40,
+    "overdue_tasks_high": 3,
+    "member_workload_high": 70,
+    "invoice_overdue_days_high": 30,
+    "client_overdue_amount_high": 100000
+  },
+  "enable_risk_detection": true,
+  "show_financials_to_partners": true
+}

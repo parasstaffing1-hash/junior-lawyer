@@ -1,0 +1,19 @@
+{
+  "version": "2026.08",
+  "effective_from": "2026-08-08",
+  "notes": "Replace placeholder source/feed UUIDs before use.",
+  "sources": [
+    {
+      "source_id": "00000000-0000-0000-0000-000000000001",
+      "feed_id": "00000000-0000-0000-0000-000000000002",
+      "required": true,
+      "maximum_age_hours": 72,
+      "metadata": {
+        "role": "statutes"
+      }
+    }
+  ],
+  "metadata": {
+    "release_owner": "legal-data-admin"
+  }
+}

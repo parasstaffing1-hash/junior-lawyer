@@ -1,0 +1,48 @@
+{
+  "record": {
+    "cnr": "ABCD010012342025",
+    "case_type": "CS",
+    "case_number": "234",
+    "year": 2025,
+    "case_title": "Asha Traders v. Bharat Supplies",
+    "court_name": "Synthetic District Court No. 2",
+    "court_code": "SYN-DIST-02",
+    "court_number": "2",
+    "court_level": "District Court",
+    "district": "Demo District",
+    "state": "Demo State",
+    "filing_date": "2025-01-10",
+    "registration_date": "2025-01-15",
+    "judge": "Demo Judge",
+    "bench": null,
+    "status": "Pending",
+    "case_stage": "Evidence",
+    "previous_hearing_date": "2026-07-21",
+    "next_hearing_date": "2026-08-17",
+    "parties": [
+      {"name": "Asha Traders", "side": "petitioner", "sequence": 1, "metadata_json": {}},
+      {"name": "Bharat Supplies", "side": "respondent", "sequence": 1, "metadata_json": {}}
+    ],
+    "advocates": [
+      {"name": "Advocate A", "side": "petitioner", "enrollment_or_reference": null},
+      {"name": "Advocate B", "side": "respondent", "enrollment_or_reference": null}
+    ],
+    "acts": [
+      {"act_name": "Synthetic Example Act", "sections": ["12"], "source_text": "Example only; not legal authority."}
+    ],
+    "hearing_history": [
+      {"hearing_date": "2026-07-21", "purpose_or_stage": "Evidence", "judge_or_bench": "Demo Judge", "result_or_note": "Example hearing", "source_reference": "fixture-1", "metadata_json": {}}
+    ],
+    "orders": [
+      {"order_date": "2026-07-21", "title": "Synthetic procedural order", "order_type": "procedural", "document_url": null, "source_url": null, "checksum_sha256": null, "metadata_json": {}}
+    ],
+    "judgments": [],
+    "source_kind": "official_import",
+    "source_name": "Synthetic approved-adapter fixture",
+    "source_url": null,
+    "source_reference": "synthetic-case-fixture",
+    "fetched_at": "2026-08-08T12:00:00Z",
+    "source_updated_at": "2026-08-08T11:55:00Z"
+  },
+  "save_case": true
+}

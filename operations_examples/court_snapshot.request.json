@@ -1,0 +1,13 @@
+{
+  "case_status": "Pending",
+  "stage": "Arguments",
+  "next_hearing_date": "2026-08-19",
+  "judge_or_bench": "Court / bench as shown by source",
+  "order_count": 6,
+  "latest_order_date": "2026-08-08",
+  "latest_order_reference": "Order dated 08-08-2026",
+  "source_payload_json": {
+    "source": "official court record/manual verified entry",
+    "review_note": "Entered by legal team; verify official record before substantive reliance"
+  }
+}

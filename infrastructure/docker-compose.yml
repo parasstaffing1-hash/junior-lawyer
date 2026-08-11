@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: junior_lawyer
+      POSTGRES_USER: junior_lawyer
+      POSTGRES_PASSWORD: junior_lawyer_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - junior_lawyer_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U junior_lawyer -d junior_lawyer"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - junior_lawyer_redis:/data
+
+  api:
+    build:
+      context: ../apps/api
+    environment:
+      DATABASE_URL: postgresql+asyncpg://junior_lawyer:junior_lawyer_dev@postgres:5432/junior_lawyer
+      FRONTEND_ORIGINS: http://localhost:3000
+      STORAGE_ROOT: /data/documents
+      BACKUP_ROOT: /data/backups
+      STRUCTURED_LOGGING_ENABLED: "true"
+      OCR_LANGUAGES: eng+hin
+    ports:
+      - "8000:8000"
+    volumes:
+      - junior_lawyer_documents:/data/documents
+      - junior_lawyer_backups:/data/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  junior_lawyer_postgres:
+  junior_lawyer_redis:
+  junior_lawyer_documents:
+  junior_lawyer_backups:

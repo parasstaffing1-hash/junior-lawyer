@@ -1,0 +1,24 @@
+{
+  "title": "Consulting Agreement",
+  "contract_type": "consulting",
+  "language": "bilingual",
+  "risk_profile": "balanced",
+  "jurisdiction": "India",
+  "governing_state": "Delhi",
+  "party_a_name": "Example Client Pvt Ltd",
+  "party_b_name": "Example Consultant",
+  "effective_date": "2026-08-08",
+  "questionnaire_json": {
+    "party_a_address": "New Delhi, India",
+    "party_b_address": "Gurugram, Haryana, India",
+    "effective_date": "2026-08-08",
+    "governing_state": "Delhi",
+    "dispute_mode": "arbitration",
+    "arbitration_city": "New Delhi",
+    "notice_days": 30,
+    "scope_description": "Business process and operations consulting",
+    "fee_amount": 150000,
+    "payment_schedule": "50% advance and 50% on completion",
+    "term_months": 3
+  }
+}

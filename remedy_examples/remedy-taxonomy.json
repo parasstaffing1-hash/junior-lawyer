@@ -1,0 +1,15 @@
+{
+  "note": "Product taxonomy only; not a statement that any remedy is maintainable in a particular case.",
+  "remedy_kinds": [
+    "appeal",
+    "revision",
+    "review",
+    "writ",
+    "bail application",
+    "stay / injunction request",
+    "quashing petition",
+    "execution / enforcement application",
+    "restoration / recall application",
+    "other verified jurisdiction-specific remedy"
+  ]
+}

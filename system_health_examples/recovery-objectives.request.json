@@ -1,0 +1,10 @@
+{
+  "target_rpo_minutes": 1440,
+  "target_rto_minutes": 240,
+  "restore_verification_days": 30,
+  "max_queue_lag_seconds": 900,
+  "worker_stale_seconds": 90,
+  "slow_job_seconds": 1800,
+  "min_storage_free_percent": 15,
+  "max_database_latency_ms": 500
+}

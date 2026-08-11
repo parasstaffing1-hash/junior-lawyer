@@ -1,0 +1,14 @@
+{
+  "name": "Daily local recovery copy",
+  "enabled": true,
+  "include_database": true,
+  "include_documents": true,
+  "schedule_rrule": "FREQ=DAILY;INTERVAL=1",
+  "retention_days": 30,
+  "max_backups": 30,
+  "destination_kind": "local",
+  "destination_path": "daily",
+  "encryption_mode": "none",
+  "rpo_minutes": 1440,
+  "rto_minutes": 240
+}

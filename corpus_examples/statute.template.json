@@ -1,0 +1,30 @@
+{
+  "type": "statute",
+  "source_code": "india_code",
+  "external_id": "official-source-id",
+  "title_en": "Act title from official source",
+  "title_hi": null,
+  "act_number": null,
+  "act_year": null,
+  "enactment_date": null,
+  "jurisdiction": "India",
+  "source_url": "https://www.indiacode.nic.in/",
+  "metadata": {
+    "import_note": "Replace this template with verified official source metadata."
+  },
+  "sections": [
+    {
+      "section_number": "1",
+      "provision_type": "section",
+      "heading_en": "Official heading",
+      "heading_hi": null,
+      "text_en": "Official provision text goes here.",
+      "text_hi": null,
+      "effective_from": null,
+      "effective_to": null,
+      "version_label": "current",
+      "source_url": "https://www.indiacode.nic.in/",
+      "metadata": {}
+    }
+  ]
+}
