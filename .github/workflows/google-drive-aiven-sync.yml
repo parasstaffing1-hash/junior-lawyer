@@ -33,11 +33,13 @@ jobs:
 
       - name: Install API dependencies
         working-directory: apps/api
-        run: pip install -e .
+        run: pip install -e '.[dev]'
 
       - name: Validate sync script
         working-directory: apps/api
-        run: python -m py_compile scripts/sync_google_drive_to_aiven.py
+        run: |
+          python -m py_compile scripts/sync_google_drive_to_aiven.py
+          pytest -q tests/test_drive_aiven_sync.py
 
       - name: Sync Google Drive legal-data folder to Aiven
         working-directory: apps/api
