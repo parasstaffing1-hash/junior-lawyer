@@ -1,0 +1,59 @@
+{
+  "id": "demo-supporting-affidavit-v1",
+  "version": "1.0.0",
+  "title": "Supporting Affidavit",
+  "affidavit_type": "supporting",
+  "jurisdiction": "DEMO / JURISDICTION-NEUTRAL",
+  "effective_from": "2026-01-01",
+  "effective_to": null,
+  "fields": [
+    {"key": "court_name", "label": "Court/tribunal name", "kind": "text", "required": true, "max_length": 300},
+    {"key": "case_title", "label": "Case title", "kind": "text", "required": true, "max_length": 500},
+    {"key": "case_number", "label": "Case number", "kind": "text", "required": true, "max_length": 200},
+    {"key": "deponent_name", "label": "Deponent name", "kind": "text", "required": true, "max_length": 200},
+    {"key": "deponent_address", "label": "Deponent address", "kind": "multiline", "required": true, "max_length": 1200},
+    {"key": "deponent_capacity", "label": "Capacity/relationship to proceeding", "kind": "text", "required": false, "max_length": 300},
+    {"key": "place", "label": "Place of verification", "kind": "text", "required": true, "max_length": 200},
+    {"key": "verification_date", "label": "Verification date", "kind": "date", "required": true, "max_length": 80}
+  ],
+  "sections": [
+    {
+      "id": "case_heading",
+      "heading": null,
+      "body_template": "Before: {court_name}\nCase: {case_title}\nCase No.: {case_number}"
+    },
+    {
+      "id": "deponent",
+      "heading": "Deponent",
+      "body_template": "I, {deponent_name}, residing at {deponent_address}, state on oath/affirmation in support of the above proceeding as follows:"
+    },
+    {
+      "id": "capacity",
+      "heading": null,
+      "body_template": "Capacity: {deponent_capacity}",
+      "include_if_all_present": ["deponent_capacity"]
+    },
+    {
+      "id": "statements",
+      "heading": "Statements",
+      "body_template": "{numbered_statements}"
+    },
+    {
+      "id": "annexures",
+      "heading": "Annexure Schedule",
+      "body_template": "{annexure_schedule}",
+      "include_if_all_present": ["annexure_schedule"]
+    },
+    {
+      "id": "verification",
+      "heading": "Verification",
+      "body_template": "Verified at {place} on {verification_date} in relation to the {statement_count} statement(s) above, subject to the verification and attestation requirements of the applicable jurisdiction."
+    },
+    {
+      "id": "signature",
+      "heading": null,
+      "body_template": "Deponent: {deponent_name}\nGenerated on: {generation_date}"
+    }
+  ],
+  "source_note": "Fictional demonstration template only. It must not be treated as a court-approved or jurisdiction-specific affidavit form."
+}

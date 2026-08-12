@@ -37,17 +37,18 @@ from app.api.routes.remedies import router as remedies_router
 from app.api.routes.security import router as security_router
 from app.api.routes.search import router as search_router
 from app.api.routes.system_health import router as system_health_router
+from app.api.routes.tools import router as tools_router
 from app.api.routes.qa import router as qa_router
 from app.api.routes.release import router as release_router
 from app.api.routes.procedure import router as procedure_router
 from app.api.routes.deployment import router as deployment_router
 from app.api.routes.validation import router as validation_router
-from app.api.endpoints.chat_rag import router as chat_rag_router
 from app.core.config import settings
 from app.core.structured_logging import configure_structured_logging
 from app.db.base import Base
 from app.db.session import engine
 from app.services.security.middleware import SecurityMiddleware
+from app.services.security.rate_limit import RateLimitMiddleware
 
 configure_structured_logging()
 request_logger = logging.getLogger("junior_lawyer.http")
@@ -93,6 +94,7 @@ async def structured_request_log(request: Request, call_next):
     return response
 
 app.add_middleware(SecurityMiddleware)
+app.add_middleware(RateLimitMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -135,4 +137,4 @@ app.include_router(release_router, prefix=settings.api_v1_prefix)
 app.include_router(procedure_router, prefix=settings.api_v1_prefix)
 app.include_router(deployment_router, prefix=settings.api_v1_prefix)
 app.include_router(validation_router, prefix=settings.api_v1_prefix)
-app.include_router(chat_rag_router, prefix=settings.api_v1_prefix + "/chat-rag", tags=["Chat RAG"])
+app.include_router(tools_router, prefix=settings.api_v1_prefix)

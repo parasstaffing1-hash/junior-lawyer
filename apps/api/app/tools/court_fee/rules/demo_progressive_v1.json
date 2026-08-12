@@ -1,0 +1,26 @@
+{
+  "id": "demo-progressive-v1",
+  "version": "1.0.0",
+  "jurisdiction": "DEMO ONLY",
+  "court": "Example Civil Court",
+  "case_type": "Money claim",
+  "currency": "INR",
+  "effective_from": "2026-01-01",
+  "effective_to": null,
+  "method": "progressive",
+  "fixed_fee": null,
+  "slabs": [
+    {"up_to": "100000", "rate_percent": "2"},
+    {"up_to": "500000", "rate_percent": "1"},
+    {"up_to": null, "rate_percent": "0.5"}
+  ],
+  "minimum_fee": "500",
+  "maximum_fee": "25000",
+  "additional_fees": [
+    {"code": "PROCESS", "label": "Example process fee", "amount": "100"},
+    {"code": "CERTIFIED_COPY", "label": "Example certified-copy fee", "amount": "250"}
+  ],
+  "rounding_method": "up",
+  "rounding_unit": "1",
+  "source_note": "Demonstration rule pack only. These values are not an official court-fee schedule."
+}

@@ -1,0 +1,56 @@
+{
+  "id": "demo-breach-notice-v1",
+  "version": "1.0.0",
+  "title": "Notice of Breach and Opportunity to Cure",
+  "notice_type": "breach_notice",
+  "jurisdiction": "DEMO / JURISDICTION-NEUTRAL",
+  "effective_from": "2026-01-01",
+  "effective_to": null,
+  "fields": [
+    {"key": "sender_name", "label": "Sender name", "kind": "text", "required": true, "max_length": 200},
+    {"key": "recipient_name", "label": "Recipient name", "kind": "text", "required": true, "max_length": 200},
+    {"key": "agreement_name", "label": "Agreement name", "kind": "text", "required": true, "max_length": 300},
+    {"key": "agreement_date", "label": "Agreement date", "kind": "date", "required": true, "max_length": 80},
+    {"key": "breach_description", "label": "Breach description", "kind": "multiline", "required": true, "max_length": 4000},
+    {"key": "cure_action", "label": "Required cure action", "kind": "multiline", "required": true, "max_length": 3000},
+    {"key": "cure_deadline", "label": "Cure deadline", "kind": "date", "required": true, "max_length": 80},
+    {"key": "agreement_clause", "label": "Agreement clause", "kind": "text", "required": false, "max_length": 300},
+    {"key": "consequence_description", "label": "Potential consequence", "kind": "multiline", "required": false, "max_length": 2000}
+  ],
+  "subject_template": "Notice of breach concerning {agreement_name}",
+  "sections": [
+    {
+      "id": "intro",
+      "heading": null,
+      "body_template": "To {recipient_name}:\n\n{sender_name} gives notice concerning the {agreement_name} dated {agreement_date}."
+    },
+    {
+      "id": "clause",
+      "heading": "Relevant Provision",
+      "body_template": "The relevant contractual provision is identified as {agreement_clause}.",
+      "include_if_all_present": ["agreement_clause"]
+    },
+    {
+      "id": "breach",
+      "heading": "Breach Identified",
+      "body_template": "The alleged breach is described as follows: {breach_description}"
+    },
+    {
+      "id": "cure",
+      "heading": "Requested Cure",
+      "body_template": "The requested corrective action is: {cure_action}. The stated cure deadline is {cure_deadline}."
+    },
+    {
+      "id": "consequence",
+      "heading": "Potential Consequences",
+      "body_template": "If the matter is not cured, the sender may consider the following action, subject to applicable law and the agreement: {consequence_description}",
+      "include_if_all_present": ["consequence_description"]
+    },
+    {
+      "id": "reservation",
+      "heading": "Reservation",
+      "body_template": "All rights and remedies are reserved. This template does not determine whether the stated cure period or remedy is legally valid."
+    }
+  ],
+  "source_note": "Fictional demonstration template only. It is not based on any specific statute, court rule, or jurisdiction."
+}

@@ -1,0 +1,117 @@
+{
+  "id": "demo_civil_litigation_v1",
+  "version": "1.0.0",
+  "title": "Civil Litigation Matter Checklist (Demo)",
+  "matter_type": "civil_litigation",
+  "jurisdiction": "Generic / Demo Only",
+  "effective_from": "2026-01-01",
+  "context_fields": [
+    {
+      "key": "has_written_contract",
+      "label": "Written contract involved?",
+      "required": true,
+      "allowed_values": ["yes", "no"]
+    },
+    {
+      "key": "seeks_interim_relief",
+      "label": "Interim relief sought?",
+      "required": true,
+      "allowed_values": ["yes", "no"]
+    },
+    {
+      "key": "prior_notice_sent",
+      "label": "Prior notice sent?",
+      "required": true,
+      "allowed_values": ["yes", "no"]
+    }
+  ],
+  "items": [
+    {
+      "key": "client_identity",
+      "title": "Client identity / KYC material",
+      "category": "Client",
+      "kind": "document",
+      "requirement": "required",
+      "evidence_hint": "Retain the verified identity material appropriate to the engagement."
+    },
+    {
+      "key": "authority_to_act",
+      "title": "Authority to act / engagement record",
+      "category": "Client",
+      "kind": "document",
+      "requirement": "required"
+    },
+    {
+      "key": "facts_chronology",
+      "title": "Chronology of material facts",
+      "category": "Case Preparation",
+      "kind": "task",
+      "requirement": "required"
+    },
+    {
+      "key": "limitation_review",
+      "title": "Limitation / deadline review",
+      "category": "Case Preparation",
+      "kind": "task",
+      "requirement": "required"
+    },
+    {
+      "key": "supporting_evidence",
+      "title": "Core supporting evidence",
+      "category": "Evidence",
+      "kind": "document",
+      "requirement": "required"
+    },
+    {
+      "key": "written_contract",
+      "title": "Written contract and schedules",
+      "category": "Evidence",
+      "kind": "document",
+      "requirement": "recommended",
+      "applies_if_all": [
+        {"field": "has_written_contract", "values": ["yes"]}
+      ],
+      "required_if_all": [
+        {"field": "has_written_contract", "values": ["yes"]}
+      ]
+    },
+    {
+      "key": "prior_notice",
+      "title": "Prior legal / demand notice and proof of service",
+      "category": "Correspondence",
+      "kind": "document",
+      "requirement": "recommended",
+      "applies_if_all": [
+        {"field": "prior_notice_sent", "values": ["yes"]}
+      ]
+    },
+    {
+      "key": "interim_relief_material",
+      "title": "Evidence supporting interim relief",
+      "category": "Interim Relief",
+      "kind": "document",
+      "requirement": "recommended",
+      "applies_if_all": [
+        {"field": "seeks_interim_relief", "values": ["yes"]}
+      ],
+      "required_if_all": [
+        {"field": "seeks_interim_relief", "values": ["yes"]}
+      ]
+    },
+    {
+      "key": "opponent_correspondence",
+      "title": "Material correspondence with opposing party",
+      "category": "Correspondence",
+      "kind": "document",
+      "requirement": "recommended"
+    },
+    {
+      "key": "damages_schedule",
+      "title": "Loss / damages calculation and supporting records",
+      "category": "Quantum",
+      "kind": "document",
+      "requirement": "recommended"
+    }
+  ],
+  "source_note": "Demo checklist only. It is not tied to any court, statute, procedural code, or jurisdiction-specific filing rule."
+}
