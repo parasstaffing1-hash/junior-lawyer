@@ -70,7 +70,7 @@ jobs:
           AIVEN_DATABASE_URL: ${{ secrets.AIVEN_DATABASE_URL }}
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           GOOGLE_DRIVE_FOLDER_ID: ${{ vars.GOOGLE_DRIVE_FOLDER_ID }}
-          DRIVE_SYNC_STORE_CONTENT: ${{ github.event_name == 'workflow_dispatch' && inputs.metadata_only && 'false' || 'true' }}
+          DRIVE_SYNC_STORE_CONTENT: 'false'
         run: |
           if [ -z "$AIVEN_DATABASE_URL" ]; then
             echo "Missing required repository secret: AIVEN_DATABASE_URL" >&2
