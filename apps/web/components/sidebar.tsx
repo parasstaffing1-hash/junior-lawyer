@@ -10,6 +10,7 @@ const items = [
   { key:"matters", label: "Matters", hi:"मामले", href: "/matters", icon: FolderIcon },
   { key:"cases", label: "Case Lookup", hi:"केस खोज", href: "/cases", icon: ScaleIcon },
   { key:"search", label: "Search", hi:"खोज", href: "/search", icon: SearchIcon },
+  { key:"tools", label: "Tools", hi:"उपकरण", href: "/tools", icon: GridIcon },
   { key:"clients", label: "Clients", hi:"मुवक्किल", href: "/clients", icon: UsersIcon },
   { key:"research", label: "Research", hi:"कानूनी शोध", href: "/research", icon: BookIcon },
   { key:"legal-data", label: "Legal data", hi:"कानूनी डेटा", href: "/legal-data", icon: BookIcon },
