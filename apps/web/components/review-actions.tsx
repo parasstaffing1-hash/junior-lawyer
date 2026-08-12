@@ -14,7 +14,7 @@ export function ReviewActions({ item }: { item: ReviewItem }) {
   async function decide(status: "confirmed" | "dismissed") {
     setBusy(true);
     try {
-      await updateReviewItem(item.id, status);
+      await updateReviewItem(item, status);
       router.refresh();
     } finally {
       setBusy(false);

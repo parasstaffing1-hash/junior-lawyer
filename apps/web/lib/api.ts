@@ -79,6 +79,21 @@ export function updateExperiencePreferences(
   });
 }
 
+
+function patchBody(payload: unknown): RequestInit {
+  return { method: "PATCH", body: JSON.stringify(payload) };
+}
+
+/** Builds a query string, dropping keys the caller left undefined or blank. */
+function query(params: Record<string, string | number | undefined | null>): string {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== "") search.set(key, String(value));
+  }
+  const rendered = search.toString();
+  return rendered ? `?${rendered}` : "";
+}
+
 /* ------------------------------------------------------------------------ */
 /* Placeholders — not yet implemented.                                       */
 /* ------------------------------------------------------------------------ */
@@ -238,238 +253,238 @@ export type WitnessPrepQuestionRecord = G.PrepQuestionRead;
 export type WorkflowTaskRecord = G.WorkflowTaskRead;
 export type WorkflowTemplateRecord = G.WorkflowTemplateRead;
 
-export function adoptLegacyMatter(...args: any[]): Promise<any> { void args; return pending('adoptLegacyMatter'); }
-export function analyzeRemedies(...args: any[]): Promise<any> { void args; return pending('analyzeRemedies'); }
-export function approveContract(...args: any[]): Promise<any> { void args; return pending('approveContract'); }
-export function approveKnowledgeAsset(...args: any[]): Promise<any> { void args; return pending('approveKnowledgeAsset'); }
-export function approveLegalDraft(...args: any[]): Promise<any> { void args; return pending('approveLegalDraft'); }
-export function attachProcedure(...args: any[]): Promise<any> { void args; return pending('attachProcedure'); }
-export function beginDraftReview(...args: any[]): Promise<any> { void args; return pending('beginDraftReview'); }
-export function cancelBackgroundJob(...args: any[]): Promise<any> { void args; return pending('cancelBackgroundJob'); }
-export function captureCourtSnapshot(...args: any[]): Promise<any> { void args; return pending('captureCourtSnapshot'); }
-export function contractDownloadUrl(...args: any[]): Promise<any> { void args; return pending('contractDownloadUrl'); }
-export function contractRedlineDownloadUrl(...args: any[]): Promise<any> { void args; return pending('contractRedlineDownloadUrl'); }
-export function convertCRMLead(...args: any[]): Promise<any> { void args; return pending('convertCRMLead'); }
-export function createAnalyticsGoal(...args: any[]): Promise<any> { void args; return pending('createAnalyticsGoal'); }
-export function createAnalyticsSnapshot(...args: any[]): Promise<any> { void args; return pending('createAnalyticsSnapshot'); }
-export function createBackgroundJob(...args: any[]): Promise<any> { void args; return pending('createBackgroundJob'); }
-export function createBillingExpense(...args: any[]): Promise<any> { void args; return pending('createBillingExpense'); }
-export function createBillingInvoice(...args: any[]): Promise<any> { void args; return pending('createBillingInvoice'); }
-export function createBillingPayment(...args: any[]): Promise<any> { void args; return pending('createBillingPayment'); }
-export function createCRMClient(...args: any[]): Promise<any> { void args; return pending('createCRMClient'); }
-export function createCRMLead(...args: any[]): Promise<any> { void args; return pending('createCRMLead'); }
-export function createCaseWorkspace(...args: any[]): Promise<any> { void args; return pending('createCaseWorkspace'); }
-export function createClientMoneyAccount(...args: any[]): Promise<any> { void args; return pending('createClientMoneyAccount'); }
-export function createClientMoneyDeposit(...args: any[]): Promise<any> { void args; return pending('createClientMoneyDeposit'); }
-export function createClientMoneyTransfer(...args: any[]): Promise<any> { void args; return pending('createClientMoneyTransfer'); }
-export function createConflictCheck(...args: any[]): Promise<any> { void args; return pending('createConflictCheck'); }
-export function createContract(...args: any[]): Promise<any> { void args; return pending('createContract'); }
-export function createCourtTracker(...args: any[]): Promise<any> { void args; return pending('createCourtTracker'); }
-export function createDeploymentEnvironment(...args: any[]): Promise<any> { void args; return pending('createDeploymentEnvironment'); }
-export function createDocumentComment(...args: any[]): Promise<any> { void args; return pending('createDocumentComment'); }
-export function createEvidenceBundle(...args: any[]): Promise<any> { void args; return pending('createEvidenceBundle'); }
-export function createEvidenceWitness(...args: any[]): Promise<any> { void args; return pending('createEvidenceWitness'); }
-export function createHearing(...args: any[]): Promise<any> { void args; return pending('createHearing'); }
-export function createIntegrationConnection(...args: any[]): Promise<any> { void args; return pending('createIntegrationConnection'); }
-export function createJurisdictionPack(...args: any[]): Promise<any> { void args; return pending('createJurisdictionPack'); }
-export function createKnowledgeAsset(...args: any[]): Promise<any> { void args; return pending('createKnowledgeAsset'); }
-export function createKnowledgeCollection(...args: any[]): Promise<any> { void args; return pending('createKnowledgeCollection'); }
-export function createLegalDataFeed(...args: any[]): Promise<any> { void args; return pending('createLegalDataFeed'); }
-export function createLegalDraft(...args: any[]): Promise<any> { void args; return pending('createLegalDraft'); }
-export function createLitigationIssue(...args: any[]): Promise<any> { void args; return pending('createLitigationIssue'); }
-export function createManualDeadline(...args: any[]): Promise<any> { void args; return pending('createManualDeadline'); }
-export function createReleaseRun(...args: any[]): Promise<any> { void args; return pending('createReleaseRun'); }
-export function createRemedyDraft(...args: any[]): Promise<any> { void args; return pending('createRemedyDraft'); }
-export function createRemedyMemo(...args: any[]): Promise<any> { void args; return pending('createRemedyMemo'); }
-export function createSecurityMember(...args: any[]): Promise<any> { void args; return pending('createSecurityMember'); }
-export function createValidationCampaign(...args: any[]): Promise<any> { void args; return pending('createValidationCampaign'); }
-export function decideClientMoneyTransfer(...args: any[]): Promise<any> { void args; return pending('decideClientMoneyTransfer'); }
-export function decideDeployment(...args: any[]): Promise<any> { void args; return pending('decideDeployment'); }
-export function deleteSavedSearch(...args: any[]): Promise<any> { void args; return pending('deleteSavedSearch'); }
-export function detectSearchDuplicates(...args: any[]): Promise<any> { void args; return pending('detectSearchDuplicates'); }
-export function draftContract(...args: any[]): Promise<any> { void args; return pending('draftContract'); }
-export function ensureDefaultBackupPolicy(...args: any[]): Promise<any> { void args; return pending('ensureDefaultBackupPolicy'); }
-export function evaluateReleaseRun(...args: any[]): Promise<any> { void args; return pending('evaluateReleaseRun'); }
-export function evaluateValidationCampaign(...args: any[]): Promise<any> { void args; return pending('evaluateValidationCampaign'); }
-export function evidenceBundleDownloadUrl(...args: any[]): Promise<any> { void args; return pending('evidenceBundleDownloadUrl'); }
-export function executeClientMoneyTransfer(...args: any[]): Promise<any> { void args; return pending('executeClientMoneyTransfer'); }
-export function finalizeEvidenceBundle(...args: any[]): Promise<any> { void args; return pending('finalizeEvidenceBundle'); }
-export function findInDocument(...args: any[]): Promise<any> { void args; return pending('findInDocument'); }
-export function generateContractRedline(...args: any[]): Promise<any> { void args; return pending('generateContractRedline'); }
-export function generateWitnessPrep(...args: any[]): Promise<any> { void args; return pending('generateWitnessPrep'); }
-export function getAgenda(...args: any[]): Promise<any> { void args; return pending('getAgenda'); }
-export function getAnalyticsDashboard(...args: any[]): Promise<any> { void args; return pending('getAnalyticsDashboard'); }
-export function getAnalyticsGoals(...args: any[]): Promise<any> { void args; return pending('getAnalyticsGoals'); }
-export function getAnalyticsPreferences(...args: any[]): Promise<any> { void args; return pending('getAnalyticsPreferences'); }
-export function getAnalyticsRisks(...args: any[]): Promise<any> { void args; return pending('getAnalyticsRisks'); }
-export function getAnalyticsSnapshots(...args: any[]): Promise<any> { void args; return pending('getAnalyticsSnapshots'); }
-export function getAuthorityCollections(...args: any[]): Promise<any> { void args; return pending('getAuthorityCollections'); }
-export function getBackgroundJob(...args: any[]): Promise<any> { void args; return pending('getBackgroundJob'); }
-export function getBackgroundJobs(...args: any[]): Promise<any> { void args; return pending('getBackgroundJobs'); }
-export function getBackgroundQueues(...args: any[]): Promise<any> { void args; return pending('getBackgroundQueues'); }
-export function getBillingExpenses(...args: any[]): Promise<any> { void args; return pending('getBillingExpenses'); }
-export function getBillingInvoices(...args: any[]): Promise<any> { void args; return pending('getBillingInvoices'); }
-export function getBillingOverview(...args: any[]): Promise<any> { void args; return pending('getBillingOverview'); }
-export function getBillingPayments(...args: any[]): Promise<any> { void args; return pending('getBillingPayments'); }
-export function getBillingProfile(...args: any[]): Promise<any> { void args; return pending('getBillingProfile'); }
-export function getCRMClientDetail(...args: any[]): Promise<any> { void args; return pending('getCRMClientDetail'); }
-export function getCRMClients(...args: any[]): Promise<any> { void args; return pending('getCRMClients'); }
-export function getCRMConflicts(...args: any[]): Promise<any> { void args; return pending('getCRMConflicts'); }
-export function getCRMLeads(...args: any[]): Promise<any> { void args; return pending('getCRMLeads'); }
-export function getCRMOverview(...args: any[]): Promise<any> { void args; return pending('getCRMOverview'); }
-export function getCRMTasks(...args: any[]): Promise<any> { void args; return pending('getCRMTasks'); }
-export function getClientHealthAnalytics(...args: any[]): Promise<any> { void args; return pending('getClientHealthAnalytics'); }
-export function getClientMoneyAccounts(...args: any[]): Promise<any> { void args; return pending('getClientMoneyAccounts'); }
-export function getClientMoneyDashboard(...args: any[]): Promise<any> { void args; return pending('getClientMoneyDashboard'); }
-export function getClientMoneyEntries(...args: any[]): Promise<any> { void args; return pending('getClientMoneyEntries'); }
-export function getClientMoneyTransfers(...args: any[]): Promise<any> { void args; return pending('getClientMoneyTransfers'); }
-export function getContract(...args: any[]): Promise<any> { void args; return pending('getContract'); }
-export function getContractQuestionnaire(...args: any[]): Promise<any> { void args; return pending('getContractQuestionnaire'); }
-export function getContractReview(...args: any[]): Promise<any> { void args; return pending('getContractReview'); }
-export function getCourtChanges(...args: any[]): Promise<any> { void args; return pending('getCourtChanges'); }
-export function getCourtSources(...args: any[]): Promise<any> { void args; return pending('getCourtSources'); }
-export function getCourtTrackers(...args: any[]): Promise<any> { void args; return pending('getCourtTrackers'); }
-export function getDeadlines(...args: any[]): Promise<any> { void args; return pending('getDeadlines'); }
-export function getDeploymentDashboard(...args: any[]): Promise<any> { void args; return pending('getDeploymentDashboard'); }
-export function getDocument(...args: any[]): Promise<any> { void args; return pending('getDocument'); }
-export function getDocumentComments(...args: any[]): Promise<any> { void args; return pending('getDocumentComments'); }
-export function getDocumentPageWindow(...args: any[]): Promise<any> { void args; return pending('getDocumentPageWindow'); }
-export function getDocumentVersions(...args: any[]): Promise<any> { void args; return pending('getDocumentVersions'); }
-export function getDocuments(...args: any[]): Promise<any> { void args; return pending('getDocuments'); }
-export function getDraft(...args: any[]): Promise<any> { void args; return pending('getDraft'); }
-export function getDraftContext(...args: any[]): Promise<any> { void args; return pending('getDraftContext'); }
-export function getEvidenceBundles(...args: any[]): Promise<any> { void args; return pending('getEvidenceBundles'); }
-export function getEvidenceDashboard(...args: any[]): Promise<any> { void args; return pending('getEvidenceDashboard'); }
-export function getEvidenceGaps(...args: any[]): Promise<any> { void args; return pending('getEvidenceGaps'); }
-export function getEvidenceGraph(...args: any[]): Promise<any> { void args; return pending('getEvidenceGraph'); }
-export function getEvidenceItems(...args: any[]): Promise<any> { void args; return pending('getEvidenceItems'); }
-export function getEvidenceWitnesses(...args: any[]): Promise<any> { void args; return pending('getEvidenceWitnesses'); }
-export function getHearings(...args: any[]): Promise<any> { void args; return pending('getHearings'); }
-export function getIntegrationCatalog(...args: any[]): Promise<any> { void args; return pending('getIntegrationCatalog'); }
-export function getIntegrationsDashboard(...args: any[]): Promise<any> { void args; return pending('getIntegrationsDashboard'); }
-export function getJobsDashboard(...args: any[]): Promise<any> { void args; return pending('getJobsDashboard'); }
-export function getJurisdictionPacks(...args: any[]): Promise<any> { void args; return pending('getJurisdictionPacks'); }
-export function getKnowledgeAssets(...args: any[]): Promise<any> { void args; return pending('getKnowledgeAssets'); }
-export function getKnowledgeCollections(...args: any[]): Promise<any> { void args; return pending('getKnowledgeCollections'); }
-export function getKnowledgeDashboard(...args: any[]): Promise<any> { void args; return pending('getKnowledgeDashboard'); }
-export function getLegacyMatters(...args: any[]): Promise<any> { void args; return pending('getLegacyMatters'); }
-export function getLegalDataAmendments(...args: any[]): Promise<any> { void args; return pending('getLegalDataAmendments'); }
-export function getLegalDataDashboard(...args: any[]): Promise<any> { void args; return pending('getLegalDataDashboard'); }
-export function getLegalDataFeeds(...args: any[]): Promise<any> { void args; return pending('getLegalDataFeeds'); }
-export function getLegalDataRuns(...args: any[]): Promise<any> { void args; return pending('getLegalDataRuns'); }
-export function getLitigationIssues(...args: any[]): Promise<any> { void args; return pending('getLitigationIssues'); }
-export function getMatterHealthAnalytics(...args: any[]): Promise<any> { void args; return pending('getMatterHealthAnalytics'); }
-export function getMatterPlaybooks(...args: any[]): Promise<any> { void args; return pending('getMatterPlaybooks'); }
-export function getMatterProcedures(...args: any[]): Promise<any> { void args; return pending('getMatterProcedures'); }
-export function getMatterRemedies(...args: any[]): Promise<any> { void args; return pending('getMatterRemedies'); }
-export function getMatterSecurityAccess(...args: any[]): Promise<any> { void args; return pending('getMatterSecurityAccess'); }
-export function getMatterSecurityGrants(...args: any[]): Promise<any> { void args; return pending('getMatterSecurityGrants'); }
-export function getMatterSecurityProfile(...args: any[]): Promise<any> { void args; return pending('getMatterSecurityProfile'); }
-export function getMatters(...args: any[]): Promise<any> { void args; return pending('getMatters'); }
-export function getOnboardingProgress(...args: any[]): Promise<any> { void args; return pending('getOnboardingProgress'); }
-export function getOperationsAgenda(...args: any[]): Promise<any> { void args; return pending('getOperationsAgenda'); }
-export function getOperationsDashboard(...args: any[]): Promise<any> { void args; return pending('getOperationsDashboard'); }
-export function getOperationsSupervision(...args: any[]): Promise<any> { void args; return pending('getOperationsSupervision'); }
-export function getPortalApprovals(...args: any[]): Promise<any> { void args; return pending('getPortalApprovals'); }
-export function getPortalDashboard(...args: any[]): Promise<any> { void args; return pending('getPortalDashboard'); }
-export function getProcedurePacks(...args: any[]): Promise<any> { void args; return pending('getProcedurePacks'); }
-export function getProcedureStats(...args: any[]): Promise<any> { void args; return pending('getProcedureStats'); }
-export function getQADashboard(...args: any[]): Promise<any> { void args; return pending('getQADashboard'); }
-export function getQARun(...args: any[]): Promise<any> { void args; return pending('getQARun'); }
-export function getQASuite(...args: any[]): Promise<any> { void args; return pending('getQASuite'); }
-export function getRecentSearchItems(...args: any[]): Promise<any> { void args; return pending('getRecentSearchItems'); }
-export function getReleaseDashboard(...args: any[]): Promise<any> { void args; return pending('getReleaseDashboard'); }
-export function getReleaseRun(...args: any[]): Promise<any> { void args; return pending('getReleaseRun'); }
-export function getResearchSources(...args: any[]): Promise<any> { void args; return pending('getResearchSources'); }
-export function getSavedCase(...args: any[]): Promise<any> { void args; return pending('getSavedCase'); }
-export function getSavedCases(...args: any[]): Promise<any> { void args; return pending('getSavedCases'); }
-export function getSavedSearches(...args: any[]): Promise<any> { void args; return pending('getSavedSearches'); }
-export function getSearchCommands(...args: any[]): Promise<any> { void args; return pending('getSearchCommands'); }
-export function getSearchDuplicates(...args: any[]): Promise<any> { void args; return pending('getSearchDuplicates'); }
-export function getSearchIndexHealth(...args: any[]): Promise<any> { void args; return pending('getSearchIndexHealth'); }
-export function getSecurityAudit(...args: any[]): Promise<any> { void args; return pending('getSecurityAudit'); }
-export function getSecurityMembers(...args: any[]): Promise<any> { void args; return pending('getSecurityMembers'); }
-export function getSecurityOverview(...args: any[]): Promise<any> { void args; return pending('getSecurityOverview'); }
-export function getSystemHealthDashboard(...args: any[]): Promise<any> { void args; return pending('getSystemHealthDashboard'); }
-export function getTeamAnalytics(...args: any[]): Promise<any> { void args; return pending('getTeamAnalytics'); }
-export function getValidationCampaign(...args: any[]): Promise<any> { void args; return pending('getValidationCampaign'); }
-export function getValidationDashboard(...args: any[]): Promise<any> { void args; return pending('getValidationDashboard'); }
-export function getWitnessPrep(...args: any[]): Promise<any> { void args; return pending('getWitnessPrep'); }
-export function getWorkflowTasks(...args: any[]): Promise<any> { void args; return pending('getWorkflowTasks'); }
-export function getWorkflowTemplates(...args: any[]): Promise<any> { void args; return pending('getWorkflowTemplates'); }
-export function issueBillingInvoice(...args: any[]): Promise<any> { void args; return pending('issueBillingInvoice'); }
-export function legalDraftDownloadUrl(...args: any[]): Promise<any> { void args; return pending('legalDraftDownloadUrl'); }
-export function markSavedSearchRun(...args: any[]): Promise<any> { void args; return pending('markSavedSearchRun'); }
-export function patchCompliance(...args: any[]): Promise<any> { void args; return pending('patchCompliance'); }
-export function patchDeadline(...args: any[]): Promise<any> { void args; return pending('patchDeadline'); }
-export function patchDraftFinding(...args: any[]): Promise<any> { void args; return pending('patchDraftFinding'); }
-export function patchDraftSection(...args: any[]): Promise<any> { void args; return pending('patchDraftSection'); }
-export function portalActivate(...args: any[]): Promise<any> { void args; return pending('portalActivate'); }
-export function portalInvoiceSnapshot(...args: any[]): Promise<any> { void args; return pending('portalInvoiceSnapshot'); }
-export function portalLogin(...args: any[]): Promise<any> { void args; return pending('portalLogin'); }
-export function portalSendMessage(...args: any[]): Promise<any> { void args; return pending('portalSendMessage'); }
-export function portalUpdateRequest(...args: any[]): Promise<any> { void args; return pending('portalUpdateRequest'); }
-export function prepareAIReasoning(...args: any[]): Promise<any> { void args; return pending('prepareAIReasoning'); }
-export function queueBackupRun(...args: any[]): Promise<any> { void args; return pending('queueBackupRun'); }
-export function queueRestoreVerification(...args: any[]): Promise<any> { void args; return pending('queueRestoreVerification'); }
-export function reanalyzeContractReview(...args: any[]): Promise<any> { void args; return pending('reanalyzeContractReview'); }
-export function rebuildAnalyticsRisks(...args: any[]): Promise<any> { void args; return pending('rebuildAnalyticsRisks'); }
-export function rebuildEvidence(...args: any[]): Promise<any> { void args; return pending('rebuildEvidence'); }
-export function rebuildIntelligence(...args: any[]): Promise<any> { void args; return pending('rebuildIntelligence'); }
-export function rebuildSearchIndex(...args: any[]): Promise<any> { void args; return pending('rebuildSearchIndex'); }
-export function recordRecentSearchItem(...args: any[]): Promise<any> { void args; return pending('recordRecentSearchItem'); }
-export function regenerateLegalDraft(...args: any[]): Promise<any> { void args; return pending('regenerateLegalDraft'); }
-export function renderLegalDraft(...args: any[]): Promise<any> { void args; return pending('renderLegalDraft'); }
-export function resolveDocumentComment(...args: any[]): Promise<any> { void args; return pending('resolveDocumentComment'); }
-export function respondPortalApproval(...args: any[]): Promise<any> { void args; return pending('respondPortalApproval'); }
-export function retryBackgroundJob(...args: any[]): Promise<any> { void args; return pending('retryBackgroundJob'); }
-export function reviewAIRun(...args: any[]): Promise<any> { void args; return pending('reviewAIRun'); }
-export function reviewBillingInvoice(...args: any[]): Promise<any> { void args; return pending('reviewBillingInvoice'); }
-export function reviewCRMConflict(...args: any[]): Promise<any> { void args; return pending('reviewCRMConflict'); }
-export function reviewContract(...args: any[]): Promise<any> { void args; return pending('reviewContract'); }
-export function reviewCourtChange(...args: any[]): Promise<any> { void args; return pending('reviewCourtChange'); }
-export function reviewLegalDataAmendment(...args: any[]): Promise<any> { void args; return pending('reviewLegalDataAmendment'); }
-export function reviewRestoreDrill(...args: any[]): Promise<any> { void args; return pending('reviewRestoreDrill'); }
-export function runAIReasoning(...args: any[]): Promise<any> { void args; return pending('runAIReasoning'); }
-export function runLegalDataIntegritySweep(...args: any[]): Promise<any> { void args; return pending('runLegalDataIntegritySweep'); }
-export function runOperationsSweep(...args: any[]): Promise<any> { void args; return pending('runOperationsSweep'); }
-export function runQASuite(...args: any[]): Promise<any> { void args; return pending('runQASuite'); }
-export function runSystemHealthCheck(...args: any[]): Promise<any> { void args; return pending('runSystemHealthCheck'); }
-export function saveCaseCandidate(...args: any[]): Promise<any> { void args; return pending('saveCaseCandidate'); }
-export function saveSearch(...args: any[]): Promise<any> { void args; return pending('saveSearch'); }
-export function searchCases(...args: any[]): Promise<any> { void args; return pending('searchCases'); }
-export function searchKnowledge(...args: any[]): Promise<any> { void args; return pending('searchKnowledge'); }
-export function searchResearch(...args: any[]): Promise<any> { void args; return pending('searchResearch'); }
-export function seedProcedurePacks(...args: any[]): Promise<any> { void args; return pending('seedProcedurePacks'); }
-export function seedQASuite(...args: any[]): Promise<any> { void args; return pending('seedQASuite'); }
-export function seedResearchSources(...args: any[]): Promise<any> { void args; return pending('seedResearchSources'); }
-export function seedValidationScenarios(...args: any[]): Promise<any> { void args; return pending('seedValidationScenarios'); }
-export function seedWorkflowTemplates(...args: any[]): Promise<any> { void args; return pending('seedWorkflowTemplates'); }
-export function signoffValidationCampaign(...args: any[]): Promise<any> { void args; return pending('signoffValidationCampaign'); }
-export function snapshotDocumentVersion(...args: any[]): Promise<any> { void args; return pending('snapshotDocumentVersion'); }
-export function submitKnowledgeAsset(...args: any[]): Promise<any> { void args; return pending('submitKnowledgeAsset'); }
-export function syncLegalDataFeed(...args: any[]): Promise<any> { void args; return pending('syncLegalDataFeed'); }
-export function testIntegrationConnection(...args: any[]): Promise<any> { void args; return pending('testIntegrationConnection'); }
-export function universalSearch(...args: any[]): Promise<any> { void args; return pending('universalSearch'); }
-export function updateAnalyticsPreferences(...args: any[]): Promise<any> { void args; return pending('updateAnalyticsPreferences'); }
-export function updateAnalyticsRisk(...args: any[]): Promise<any> { void args; return pending('updateAnalyticsRisk'); }
-export function updateBackgroundQueue(...args: any[]): Promise<any> { void args; return pending('updateBackgroundQueue'); }
-export function updateBillingProfile(...args: any[]): Promise<any> { void args; return pending('updateBillingProfile'); }
-export function updateContractReviewClauseDecision(...args: any[]): Promise<any> { void args; return pending('updateContractReviewClauseDecision'); }
-export function updateContractReviewFinding(...args: any[]): Promise<any> { void args; return pending('updateContractReviewFinding'); }
-export function updateContractRisk(...args: any[]): Promise<any> { void args; return pending('updateContractRisk'); }
-export function updateEvidenceGap(...args: any[]): Promise<any> { void args; return pending('updateEvidenceGap'); }
-export function updateEvidenceItem(...args: any[]): Promise<any> { void args; return pending('updateEvidenceItem'); }
-export function updateMatterSecurityProfile(...args: any[]): Promise<any> { void args; return pending('updateMatterSecurityProfile'); }
-export function updateOnboardingProgress(...args: any[]): Promise<any> { void args; return pending('updateOnboardingProgress'); }
-export function updatePilotReadiness(...args: any[]): Promise<any> { void args; return pending('updatePilotReadiness'); }
-export function updateRecoveryObjectives(...args: any[]): Promise<any> { void args; return pending('updateRecoveryObjectives'); }
-export function updateReviewItem(...args: any[]): Promise<any> { void args; return pending('updateReviewItem'); }
-export function updateSecurityPolicy(...args: any[]): Promise<any> { void args; return pending('updateSecurityPolicy'); }
-export function updateSystemIncident(...args: any[]): Promise<any> { void args; return pending('updateSystemIncident'); }
-export function updateWorkflowTask(...args: any[]): Promise<any> { void args; return pending('updateWorkflowTask'); }
-export function uploadContractReview(...args: any[]): Promise<any> { void args; return pending('uploadContractReview'); }
-export function uploadDocument(...args: any[]): Promise<any> { void args; return pending('uploadDocument'); }
-export function uploadDocumentVersion(...args: any[]): Promise<any> { void args; return pending('uploadDocumentVersion'); }
-export function upsertMatterSecurityGrant(...args: any[]): Promise<any> { void args; return pending('upsertMatterSecurityGrant'); }
-export function verifySecurityAudit(...args: any[]): Promise<any> { void args; return pending('verifySecurityAudit'); }
+export const adoptLegacyMatter = (matterId: string): Promise<Record<string, unknown>> => apiFetch(`/security/matters/${matterId}/adopt`, { method: "POST" });
+export const analyzeRemedies = (payload: Record<string, unknown>): Promise<G.RemedyAnalysisRead> => apiFetch("/remedies/analyze", jsonBody(payload));
+export const approveContract = (contractId: string): Promise<G.DraftResult> => apiFetch(`/contracts/${contractId}/approve`, { method: "POST" });
+export const approveKnowledgeAsset = (assetId: string, sanitizationStatus: string, reviewNote: string): Promise<G.KnowledgeAssetRead> => apiFetch(`/knowledge/assets/${assetId}/approve`, jsonBody({ sanitization_status: sanitizationStatus, review_note: reviewNote }));
+export const approveLegalDraft = (draftId: string): Promise<G.DraftRenderResult> => apiFetch(`/drafting/${draftId}/approve`, { method: "POST" });
+export const attachProcedure = (matterId: string, packId: string): Promise<G.MatterProcedureRead> => apiFetch(`/procedure/matters/${matterId}/attach`, jsonBody({ pack_id: packId }));
+export const beginDraftReview = (draftId: string): Promise<G.LegalDraftRead> => apiFetch(`/drafting/${draftId}/review`, { method: "POST" });
+export const cancelBackgroundJob = (jobId: string): Promise<G.JobRead> => apiFetch(`/jobs/${jobId}/cancel`, { method: "POST" });
+export const captureCourtSnapshot = (trackerId: string, payload: Record<string, unknown>): Promise<G.CourtSnapshotCaptureRead> => apiFetch(`/operations/trackers/${trackerId}/snapshots`, jsonBody(payload));
+export const contractDownloadUrl = (contractId: string): string => `${API_BASE}/contracts/${contractId}/download`;
+export const contractRedlineDownloadUrl = (reviewId: string, redlineId: string): string => `${API_BASE}/contract-reviews/${reviewId}/redlines/${redlineId}/download`;
+export const convertCRMLead = (leadId: string, payload: Record<string, unknown>): Promise<G.ClientRead> => apiFetch(`/crm/leads/${leadId}/convert`, jsonBody(payload));
+export const createAnalyticsGoal = (payload: Record<string, unknown>): Promise<G.GoalWithProgress> => apiFetch("/analytics/goals", jsonBody(payload));
+export const createAnalyticsSnapshot = (notes: string): Promise<G.SnapshotRead> => apiFetch("/analytics/snapshots", jsonBody({ notes }));
+export const createBackgroundJob = (payload: Record<string, unknown>): Promise<G.JobRead> => apiFetch("/jobs", jsonBody(payload));
+export const createBillingExpense = (payload: Record<string, unknown>): Promise<G.ExpenseRead> => apiFetch("/billing/expenses", jsonBody(payload));
+export const createBillingInvoice = (payload: Record<string, unknown>): Promise<G.InvoiceRead> => apiFetch("/billing/invoices", jsonBody(payload));
+export const createBillingPayment = (payload: Record<string, unknown>): Promise<G.PaymentRead> => apiFetch("/billing/payments", jsonBody(payload));
+export const createCRMClient = (payload: Record<string, unknown>): Promise<G.ClientRead> => apiFetch("/crm/clients", jsonBody(payload));
+export const createCRMLead = (payload: Record<string, unknown>): Promise<G.LeadRead> => apiFetch("/crm/leads", jsonBody(payload));
+export const createCaseWorkspace = (savedCaseId: string): Promise<Record<string, unknown>> => apiFetch(`/case-lookup/saved/${savedCaseId}/workspace`, { method: "POST" });
+export const createClientMoneyAccount = (payload: Record<string, unknown>): Promise<G.ClientMoneyAccountRead> => apiFetch("/client-money/accounts", jsonBody(payload));
+export const createClientMoneyDeposit = (payload: Record<string, unknown>): Promise<G.ClientMoneyJournalEntryRead> => apiFetch("/client-money/deposits", jsonBody(payload));
+export const createClientMoneyTransfer = (payload: Record<string, unknown>): Promise<G.TransferRequestRead> => apiFetch("/client-money/transfers", jsonBody(payload));
+export const createConflictCheck = (payload: Record<string, unknown>): Promise<G.ConflictCheckRead> => apiFetch("/crm/conflicts", jsonBody(payload));
+export const createContract = (payload: Record<string, unknown>): Promise<G.ContractRead> => apiFetch("/contracts", jsonBody(payload));
+export const createCourtTracker = (payload: Record<string, unknown>): Promise<G.CourtTrackerRead> => apiFetch("/operations/trackers", jsonBody(payload));
+export const createDeploymentEnvironment = (payload: Record<string, unknown>): Promise<G.DeploymentEnvironmentRead> => apiFetch("/deployment/environments", jsonBody(payload));
+export const createDocumentComment = (documentId: string, body: string): Promise<G.CommentRead> => apiFetch(`/collaboration/documents/${documentId}/comments`, jsonBody({ body }));
+export const createEvidenceBundle = (matterId: string, payload: Record<string, unknown>): Promise<G.BundleRead> => apiFetch(`/evidence/matters/${matterId}/bundles`, jsonBody(payload));
+export const createEvidenceWitness = (matterId: string, payload: Record<string, unknown>): Promise<G.WitnessRead> => apiFetch(`/evidence/matters/${matterId}/witnesses`, jsonBody(payload));
+export const createHearing = (payload: Record<string, unknown>): Promise<G.HearingRead> => apiFetch("/procedure/hearings", jsonBody(payload));
+export const createIntegrationConnection = (payload: IntegrationConnectionCreatePayload): Promise<G.IntegrationConnectionRead> => apiFetch("/integrations", jsonBody(payload));
+export const createJurisdictionPack = (payload: Record<string, unknown>): Promise<G.JurisdictionPackRead> => apiFetch("/legal-data/packs", jsonBody(payload));
+export const createKnowledgeAsset = (payload: Record<string, unknown>): Promise<G.KnowledgeAssetRead> => apiFetch("/knowledge/assets", jsonBody(payload));
+export const createKnowledgeCollection = (payload: Record<string, unknown>): Promise<G.KnowledgeCollectionRead> => apiFetch("/knowledge/collections", jsonBody(payload));
+export const createLegalDataFeed = (payload: Record<string, unknown>): Promise<G.LegalDataFeedRead> => apiFetch("/legal-data/feeds", jsonBody(payload));
+export const createLegalDraft = (payload: Record<string, unknown>): Promise<G.LegalDraftRead> => apiFetch("/drafting", jsonBody(payload));
+export const createLitigationIssue = (matterId: string, payload: Record<string, unknown>): Promise<G.IssueRead> => apiFetch(`/evidence/matters/${matterId}/issues`, jsonBody(payload));
+export const createManualDeadline = (matterId: string, payload: Record<string, unknown>): Promise<G.DeadlineRead> => apiFetch(`/procedure/matters/${matterId}/deadlines/manual`, jsonBody(payload));
+export const createReleaseRun = (payload: Record<string, unknown>): Promise<G.ReleaseRunRead> => apiFetch("/release/runs", jsonBody(payload));
+export const createRemedyDraft = (candidateId: string, requestedDocumentKind: string): Promise<G.RemedyDraftLinkRead> => apiFetch(`/remedies/candidates/${candidateId}/draft`, jsonBody({ requested_document_kind: requestedDocumentKind }));
+export const createRemedyMemo = (candidateId: string, language: string): Promise<G.RemedyMemoRead> => apiFetch(`/remedies/candidates/${candidateId}/memo`, jsonBody({ language }));
+export const createSecurityMember = (payload: Record<string, unknown>): Promise<G.MembershipRead> => apiFetch("/security/members", jsonBody(payload));
+export const createValidationCampaign = (payload: Record<string, unknown>): Promise<G.ValidationCampaignRead> => apiFetch("/validation/campaigns", jsonBody(payload));
+export const decideClientMoneyTransfer = (requestId: string, approve: boolean, note: string): Promise<G.TransferRequestRead> => apiFetch(`/client-money/transfers/${requestId}/decision`, jsonBody({ approve, note }));
+export const decideDeployment = (rolloutId: string, decision: string, note: string): Promise<Record<string, unknown>> => apiFetch(`/deployment/rollouts/${rolloutId}`, jsonBody({ decision, note }));
+export const deleteSavedSearch = (searchId: string): Promise<void> => apiFetch(`/search/saved/${searchId}`, { method: "DELETE" });
+export const detectSearchDuplicates = (): Promise<SearchDuplicateRecord[]> => apiFetch("/search/index/duplicates/detect", { method: "POST" });
+export const draftContract = (contractId: string): Promise<G.DraftResult> => apiFetch(`/contracts/${contractId}/draft`, { method: "POST" });
+export const ensureDefaultBackupPolicy = (): Promise<G.BackupPolicyRead> => apiFetch("/system-health/backups/policies/default", { method: "POST" });
+export const evaluateReleaseRun = (runId: string): Promise<ReleaseRunDetailRecord> => apiFetch(`/release/runs/${runId}/evaluate`, { method: "POST" });
+export const evaluateValidationCampaign = (campaignId: string): Promise<ValidationCampaignDetailRecord> => apiFetch(`/validation/campaigns/${campaignId}/evaluate`, { method: "POST" });
+export const evidenceBundleDownloadUrl = (bundleId: string): string => `${API_BASE}/evidence/bundles/${bundleId}/download`;
+export const executeClientMoneyTransfer = (requestId: string): Promise<G.TransferRequestRead> => apiFetch(`/client-money/transfers/${requestId}/execute`, { method: "POST" });
+export const finalizeEvidenceBundle = (bundleId: string): Promise<G.BundleRead> => apiFetch(`/evidence/bundles/${bundleId}/finalize`, { method: "POST" });
+export const findInDocument = (documentId: string, q: string): Promise<DocumentPageMatch[]> => apiFetch(`/documents/${documentId}/find${query({ q })}`);
+export const generateContractRedline = (reviewId: string): Promise<G.RedlineRead> => apiFetch(`/contract-reviews/${reviewId}/redlines`, { method: "POST" });
+export const generateWitnessPrep = (witnessId: string): Promise<G.PrepQuestionRead[]> => apiFetch(`/evidence/witnesses/${witnessId}/prep/generate`, { method: "POST" });
+export const getAgenda = (days = 7): Promise<AgendaItem[]> => apiFetch(`/procedure/agenda${query({ days })}`);
+export const getAnalyticsDashboard = (): Promise<G.AnalyticsDashboard> => apiFetch("/analytics/dashboard");
+export const getAnalyticsGoals = (): Promise<G.GoalWithProgress[]> => apiFetch("/analytics/goals");
+export const getAnalyticsPreferences = (): Promise<G.AnalyticsPreferenceRead> => apiFetch("/analytics/preferences");
+export const getAnalyticsRisks = (): Promise<G.RiskSignalRead[]> => apiFetch("/analytics/risks");
+export const getAnalyticsSnapshots = (): Promise<G.SnapshotRead[]> => apiFetch("/analytics/snapshots");
+export const getAuthorityCollections = (): Promise<Record<string, unknown>[]> => apiFetch("/knowledge/authority-collections");
+export const getBackgroundJob = (jobId: string): Promise<G.JobDetail> => apiFetch(`/jobs/${jobId}`);
+export const getBackgroundJobs = (status?: string, queue?: string): Promise<G.JobRead[]> => apiFetch(`/jobs${query({ status, queue })}`);
+export const getBackgroundQueues = (): Promise<G.QueueRead[]> => apiFetch("/jobs/queues");
+export const getBillingExpenses = (): Promise<G.ExpenseRead[]> => apiFetch("/billing/expenses");
+export const getBillingInvoices = (): Promise<G.InvoiceRead[]> => apiFetch("/billing/invoices");
+export const getBillingOverview = (): Promise<BillingOverview> => apiFetch("/billing/overview");
+export const getBillingPayments = (): Promise<G.PaymentRead[]> => apiFetch("/billing/payments");
+export const getBillingProfile = (): Promise<G.BillingProfileRead> => apiFetch("/billing/profile");
+export const getCRMClientDetail = (clientId: string): Promise<CRMClientDetail> => apiFetch(`/crm/clients/${clientId}`);
+export const getCRMClients = (): Promise<G.ClientRead[]> => apiFetch("/crm/clients");
+export const getCRMConflicts = (): Promise<G.ConflictCheckRead[]> => apiFetch("/crm/conflicts");
+export const getCRMLeads = (): Promise<G.LeadRead[]> => apiFetch("/crm/leads");
+export const getCRMOverview = (): Promise<CRMOverview> => apiFetch("/crm/overview");
+export const getCRMTasks = (): Promise<G.TaskRead[]> => apiFetch("/crm/tasks");
+export const getClientHealthAnalytics = (): Promise<G.ClientHealthRead[]> => apiFetch("/analytics/clients");
+export const getClientMoneyAccounts = (): Promise<G.ClientMoneyAccountRead[]> => apiFetch("/client-money/accounts");
+export const getClientMoneyDashboard = (): Promise<ClientMoneyDashboard> => apiFetch("/client-money/dashboard");
+export const getClientMoneyEntries = (accountId: string): Promise<G.ClientMoneyJournalEntryRead[]> => apiFetch(`/client-money/accounts/${accountId}/entries`);
+export const getClientMoneyTransfers = (): Promise<G.TransferRequestRead[]> => apiFetch("/client-money/transfers");
+export const getContract = (contractId: string): Promise<G.ContractRead> => apiFetch(`/contracts/${contractId}`);
+export const getContractQuestionnaire = (contractType: string): Promise<Record<string, unknown>> => apiFetch(`/contracts/questionnaire/${contractType}`);
+export const getContractReview = (reviewId: string): Promise<G.ContractReviewRead> => apiFetch(`/contract-reviews/${reviewId}`);
+export const getCourtChanges = (matterId?: string, unreviewedOnly?: boolean): Promise<G.CourtChangeRead[]> => apiFetch(`/operations/court-changes${query({ matter_id: matterId, unreviewed_only: unreviewedOnly === undefined ? undefined : String(unreviewedOnly) })}`);
+export const getCourtSources = (): Promise<Record<string, unknown>[]> => apiFetch("/operations/court-sources");
+export const getCourtTrackers = (matterId?: string): Promise<G.CourtTrackerRead[]> => apiFetch(`/operations/trackers${query({ matter_id: matterId })}`);
+export const getDeadlines = (matterId?: string): Promise<G.DeadlineRead[]> => apiFetch(`/procedure/deadlines${query({ matter_id: matterId })}`);
+export const getDeploymentDashboard = (): Promise<G.DeploymentDashboard> => apiFetch("/deployment/dashboard");
+export const getDocument = (documentId: string): Promise<G.DocumentRead> => apiFetch(`/documents/${documentId}`);
+export const getDocumentComments = (documentId: string): Promise<G.CommentRead[]> => apiFetch(`/collaboration/documents/${documentId}/comments`);
+export const getDocumentPageWindow = (documentId: string, startPage: number, limit: number): Promise<DocumentPageWindow> => apiFetch(`/documents/${documentId}/page-window${query({ start_page: startPage, limit })}`);
+export const getDocumentVersions = (documentId: string): Promise<G.DocumentVersionRead[]> => apiFetch(`/collaboration/documents/${documentId}/versions`);
+export const getDocuments = (matterId: string): Promise<G.DocumentRead[]> => apiFetch(`/matters/${matterId}/documents`);
+export const getDraft = (draftId: string): Promise<G.LegalDraftRead> => apiFetch(`/drafting/${draftId}`);
+export const getDraftContext = (matterId: string): Promise<DraftContextPreview> => apiFetch(`/drafting/context/${matterId}`);
+export const getEvidenceBundles = (matterId: string): Promise<G.BundleRead[]> => apiFetch(`/evidence/matters/${matterId}/bundles`);
+export const getEvidenceDashboard = (matterId: string): Promise<EvidenceDashboard> => apiFetch(`/evidence/matters/${matterId}/dashboard`);
+export const getEvidenceGaps = (matterId: string): Promise<G.GapRead[]> => apiFetch(`/evidence/matters/${matterId}/gaps`);
+export const getEvidenceGraph = (matterId: string): Promise<G.EvidenceGraphRead> => apiFetch(`/evidence/matters/${matterId}/graph`);
+export const getEvidenceItems = (matterId: string): Promise<G.EvidenceItemRead[]> => apiFetch(`/evidence/matters/${matterId}/items`);
+export const getEvidenceWitnesses = (matterId: string): Promise<G.WitnessRead[]> => apiFetch(`/evidence/matters/${matterId}/witnesses`);
+export const getHearings = (matterId?: string): Promise<G.HearingRead[]> => apiFetch(`/procedure/hearings${query({ matter_id: matterId })}`);
+export const getIntegrationCatalog = (): Promise<G.IntegrationCatalogItem[]> => apiFetch("/integrations/catalog");
+export const getIntegrationsDashboard = (): Promise<G.IntegrationDashboard> => apiFetch("/integrations/dashboard");
+export const getJobsDashboard = (): Promise<G.JobsDashboard> => apiFetch("/jobs/dashboard");
+export const getJurisdictionPacks = (): Promise<G.JurisdictionPackRead[]> => apiFetch("/legal-data/packs");
+export const getKnowledgeAssets = (): Promise<G.KnowledgeAssetRead[]> => apiFetch("/knowledge/assets");
+export const getKnowledgeCollections = (): Promise<G.KnowledgeCollectionRead[]> => apiFetch("/knowledge/collections");
+export const getKnowledgeDashboard = (): Promise<KnowledgeDashboard> => apiFetch("/knowledge/dashboard");
+export const getLegacyMatters = (): Promise<Record<string, unknown>[]> => apiFetch("/security/legacy-matters");
+export const getLegalDataAmendments = (): Promise<G.AmendmentRead[]> => apiFetch("/legal-data/amendments");
+export const getLegalDataDashboard = (): Promise<G.LegalDataDashboard> => apiFetch("/legal-data/dashboard");
+export const getLegalDataFeeds = (): Promise<G.LegalDataFeedRead[]> => apiFetch("/legal-data/feeds");
+export const getLegalDataRuns = (): Promise<G.IngestionRunRead[]> => apiFetch("/legal-data/runs");
+export const getLitigationIssues = (matterId: string): Promise<G.IssueRead[]> => apiFetch(`/evidence/matters/${matterId}/issues`);
+export const getMatterHealthAnalytics = (): Promise<G.MatterHealthRead[]> => apiFetch("/analytics/matter-health");
+export const getMatterPlaybooks = (): Promise<G.MatterPlaybookRead[]> => apiFetch("/knowledge/playbooks");
+export const getMatterProcedures = (matterId: string): Promise<G.MatterProcedureRead[]> => apiFetch(`/procedure/matters/${matterId}`);
+export const getMatterRemedies = (matterId: string): Promise<G.RemedyAnalysisRead[]> => apiFetch(`/remedies/matters/${matterId}`);
+export const getMatterSecurityAccess = (matterId: string): Promise<G.AccessDecisionRead> => apiFetch(`/security/matters/${matterId}/access`);
+export const getMatterSecurityGrants = (matterId: string): Promise<G.MatterGrantRead[]> => apiFetch(`/security/matters/${matterId}/grants`);
+export const getMatterSecurityProfile = (matterId: string): Promise<G.MatterSecurityProfileRead> => apiFetch(`/security/matters/${matterId}/profile`);
+export const getMatters = (): Promise<G.MatterRead[]> => apiFetch("/matters");
+export const getOnboardingProgress = (): Promise<G.OnboardingProgressRead> => apiFetch("/experience/onboarding");
+export const getOperationsAgenda = (days = 7): Promise<AgendaItem[]> => apiFetch(`/operations/agenda${query({ days })}`);
+export const getOperationsDashboard = (): Promise<OperationsDashboard> => apiFetch("/operations/dashboard");
+export const getOperationsSupervision = (): Promise<Record<string, unknown>> => apiFetch("/operations/supervision");
+export const getPortalApprovals = (): Promise<G.PortalClientApprovalRead[]> => apiFetch("/portal/approvals");
+export const getPortalDashboard = (): Promise<PortalDashboard> => apiFetch("/portal/dashboard");
+export const getProcedurePacks = (): Promise<G.ProcedurePackRead[]> => apiFetch("/procedure/packs");
+export const getProcedureStats = (): Promise<ProcedureStats> => apiFetch("/procedure/stats");
+export const getQADashboard = (): Promise<G.QADashboard> => apiFetch("/qa/dashboard");
+export const getQARun = (runId: string): Promise<G.EvaluationRunDetail> => apiFetch(`/qa/runs/${runId}`);
+export const getQASuite = (suiteId: string): Promise<G.EvaluationSuiteDetail> => apiFetch(`/qa/suites/${suiteId}`);
+export const getRecentSearchItems = (limit = 8): Promise<G.RecentItemRead[]> => apiFetch(`/search/recent${query({ limit })}`);
+export const getReleaseDashboard = (): Promise<G.ReleaseDashboard> => apiFetch("/release/dashboard");
+export const getReleaseRun = (runId: string): Promise<G.ReleaseRunDetail> => apiFetch(`/release/runs/${runId}`);
+export const getResearchSources = (): Promise<G.SourceRead[]> => apiFetch("/research/sources");
+export const getSavedCase = (savedCaseId: string): Promise<G.SavedCaseDetailRead> => apiFetch(`/case-lookup/saved/${savedCaseId}`);
+export const getSavedCases = (): Promise<G.SavedCaseSummaryRead[]> => apiFetch("/case-lookup/saved");
+export const getSavedSearches = (): Promise<G.SavedSearchRead[]> => apiFetch("/search/saved");
+export const getSearchCommands = (q?: string): Promise<G.CommandDefinition[]> => apiFetch(`/search/commands${query({ q })}`);
+export const getSearchDuplicates = (limit = 8): Promise<G.SearchDuplicateItem[]> => apiFetch(`/search/index/duplicates${query({ limit })}`);
+export const getSearchIndexHealth = (): Promise<SearchIndexHealth> => apiFetch("/search/index/health");
+export const getSecurityAudit = (limit = 60): Promise<G.AuditEntryRead[]> => apiFetch(`/security/audit${query({ limit })}`);
+export const getSecurityMembers = (): Promise<G.MembershipRead[]> => apiFetch("/security/members");
+export const getSecurityOverview = (): Promise<G.SecurityOverviewRead> => apiFetch("/security/overview");
+export const getSystemHealthDashboard = (): Promise<G.SystemHealthDashboard> => apiFetch("/system-health/dashboard");
+export const getTeamAnalytics = (): Promise<G.TeamPerformanceRead[]> => apiFetch("/analytics/team");
+export const getValidationCampaign = (campaignId: string): Promise<G.ValidationCampaignDetail> => apiFetch(`/validation/campaigns/${campaignId}`);
+export const getValidationDashboard = (): Promise<G.ValidationDashboard> => apiFetch("/validation/dashboard");
+export const getWitnessPrep = (witnessId: string): Promise<G.PrepQuestionRead[]> => apiFetch(`/evidence/witnesses/${witnessId}/prep`);
+export const getWorkflowTasks = (assignedToMe = false): Promise<G.WorkflowTaskRead[]> => apiFetch(`/operations/tasks${query({ assigned_to_me: String(assignedToMe) })}`);
+export const getWorkflowTemplates = (): Promise<G.WorkflowTemplateRead[]> => apiFetch("/operations/templates");
+export const issueBillingInvoice = (invoiceId: string): Promise<G.InvoiceRead> => apiFetch(`/billing/invoices/${invoiceId}/issue`, jsonBody({}));
+export const legalDraftDownloadUrl = (draftId: string): string => `${API_BASE}/drafting/${draftId}/download`;
+export const markSavedSearchRun = (searchId: string): Promise<G.SavedSearchRead> => apiFetch(`/search/saved/${searchId}/run`, { method: "POST" });
+export const patchCompliance = (complianceId: string, patch: Record<string, unknown>): Promise<G.ComplianceRead> => apiFetch(`/procedure/compliances/${complianceId}`, patchBody(patch));
+export const patchDeadline = (deadlineId: string, patch: Record<string, unknown>): Promise<G.DeadlineRead> => apiFetch(`/procedure/deadlines/${deadlineId}`, patchBody(patch));
+export const patchDraftFinding = (draftId: string, findingId: string, status: string): Promise<G.LegalDraftRead> => apiFetch(`/drafting/${draftId}/findings/${findingId}`, patchBody({ status }));
+export const patchDraftSection = (draftId: string, sectionId: string, patch: Record<string, unknown>): Promise<G.LegalDraftRead> => apiFetch(`/drafting/${draftId}/sections/${sectionId}`, patchBody(patch));
+export const portalActivate = (payload: Record<string, unknown>): Promise<G.PortalSessionRead> => apiFetch("/portal/activate", jsonBody(payload));
+export const portalInvoiceSnapshot = (shareId: string): Promise<Record<string, unknown>> => apiFetch(`/portal/shares/${shareId}/invoice`);
+export const portalLogin = (payload: Record<string, unknown>): Promise<G.PortalSessionRead> => apiFetch("/portal/login", jsonBody(payload));
+export const portalSendMessage = (payload: Record<string, unknown>): Promise<G.PortalMessageRead> => apiFetch("/portal/messages", jsonBody(payload));
+export const portalUpdateRequest = (requestId: string, status: string): Promise<G.PortalRequestRead> => apiFetch(`/portal/requests/${requestId}`, patchBody({ status }));
+export const prepareAIReasoning = (payload: Record<string, unknown>): Promise<AIPrepareResponse> => apiFetch("/ai/prepare", jsonBody(payload));
+export const queueBackupRun = (policyId: string): Promise<BackupRunRecord> => apiFetch(`/system-health/backups/policies/${policyId}/run`, { method: "POST" });
+export const queueRestoreVerification = (runId: string): Promise<Record<string, unknown>> => apiFetch(`/system-health/backups/runs/${runId}/verify`, { method: "POST" });
+export const reanalyzeContractReview = (reviewId: string): Promise<G.ContractReviewRead> => apiFetch(`/contract-reviews/${reviewId}/reanalyze`, { method: "POST" });
+export const rebuildAnalyticsRisks = (): Promise<AnalyticsRiskRecord[]> => apiFetch("/analytics/risks/rebuild", { method: "POST" });
+export const rebuildEvidence = (matterId: string): Promise<Record<string, unknown>> => apiFetch(`/evidence/matters/${matterId}/rebuild`, { method: "POST" });
+export const rebuildIntelligence = (matterId: string): Promise<G.RebuildResultRead> => apiFetch(`/matters/${matterId}/intelligence/rebuild`, { method: "POST" });
+export const rebuildSearchIndex = (includeCorpus = false): Promise<G.SearchIndexJobRead> => apiFetch(`/search/index/rebuild${query({ include_corpus: String(includeCorpus) })}`, { method: "POST" });
+export const recordRecentSearchItem = (payload: Record<string, unknown>): Promise<G.RecentItemRead> => apiFetch("/search/recent", jsonBody(payload));
+export const regenerateLegalDraft = (draftId: string): Promise<G.LegalDraftRead> => apiFetch(`/drafting/${draftId}/regenerate`, { method: "POST" });
+export const renderLegalDraft = (draftId: string): Promise<G.DraftRenderResult> => apiFetch(`/drafting/${draftId}/render`, { method: "POST" });
+export const resolveDocumentComment = (commentId: string, resolved: boolean): Promise<DocumentCommentRecord> => apiFetch(`/collaboration/comments/${commentId}/resolve${query({ resolved: String(resolved) })}`, { method: "POST" });
+export const respondPortalApproval = (approvalId: string, decision: string): Promise<G.PortalClientApprovalRead> => apiFetch(`/portal/approvals/${approvalId}/respond`, jsonBody({ decision }));
+export const retryBackgroundJob = (jobId: string): Promise<G.JobRead> => apiFetch(`/jobs/${jobId}/retry`, { method: "POST" });
+export const reviewAIRun = (runId: string, payload: Record<string, unknown>): Promise<G.AIRunRead> => apiFetch(`/ai/runs/${runId}/review`, patchBody(payload));
+export const reviewBillingInvoice = (invoiceId: string, note: string): Promise<G.InvoiceRead> => apiFetch(`/billing/invoices/${invoiceId}/review`, jsonBody({ tax_treatment_reviewed: true, note }));
+export const reviewCRMConflict = (checkId: string, status: string, reviewNote: string): Promise<G.ConflictCheckRead> => apiFetch(`/crm/conflicts/${checkId}`, patchBody({ status, review_note: reviewNote }));
+export const reviewContract = (contractId: string): Promise<G.ContractRead> => apiFetch(`/contracts/${contractId}/review`, { method: "POST" });
+export const reviewCourtChange = (changeId: string): Promise<G.CourtChangeRead> => apiFetch(`/operations/court-changes/${changeId}/review`, { method: "POST" });
+export const reviewLegalDataAmendment = (amendmentId: string, status: string): Promise<G.AmendmentRead> => apiFetch(`/legal-data/amendments/${amendmentId}`, patchBody({ status }));
+export const reviewRestoreDrill = (drillId: string, note: string): Promise<G.RestoreDrillRead> => apiFetch(`/system-health/restore-drills/${drillId}/review`, jsonBody({ note }));
+export const runAIReasoning = (payload: Record<string, unknown>): Promise<G.AIRunRead> => apiFetch("/ai/runs", jsonBody(payload));
+export const runLegalDataIntegritySweep = (): Promise<Record<string, unknown>> => apiFetch("/legal-data/integrity/sweep", { method: "POST" });
+export const runOperationsSweep = (): Promise<Record<string, unknown>> => apiFetch("/operations/sweep", { method: "POST" });
+export const runQASuite = (suiteId: string, triggeredBy: string): Promise<G.EvaluationRunRead> => apiFetch(`/qa/suites/${suiteId}/runs`, jsonBody({ triggered_by: triggeredBy }));
+export const runSystemHealthCheck = (): Promise<G.HealthRunDetail> => apiFetch("/system-health/checks/run", { method: "POST" });
+export const saveCaseCandidate = (candidateId: string): Promise<G.SavedCaseSummaryRead> => apiFetch(`/case-lookup/candidates/${candidateId}/save`, { method: "POST" });
+export const saveSearch = (payload: Record<string, unknown>): Promise<G.SavedSearchRead> => apiFetch("/search/saved", jsonBody(payload));
+export const searchCases = (q: string): Promise<G.CaseLookupResponse> => apiFetch("/case-lookup/search", jsonBody({ query: q, include_saved: true }));
+export const searchKnowledge = (q: string): Promise<G.KnowledgeSearchResponse> => apiFetch(`/knowledge/search${query({ q })}`);
+export const searchResearch = (payload: Record<string, unknown>): Promise<G.CorpusSearchResponse> => apiFetch("/research/search", jsonBody(payload));
+export const seedProcedurePacks = (): Promise<Record<string, unknown>> => apiFetch("/procedure/packs/seed", { method: "POST" });
+export const seedQASuite = (): Promise<G.EvaluationSuiteRead> => apiFetch("/qa/seed", { method: "POST" });
+export const seedResearchSources = (): Promise<G.SourceRead[]> => apiFetch("/research/sources/seed", { method: "POST" });
+export const seedValidationScenarios = (): Promise<G.ValidationScenarioRead[]> => apiFetch("/validation/seed", { method: "POST" });
+export const seedWorkflowTemplates = (): Promise<WorkflowTemplateRecord[]> => apiFetch("/operations/templates/seed", { method: "POST" });
+export const signoffValidationCampaign = (campaignId: string, decision: string, note: string): Promise<G.ValidationSignoffRead> => apiFetch(`/validation/campaigns/${campaignId}/signoffs`, jsonBody({ decision, note }));
+export const snapshotDocumentVersion = (documentId: string, changeNote: string): Promise<DocumentVersionRecord> => apiFetch(`/collaboration/documents/${documentId}/versions/snapshot${query({ change_note: changeNote })}`, { method: "POST" });
+export const submitKnowledgeAsset = (assetId: string): Promise<G.KnowledgeAssetRead> => apiFetch(`/knowledge/assets/${assetId}/submit`, { method: "POST" });
+export const syncLegalDataFeed = (feedId: string): Promise<LegalDataRunRecord> => apiFetch(`/legal-data/feeds/${feedId}/sync`, { method: "POST" });
+export const testIntegrationConnection = (connectionId: string, live: boolean): Promise<Record<string, unknown>> => apiFetch(`/integrations/${connectionId}/test${query({ live: String(live) })}`, { method: "POST" });
+export const universalSearch = (q: string, options: { scopes?: string[]; limit?: number } = {}): Promise<UniversalSearchResponse> => apiFetch(`/search${query({ q, scopes: options.scopes?.join(","), limit: options.limit })}`);
+export const updateAnalyticsPreferences = (patch: Record<string, unknown>): Promise<G.AnalyticsPreferenceRead> => apiFetch("/analytics/preferences", patchBody(patch));
+export const updateAnalyticsRisk = (signalId: string, status: string): Promise<G.RiskSignalRead> => apiFetch(`/analytics/risks/${signalId}`, patchBody({ status }));
+export const updateBackgroundQueue = (queueId: string, patch: Record<string, unknown>): Promise<G.QueueRead> => apiFetch(`/jobs/queues/${queueId}`, patchBody(patch));
+export const updateBillingProfile = (payload: Record<string, unknown>): Promise<G.BillingProfileRead> => apiFetch("/billing/profile", { method: "PUT", body: JSON.stringify(payload) });
+export const updateContractReviewClauseDecision = (reviewId: string, clauseId: string, decision: string): Promise<G.ContractReviewRead> => apiFetch(`/contract-reviews/${reviewId}/clauses/${clauseId}/decision`, patchBody({ decision }));
+export const updateContractReviewFinding = (reviewId: string, findingId: string, status: string): Promise<G.ContractReviewRead> => apiFetch(`/contract-reviews/${reviewId}/findings/${findingId}`, patchBody({ status }));
+export const updateContractRisk = (contractId: string, riskId: string, status: string): Promise<G.ContractRead> => apiFetch(`/contracts/${contractId}/risks/${riskId}`, patchBody({ status }));
+export const updateEvidenceGap = (gapId: string, status: string): Promise<G.GapRead> => apiFetch(`/evidence/gaps/${gapId}`, patchBody({ status }));
+export const updateEvidenceItem = (itemId: string, patch: Record<string, unknown>): Promise<G.EvidenceItemRead> => apiFetch(`/evidence/items/${itemId}`, patchBody(patch));
+export const updateMatterSecurityProfile = (matterId: string, patch: Record<string, unknown>): Promise<G.MatterSecurityProfileRead> => apiFetch(`/security/matters/${matterId}/profile`, patchBody(patch));
+export const updateOnboardingProgress = (patch: Record<string, unknown>): Promise<G.OnboardingProgressRead> => apiFetch("/experience/onboarding", patchBody(patch));
+export const updatePilotReadiness = (campaignId: string, checkId: string, status: string, note: string): Promise<G.PilotReadinessRead> => apiFetch(`/validation/campaigns/${campaignId}/checks/${checkId}`, patchBody({ status, note }));
+export const updateRecoveryObjectives = (patch: Record<string, unknown>): Promise<G.RecoveryObjectiveRead> => apiFetch("/system-health/recovery-objectives", patchBody(patch));
+export const updateReviewItem = (item: ReviewItem, status: string): Promise<Record<string, unknown>> => apiFetch(item.item_type === "contradiction" ? `/contradictions/${item.target_id}` : `/facts/${item.target_id}`, patchBody({ status }));
+export const updateSecurityPolicy = (patch: Record<string, unknown>): Promise<G.SecurityPolicyRead> => apiFetch("/security/policy", patchBody(patch));
+export const updateSystemIncident = (incidentId: string, patch: Record<string, unknown>): Promise<G.IncidentRead> => apiFetch(`/system-health/incidents/${incidentId}`, patchBody(patch));
+export const updateWorkflowTask = (taskId: string, patch: Record<string, unknown>): Promise<G.WorkflowTaskRead> => apiFetch(`/operations/tasks/${taskId}`, patchBody(patch));
+export const uploadContractReview = (form: FormData): Promise<G.ContractReviewRead> => apiFetch("/contract-reviews", { method: "POST", body: form });
+export const uploadDocument = (matterId: string, file: File): Promise<LegalDocument> => { const form = new FormData(); form.append("file", file); return apiFetch(`/matters/${matterId}/documents`, { method: "POST", body: form }); };
+export const uploadDocumentVersion = (documentId: string, file: File, changeNote: string): Promise<DocumentVersionRecord> => { const form = new FormData(); form.append("file", file); form.append("change_note", changeNote); return apiFetch(`/collaboration/documents/${documentId}/versions`, { method: "POST", body: form }); };
+export const upsertMatterSecurityGrant = (matterId: string, payload: Record<string, unknown>): Promise<G.MatterGrantRead> => apiFetch(`/security/matters/${matterId}/grants`, jsonBody(payload));
+export const verifySecurityAudit = (): Promise<G.AuditVerifyRead> => apiFetch("/security/audit/verify");
