@@ -33,6 +33,29 @@ from app.services.research.ranking import (
     make_snippet,
 )
 
+# Ranking still happens in Python, so the database must narrow the candidate set
+# first. Without a text predicate this query returned an arbitrary slice of the
+# corpus — fine against a handful of seeded sections, silently wrong against a
+# real one. The cap is a backstop against a pathologically common term, not the
+# primary filter.
+CANDIDATE_CAP = 5000
+
+
+def _restrict_to_query_terms(stmt, terms: list[str], columns: tuple):
+    """Keep only rows where some searchable column contains one of the terms.
+
+    ILIKE keeps this portable across SQLite (development) and PostgreSQL
+    (production); the migration adds trigram indexes so PostgreSQL can serve
+    these predicates from an index rather than a sequential scan.
+    """
+    clauses = [
+        column.ilike(f"%{term}%")
+        for term in terms
+        if term
+        for column in columns
+    ]
+    return stmt.where(or_(*clauses)) if clauses else stmt
+
 
 async def corpus_stats(db: AsyncSession) -> CorpusStatsRead:
     async def count(model) -> int:
@@ -85,7 +108,12 @@ async def search_corpus(db: AsyncSession, payload: CorpusSearchRequest) -> Corpu
             # Normal research defaults to versions not known to have expired. Historical
             # legal research can set as_of_date explicitly.
             stmt = stmt.where(StatuteSection.effective_to.is_(None))
-        rows = (await db.execute(stmt.limit(2500))).all()
+        stmt = _restrict_to_query_terms(
+            stmt,
+            expanded_terms,
+            (StatuteSection.normalized_text, StatuteSection.heading_en, StatuteSection.heading_hi),
+        )
+        rows = (await db.execute(stmt.limit(CANDIDATE_CAP))).all()
         for section, statute, source in rows:
             text = " ".join(filter(None, [
                 statute.title_en,
@@ -126,7 +154,12 @@ async def search_corpus(db: AsyncSession, payload: CorpusSearchRequest) -> Corpu
             stmt = stmt.where(Judgment.decision_date >= payload.date_from)
         if payload.date_to:
             stmt = stmt.where(Judgment.decision_date <= payload.date_to)
-        rows = (await db.execute(stmt.limit(5000))).all()
+        stmt = _restrict_to_query_terms(
+            stmt,
+            expanded_terms,
+            (JudgmentParagraph.normalized_text, Judgment.case_title, Judgment.neutral_citation),
+        )
+        rows = (await db.execute(stmt.limit(CANDIDATE_CAP))).all()
         for paragraph, judgment, source in rows:
             searchable_metadata = " ".join([
                 *(str(x) for x in judgment.acts_json),

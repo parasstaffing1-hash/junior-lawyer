@@ -87,6 +87,17 @@ class Settings(BaseSettings):
     security_audit_hmac_key: str | None = None
     security_privacy_hash_key: str | None = None
     security_hsts_seconds: int = 31536000
+    # Only trust X-Forwarded-For when a proxy actually sets it; otherwise a
+    # client can spoof the header and evade rate limiting.
+    security_trust_forwarded_for: bool = False
+
+    # Fixed-window rate limiting. Counters are per API process, so with multiple
+    # replicas the effective limit is per replica; a shared limiter belongs at
+    # the reverse proxy.
+    rate_limit_enabled: bool = True
+    rate_limit_requests: int = 300
+    rate_limit_window_seconds: int = 60
+    rate_limit_auth_requests: int = 10
 
     # Batch 12 · external client portal uses a separate session namespace/trust boundary.
     portal_session_cookie_name: str = "jl_client_session"

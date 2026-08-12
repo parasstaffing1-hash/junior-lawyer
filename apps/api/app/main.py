@@ -48,6 +48,7 @@ from app.core.structured_logging import configure_structured_logging
 from app.db.base import Base
 from app.db.session import engine
 from app.services.security.middleware import SecurityMiddleware
+from app.services.security.rate_limit import RateLimitMiddleware
 
 configure_structured_logging()
 request_logger = logging.getLogger("junior_lawyer.http")
@@ -93,6 +94,7 @@ async def structured_request_log(request: Request, call_next):
     return response
 
 app.add_middleware(SecurityMiddleware)
+app.add_middleware(RateLimitMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
