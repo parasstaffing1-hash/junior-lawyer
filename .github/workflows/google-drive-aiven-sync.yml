@@ -45,8 +45,6 @@ jobs:
           AIVEN_DATABASE_URL: ${{ secrets.AIVEN_DATABASE_URL }}
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           GOOGLE_DRIVE_FOLDER_ID: ${{ vars.GOOGLE_DRIVE_FOLDER_ID }}
-          GOOGLE_DRIVE_FOLDER_NAME: ${{ vars.GOOGLE_DRIVE_FOLDER_NAME }}
-          DRIVE_SYNC_CONTENT_MAX_MB: ${{ vars.DRIVE_SYNC_CONTENT_MAX_MB }}
           DRIVE_SYNC_STORE_CONTENT: ${{ github.event_name == 'workflow_dispatch' && inputs.metadata_only && 'false' || 'true' }}
         run: |
           if [ -z "$AIVEN_DATABASE_URL" ]; then
