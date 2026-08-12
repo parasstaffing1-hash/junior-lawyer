@@ -1,0 +1,60 @@
+name: Google Drive to Aiven sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      metadata_only:
+        description: 'Catalog metadata only (do not extract file text)'
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: google-drive-aiven-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: apps/api/pyproject.toml
+
+      - name: Install API dependencies
+        working-directory: apps/api
+        run: pip install -e .
+
+      - name: Validate sync script
+        working-directory: apps/api
+        run: python -m py_compile scripts/sync_google_drive_to_aiven.py
+
+      - name: Sync Google Drive legal-data folder to Aiven
+        working-directory: apps/api
+        env:
+          AIVEN_DATABASE_URL: ${{ secrets.AIVEN_DATABASE_URL }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          GOOGLE_DRIVE_FOLDER_ID: ${{ vars.GOOGLE_DRIVE_FOLDER_ID }}
+          GOOGLE_DRIVE_FOLDER_NAME: ${{ vars.GOOGLE_DRIVE_FOLDER_NAME }}
+          DRIVE_SYNC_CONTENT_MAX_MB: ${{ vars.DRIVE_SYNC_CONTENT_MAX_MB }}
+          DRIVE_SYNC_STORE_CONTENT: ${{ github.event_name == 'workflow_dispatch' && inputs.metadata_only && 'false' || 'true' }}
+        run: |
+          if [ -z "$AIVEN_DATABASE_URL" ]; then
+            echo "Missing required repository secret: AIVEN_DATABASE_URL" >&2
+            exit 1
+          fi
+          if [ -z "$GOOGLE_SERVICE_ACCOUNT_JSON" ]; then
+            echo "Missing required repository secret: GOOGLE_SERVICE_ACCOUNT_JSON" >&2
+            exit 1
+          fi
+          python scripts/sync_google_drive_to_aiven.py
