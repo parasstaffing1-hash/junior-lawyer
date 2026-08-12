@@ -1,53 +1,158 @@
 /**
  * Server-side data access for React Server Components.
  *
- * STATUS: placeholders. Server components must forward the incoming session
- * cookie explicitly, so these cannot simply re-export the browser client.
- * See lib/api.ts for the same caveat.
+ * Browser requests carry the session cookie automatically; server components do
+ * not, so the incoming cookie header is read and forwarded explicitly. These
+ * calls go straight to the API's internal URL rather than through the Next.js
+ * rewrite, which only exists for the browser.
+ *
+ * Every function here is read-only. Mutations belong in client components so
+ * they go through lib/client.ts and pick up CSRF handling.
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { cookies } from "next/headers";
 
-function pending(name: string): never {
-  throw new Error(
-    `${name}() is not implemented yet. Server-side data access is still to be ` +
-      `wired up against the API's session cookie.`,
-  );
+import type {
+  ContractListItem as ContractListItemSchema,
+  ContractReviewListItem as ContractReviewListItemSchema,
+  CorpusStatsRead,
+  ContradictionRead,
+  DocumentRead,
+  EvidenceMatrixRead,
+  FactRead,
+  IntelligenceSummaryRead,
+  LegalDraftListItem,
+  MatterRead,
+  ProcedurePackRead,
+  ProcedureStats as ProcedureStatsSchema,
+  ReviewItemRead,
+  StatementRead,
+  TimelineEventRead,
+} from "@/lib/generated-types";
+
+const INTERNAL_URL = process.env.API_INTERNAL_URL ?? "http://localhost:8000";
+const PREFIX = "/api/v1";
+
+/** Names the UI uses, bound to the API's own response contracts. */
+export type Matter = MatterRead;
+export type LegalDocument = DocumentRead;
+export type MatterFact = FactRead;
+export type MatterStatement = StatementRead;
+export type MatterContradiction = ContradictionRead;
+export type TimelineEvent = TimelineEventRead;
+export type EvidenceMatrix = EvidenceMatrixRead;
+export type IntelligenceSummary = IntelligenceSummaryRead;
+export type ReviewItem = ReviewItemRead;
+export type ResearchStats = CorpusStatsRead;
+export type ProcedurePack = ProcedurePackRead;
+export type ProcedureStats = ProcedureStatsSchema;
+export type ContractListItem = ContractListItemSchema;
+export type ContractCatalogItem = Record<string, unknown>;
+export type ContractReviewListItem = ContractReviewListItemSchema;
+export type { LegalDraftListItem };
+
+async function get<T>(path: string, fallback: T): Promise<T> {
+  const cookieStore = await cookies();
+  const header = cookieStore
+    .getAll()
+    .map((entry) => `${entry.name}=${entry.value}`)
+    .join("; ");
+
+  let response: Response;
+  try {
+    response = await fetch(`${INTERNAL_URL}${PREFIX}${path}`, {
+      headers: header ? { cookie: header } : {},
+      cache: "no-store",
+    });
+  } catch {
+    // A page should still render its shell when the API is unreachable.
+    return fallback;
+  }
+  // 401 is the normal state for a signed-out visitor, not an error worth
+  // crashing a server-rendered page over.
+  if (!response.ok) return fallback;
+  return (await response.json()) as T;
 }
 
-/* Response shapes still to be typed from the OpenAPI schema. */
-export type ContractCatalogItem = any;
-export type ContractListItem = any;
-export type ContractReviewListItem = any;
-export type EvidenceMatrix = any;
-export type IntelligenceSummary = any;
-export type LegalDocument = any;
-export type LegalDraftListItem = any;
-export type Matter = any;
-export type MatterContradiction = any;
-export type MatterFact = any;
-export type MatterStatement = any;
-export type ResearchStats = any;
-export type ReviewItem = any;
-export type TimelineEvent = any;
+export function getMatters() {
+  return get<Matter[]>("/matters", []);
+}
 
-export function getAIProviderStatus(...args: any[]): Promise<any> { void args; return pending('getAIProviderStatus'); }
-export function getAIRuns(...args: any[]): Promise<any> { void args; return pending('getAIRuns'); }
-export function getAgenda(...args: any[]): Promise<any> { void args; return pending('getAgenda'); }
-export function getContractCatalog(...args: any[]): Promise<any> { void args; return pending('getContractCatalog'); }
-export function getContractReviews(...args: any[]): Promise<any> { void args; return pending('getContractReviews'); }
-export function getContracts(...args: any[]): Promise<any> { void args; return pending('getContracts'); }
-export function getContradictions(...args: any[]): Promise<any> { void args; return pending('getContradictions'); }
-export function getDocuments(...args: any[]): Promise<any> { void args; return pending('getDocuments'); }
-export function getDraftCatalog(...args: any[]): Promise<any> { void args; return pending('getDraftCatalog'); }
-export function getDrafts(...args: any[]): Promise<any> { void args; return pending('getDrafts'); }
-export function getEvidence(...args: any[]): Promise<any> { void args; return pending('getEvidence'); }
-export function getFacts(...args: any[]): Promise<any> { void args; return pending('getFacts'); }
-export function getIntelligenceSummary(...args: any[]): Promise<any> { void args; return pending('getIntelligenceSummary'); }
-export function getMatter(...args: any[]): Promise<any> { void args; return pending('getMatter'); }
-export function getMatters(...args: any[]): Promise<any> { void args; return pending('getMatters'); }
-export function getProcedurePacks(...args: any[]): Promise<any> { void args; return pending('getProcedurePacks'); }
-export function getProcedureStats(...args: any[]): Promise<any> { void args; return pending('getProcedureStats'); }
-export function getResearchStats(...args: any[]): Promise<any> { void args; return pending('getResearchStats'); }
-export function getReviewItems(...args: any[]): Promise<any> { void args; return pending('getReviewItems'); }
-export function getStatements(...args: any[]): Promise<any> { void args; return pending('getStatements'); }
-export function getTimeline(...args: any[]): Promise<any> { void args; return pending('getTimeline'); }
+export function getMatter(matterId: string) {
+  return get<Matter | null>(`/matters/${matterId}`, null);
+}
+
+export function getDocuments(matterId: string) {
+  return get<LegalDocument[]>(`/matters/${matterId}/documents`, []);
+}
+
+export function getFacts(matterId: string) {
+  return get<MatterFact[]>(`/matters/${matterId}/facts`, []);
+}
+
+export function getStatements(matterId: string) {
+  return get<MatterStatement[]>(`/matters/${matterId}/statements`, []);
+}
+
+export function getContradictions(matterId: string) {
+  return get<MatterContradiction[]>(`/matters/${matterId}/contradictions`, []);
+}
+
+export function getTimeline(matterId: string) {
+  return get<TimelineEvent[]>(`/matters/${matterId}/timeline`, []);
+}
+
+export function getEvidence(matterId: string) {
+  return get<EvidenceMatrix | null>(`/matters/${matterId}/evidence`, null);
+}
+
+export function getReviewItems(matterId: string) {
+  return get<ReviewItem[]>(`/matters/${matterId}/review`, []);
+}
+
+export function getIntelligenceSummary(matterId: string) {
+  return get<IntelligenceSummary | null>(`/matters/${matterId}/intelligence/summary`, null);
+}
+
+export function getResearchStats() {
+  return get<ResearchStats | null>("/research/stats", null);
+}
+
+export function getAIProviderStatus() {
+  return get<Record<string, unknown> | null>("/ai/providers", null);
+}
+
+export function getAIRuns() {
+  return get<Record<string, unknown>[]>("/ai/runs", []);
+}
+
+export function getAgenda(days = 7) {
+  return get<Record<string, unknown>[]>(`/procedure/agenda?days=${days}`, []);
+}
+
+export function getProcedurePacks() {
+  return get<ProcedurePack[]>("/procedure/packs", []);
+}
+
+export function getProcedureStats() {
+  return get<ProcedureStats | null>("/procedure/stats", null);
+}
+
+export function getContracts() {
+  return get<ContractListItem[]>("/contracts", []);
+}
+
+export function getContractCatalog() {
+  return get<ContractCatalogItem[]>("/contracts/catalog", []);
+}
+
+export function getContractReviews() {
+  return get<ContractReviewListItem[]>("/contract-reviews", []);
+}
+
+export function getDrafts(matterId?: string) {
+  return get<LegalDraftListItem[]>(matterId ? `/drafting?matter_id=${matterId}` : "/drafting", []);
+}
+
+export function getDraftCatalog() {
+  return get<Record<string, unknown>[]>("/drafting/catalog", []);
+}
