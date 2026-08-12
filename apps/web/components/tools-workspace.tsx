@@ -48,8 +48,10 @@ export function ToolsWorkspace() {
       <h1 className="page-title">{language === "hi" ? "कानूनी उपकरण" : "Tools"}</h1>
       <p className="page-subtitle">
         Deterministic calculators and document utilities. Same input, same output — no model call,
-        nothing sent to a provider. {ready} of {TOOL_CATALOG.length} have a workspace; the rest are
-        callable on the API while their screens are built.
+        nothing sent to a provider.{" "}
+        {ready === TOOL_CATALOG.length
+          ? `All ${TOOL_CATALOG.length} tools run here and on the API.`
+          : `${ready} of ${TOOL_CATALOG.length} have a workspace; the rest are callable on the API while their screens are built.`}
       </p>
 
       {groups.map((group) => (

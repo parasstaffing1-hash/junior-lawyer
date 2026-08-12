@@ -1640,3 +1640,32 @@ a.tool-card:hover { border-color: #cfd8d2; box-shadow: var(--shadow); }
 .tool-disclaimer { margin: 16px 20px 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
 
 @media (max-width: 900px) { .tool-layout { grid-template-columns: minmax(0, 1fr); } }
+
+/* Tool patterns: wide layouts, repeatable rows, upload actions */
+.tool-layout-wide { grid-template-columns: minmax(0, 440px) minmax(0, 1fr); }
+.tool-provenance { margin: -6px 0 14px; color: var(--warning); font-size: 11px; line-height: 1.5; }
+.tool-status { margin-top: 16px; color: var(--accent); font-size: 13px; font-weight: 620; }
+.tool-nil { color: var(--muted); }
+.tool-action-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 20px 20px; }
+.tool-form .tool-action-row .button { margin: 0; }
+.tool-list { margin: 4px 0; padding-left: 18px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+.tool-list > li { padding-left: 2px; }
+.tool-subreadout { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px 14px; margin: 4px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle); }
+.tool-subreadout div { display: flex; flex-direction: column; gap: 2px; }
+.tool-subreadout dt { color: var(--muted); font-size: 10px; font-weight: 620; text-transform: uppercase; letter-spacing: .03em; }
+.tool-subreadout dd { margin: 0; font-size: 12px; }
+.tool-row-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+.tool-row-item textarea { flex: 1; }
+.tool-row-card { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-bottom: 10px; background: var(--surface-subtle); }
+.tool-row-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; color: var(--muted); font-size: 11px; font-weight: 620; }
+.tool-row-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.tool-row-field.wide { grid-column: 1 / -1; }
+.tool-row-fields input, .tool-row-fields select { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: 12px; }
+.tool-check-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0ec; }
+.tool-check-row:last-of-type { border-bottom: 0; }
+.tool-check-label { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tool-check-label strong { font-size: 12px; font-weight: 620; }
+.tool-check-label span { color: var(--muted); font-size: 11px; }
+.tool-check-row select { padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: 12px; }
+.tool-form input[type="file"] { padding: 8px; background: var(--surface-subtle); }
+@media (max-width: 1000px) { .tool-layout-wide { grid-template-columns: minmax(0, 1fr); } }

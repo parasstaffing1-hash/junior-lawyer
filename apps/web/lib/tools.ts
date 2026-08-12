@@ -25,23 +25,23 @@ export interface ToolDescriptor {
 export const TOOL_CATALOG: ToolDescriptor[] = [
   { key: "legal-deadlines", href: "/tools/legal-deadlines", name: "Deadline calculator", nameHi: "समय-सीमा गणक", summary: "Count calendar or business days from a trigger date, skipping weekends, court holidays and excluded dates.", group: "Dates & limitation", interactive: true },
   { key: "limitation-periods", href: "/tools/limitation-periods", name: "Limitation period", nameHi: "परिसीमा अवधि", summary: "Compute an expiry date from a trigger, with extensions and next-business-day adjustment.", group: "Dates & limitation", interactive: true },
-  { key: "key-dates-obligations", href: "/tools/key-dates-obligations", name: "Key dates & obligations", nameHi: "मुख्य तिथियाँ", summary: "Extract dated obligations and deadlines from contract text.", group: "Dates & limitation", interactive: false },
-  { key: "case-timelines", href: "/tools/case-timelines", name: "Case timeline", nameHi: "मामला समयरेखा", summary: "Build an ordered chronology from dated events.", group: "Dates & limitation", interactive: false },
-  { key: "court-fees", href: "/tools/court-fees", name: "Court fee", nameHi: "न्यायालय शुल्क", summary: "Apply a verified fee rule pack to a claim value.", group: "Money", interactive: false },
-  { key: "stamp-duty", href: "/tools/stamp-duty", name: "Stamp duty", nameHi: "स्टाम्प शुल्क", summary: "Apply a verified stamp-duty rule pack to an instrument value.", group: "Money", interactive: false },
-  { key: "claim-interest", href: "/tools/claim-interest", name: "Claim interest", nameHi: "दावा ब्याज", summary: "Simple or compound interest across day-count conventions.", group: "Money", interactive: false },
-  { key: "legal-notices", href: "/tools/legal-notices", name: "Legal notice", nameHi: "कानूनी नोटिस", summary: "Generate a notice from a reviewed template.", group: "Drafting", interactive: false },
-  { key: "affidavits", href: "/tools/affidavits", name: "Affidavit", nameHi: "शपथपत्र", summary: "Generate an affidavit from a reviewed template.", group: "Drafting", interactive: false },
-  { key: "client-intakes", href: "/tools/client-intakes", name: "Client intake", nameHi: "मुवक्किल इनटेक", summary: "Produce a structured intake record from a questionnaire.", group: "Drafting", interactive: false },
-  { key: "legal-checklists", href: "/tools/legal-checklists", name: "Legal checklist", nameHi: "जाँच सूची", summary: "Evaluate a matter against a procedural checklist template.", group: "Review", interactive: false },
-  { key: "contract-compare", href: "/tools/contract-compare", name: "Contract compare", nameHi: "अनुबंध तुलना", summary: "Clause-level diff between two contract versions.", group: "Review", interactive: false },
-  { key: "contract-clauses", href: "/tools/contract-clauses", name: "Clause extractor", nameHi: "क्लॉज़ निष्कर्षण", summary: "Identify and classify clauses in a contract.", group: "Review", interactive: false },
-  { key: "legal-citations", href: "/tools/legal-citations", name: "Citation tools", nameHi: "उद्धरण उपकरण", summary: "Extract and normalise legal citations from text.", group: "Review", interactive: false },
-  { key: "evidence-indexes", href: "/tools/evidence-indexes", name: "Evidence index", nameHi: "साक्ष्य सूची", summary: "Build a paginated evidence index for filing.", group: "Documents & evidence", interactive: false },
-  { key: "bates-numbering", href: "/tools/bates-numbering", name: "Bates numbering", nameHi: "बेट्स नंबरिंग", summary: "Stamp sequential Bates numbers onto a PDF.", group: "Documents & evidence", interactive: false },
-  { key: "legal-ocr", href: "/tools/legal-ocr", name: "OCR", nameHi: "ओसीआर", summary: "Make a scanned PDF searchable, locally.", group: "Documents & evidence", interactive: false },
-  { key: "legal-documents", href: "/tools/legal-documents", name: "Document parser", nameHi: "दस्तावेज़ पार्सर", summary: "Extract structure and text from PDF/DOCX.", group: "Documents & evidence", interactive: false },
-  { key: "document-exports", href: "/tools/document-exports", name: "Document export", nameHi: "दस्तावेज़ निर्यात", summary: "Render a prepared document to PDF or DOCX.", group: "Documents & evidence", interactive: false },
+  { key: "key-dates-obligations", href: "/tools/key-dates-obligations", name: "Key dates & obligations", nameHi: "मुख्य तिथियाँ", summary: "Extract dated obligations and deadlines from contract text.", group: "Dates & limitation", interactive: true },
+  { key: "case-timelines", href: "/tools/case-timelines", name: "Case timeline", nameHi: "मामला समयरेखा", summary: "Build an ordered chronology from dated events.", group: "Dates & limitation", interactive: true },
+  { key: "court-fees", href: "/tools/court-fees", name: "Court fee", nameHi: "न्यायालय शुल्क", summary: "Apply a verified fee rule pack to a claim value.", group: "Money", interactive: true },
+  { key: "stamp-duty", href: "/tools/stamp-duty", name: "Stamp duty", nameHi: "स्टाम्प शुल्क", summary: "Apply a verified stamp-duty rule pack to an instrument value.", group: "Money", interactive: true },
+  { key: "claim-interest", href: "/tools/claim-interest", name: "Claim interest", nameHi: "दावा ब्याज", summary: "Simple or compound interest across day-count conventions.", group: "Money", interactive: true },
+  { key: "legal-notices", href: "/tools/legal-notices", name: "Legal notice", nameHi: "कानूनी नोटिस", summary: "Generate a notice from a reviewed template.", group: "Drafting", interactive: true },
+  { key: "affidavits", href: "/tools/affidavits", name: "Affidavit", nameHi: "शपथपत्र", summary: "Generate an affidavit from a reviewed template.", group: "Drafting", interactive: true },
+  { key: "client-intakes", href: "/tools/client-intakes", name: "Client intake", nameHi: "मुवक्किल इनटेक", summary: "Produce a structured intake record from a questionnaire.", group: "Drafting", interactive: true },
+  { key: "legal-checklists", href: "/tools/legal-checklists", name: "Legal checklist", nameHi: "जाँच सूची", summary: "Evaluate a matter against a procedural checklist template.", group: "Review", interactive: true },
+  { key: "contract-compare", href: "/tools/contract-compare", name: "Contract compare", nameHi: "अनुबंध तुलना", summary: "Clause-level diff between two contract versions.", group: "Review", interactive: true },
+  { key: "contract-clauses", href: "/tools/contract-clauses", name: "Clause extractor", nameHi: "क्लॉज़ निष्कर्षण", summary: "Identify and classify clauses in a contract.", group: "Review", interactive: true },
+  { key: "legal-citations", href: "/tools/legal-citations", name: "Citation tools", nameHi: "उद्धरण उपकरण", summary: "Extract and normalise legal citations from text.", group: "Review", interactive: true },
+  { key: "evidence-indexes", href: "/tools/evidence-indexes", name: "Evidence index", nameHi: "साक्ष्य सूची", summary: "Build a paginated evidence index for filing.", group: "Documents & evidence", interactive: true },
+  { key: "bates-numbering", href: "/tools/bates-numbering", name: "Bates numbering", nameHi: "बेट्स नंबरिंग", summary: "Stamp sequential Bates numbers onto a PDF.", group: "Documents & evidence", interactive: true },
+  { key: "legal-ocr", href: "/tools/legal-ocr", name: "OCR", nameHi: "ओसीआर", summary: "Make a scanned PDF searchable, locally.", group: "Documents & evidence", interactive: true },
+  { key: "legal-documents", href: "/tools/legal-documents", name: "Document parser", nameHi: "दस्तावेज़ पार्सर", summary: "Extract structure and text from PDF/DOCX.", group: "Documents & evidence", interactive: true },
+  { key: "document-exports", href: "/tools/document-exports", name: "Document export", nameHi: "दस्तावेज़ निर्यात", summary: "Render a prepared document to PDF or DOCX.", group: "Documents & evidence", interactive: true },
 ];
 
 export interface DeadlineAdjustment {
@@ -148,15 +148,15 @@ export function extractCitations(payload: Record<string, unknown>) {
 }
 
 export function getAffidavitTemplates() {
-  return apiFetch<Record<string, unknown>[]>("/tools/affidavits/templates");
+  return apiFetch<ToolTemplate[]>("/tools/affidavits/templates");
 }
 
 export function getLegalNoticeTemplates() {
-  return apiFetch<Record<string, unknown>[]>("/tools/legal-notices/templates");
+  return apiFetch<ToolTemplate[]>("/tools/legal-notices/templates");
 }
 
 export function getChecklistTemplates() {
-  return apiFetch<Record<string, unknown>[]>("/tools/legal-checklists/templates");
+  return apiFetch<ToolTemplate[]>("/tools/legal-checklists/templates");
 }
 
 export function getOcrCapabilities() {
@@ -193,4 +193,102 @@ export function stampBates(file: File, options: Record<string, unknown> = {}) {
 
 export function parseLegalDocument(file: File, options: Record<string, unknown> = {}) {
   return apiFetch<Record<string, unknown>>("/tools/legal-documents/parse", uploadForm(file, options));
+}
+
+/* ---------------------------------------------------------------- */
+/* Remaining tool endpoints                                          */
+/* ---------------------------------------------------------------- */
+
+export interface TemplateField {
+  key: string;
+  label?: string;
+  title?: string;
+  kind?: string;
+  field_type?: string;
+  required?: boolean;
+  max_length?: number;
+  section?: string;
+  category?: string;
+  requirement?: string;
+  evidence_hint?: string;
+  [key: string]: unknown;
+}
+
+export interface ToolTemplate {
+  id: string;
+  title: string;
+  version?: string;
+  jurisdiction?: string;
+  source_note?: string;
+  fields?: TemplateField[];
+  context_fields?: TemplateField[];
+  items?: TemplateField[];
+  sections?: { key?: string; id?: string; title?: string; heading?: string | null; description?: string }[];
+  [key: string]: unknown;
+}
+
+type Json = Record<string, unknown>;
+
+export function formatCitation(payload: Json) {
+  return apiFetch<Json>("/tools/legal-citations/format", jsonBody(payload));
+}
+
+export function extractKeyDates(payload: Json) {
+  return apiFetch<Json>("/tools/key-dates-obligations/extract", jsonBody(payload));
+}
+
+export function getKeyDatePatterns() {
+  return apiFetch<Json>("/tools/key-dates-obligations/patterns");
+}
+
+export function extractContractClauses(payload: Json) {
+  return apiFetch<Json>("/tools/contract-clauses/extract", jsonBody(payload));
+}
+
+export function getClauseTypes() {
+  return apiFetch<Json>("/tools/contract-clauses/types");
+}
+
+export function compareContracts(payload: Json) {
+  return apiFetch<Json>("/tools/contract-compare/compare", jsonBody(payload));
+}
+
+export function generateCaseTimeline(payload: Json) {
+  return apiFetch<Json>("/tools/case-timelines/generate", jsonBody(payload));
+}
+
+export function generateEvidenceIndex(payload: Json) {
+  return apiFetch<Json>("/tools/evidence-indexes/generate", jsonBody(payload));
+}
+
+export function generateLegalNotice(payload: Json) {
+  return apiFetch<Json>("/tools/legal-notices/generate", jsonBody(payload));
+}
+
+export function generateAffidavit(payload: Json) {
+  return apiFetch<Json>("/tools/affidavits/generate", jsonBody(payload));
+}
+
+export function generateIntake(payload: Json) {
+  return apiFetch<Json>("/tools/client-intakes/generate", jsonBody(payload));
+}
+
+export function evaluateChecklist(payload: Json) {
+  return apiFetch<Json>("/tools/legal-checklists/evaluate", jsonBody(payload));
+}
+
+export function getIntakeTemplates() {
+  return apiFetch<ToolTemplate[]>("/tools/client-intakes/templates");
+}
+
+export function getExportFormats() {
+  return apiFetch<Json>("/tools/document-exports/formats");
+}
+
+export function previewExport(payload: Json) {
+  return apiFetch<Json>("/tools/document-exports/preview", jsonBody(payload));
+}
+
+export function generateExport(payload: Json) {
+  return apiFetchBlob("/tools/document-exports/generate", jsonBody(payload));
 }
