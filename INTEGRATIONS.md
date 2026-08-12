@@ -42,3 +42,9 @@ Always re-check provider documentation and scopes during deployment because prov
 ## Batch 26 legal-data bridge
 
 The normalized official-legal-data integration request now accepts an optional `feed_id`. When present, the validated connector payload is routed through Batch 26's feed/integrity/amendment/checkpoint pipeline rather than imported directly. A bound feed must match the integration connection. See `LEGAL_DATA.md` for legal-data lifecycle controls.
+
+## Google Drive → Aiven legal-data catalog
+
+The repository includes `apps/api/scripts/sync_google_drive_to_aiven.py` plus the scheduled/manual `Google Drive to Aiven sync` GitHub Actions workflow. It recursively catalogs the `junior-lawyer-data` Drive folder into Aiven PostgreSQL, extracts searchable text for supported files, skips unchanged content, retains oversized/unsupported items as metadata-only records, and soft-marks files that disappear after a complete traversal.
+
+Credentials remain outside source control. The workflow requires the GitHub Actions secrets `AIVEN_DATABASE_URL` and `GOOGLE_SERVICE_ACCOUNT_JSON`; the Drive folder only needs to be shared with the service-account email as Viewer. See `docs/GOOGLE_DRIVE_AIVEN_SYNC.md` for setup and operating details.
