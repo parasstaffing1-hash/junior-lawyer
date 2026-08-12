@@ -1,6 +1,12 @@
 name: Google Drive to Aiven sync
 
 on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'apps/api/scripts/sync_google_drive_to_aiven.py'
+      - 'apps/api/tests/test_drive_aiven_sync.py'
+      - '.github/workflows/google-drive-aiven-sync.yml'
   workflow_dispatch:
     inputs:
       metadata_only:
@@ -15,13 +21,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: google-drive-aiven-sync
+  group: google-drive-aiven-sync-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  sync:
+  validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
 
@@ -35,11 +40,29 @@ jobs:
         working-directory: apps/api
         run: pip install -e '.[dev]'
 
-      - name: Validate sync script
+      - name: Validate Drive sync
         working-directory: apps/api
         run: |
           python -m py_compile scripts/sync_google_drive_to_aiven.py
           pytest -q tests/test_drive_aiven_sync.py
+
+  sync:
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: apps/api/pyproject.toml
+
+      - name: Install API dependencies
+        working-directory: apps/api
+        run: pip install -e .
 
       - name: Sync Google Drive legal-data folder to Aiven
         working-directory: apps/api
