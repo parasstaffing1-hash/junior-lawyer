@@ -12,7 +12,7 @@ export * from "@/lib/client";
 export * from "@/lib/tools";
 import type * as G from "@/lib/generated-types";
 
-import { apiFetch, jsonBody } from "@/lib/client";
+import { API_BASE, apiFetch, jsonBody } from "@/lib/client";
 
 export interface ActorRead {
   id: string;
