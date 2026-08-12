@@ -17,11 +17,13 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
-parts/
+# Anchored to the repo root: an unanchored `lib/` also matched apps/web/lib/ and
+# silently excluded the entire frontend API client from the repository.
+/lib/
+/lib64/
+/parts/
 sdist/
-var/
+/var/
 wheels/
 *.egg-info/
 .installed.cfg
