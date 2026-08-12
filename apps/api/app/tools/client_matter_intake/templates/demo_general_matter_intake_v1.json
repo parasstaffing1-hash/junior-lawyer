@@ -1,0 +1,39 @@
+{
+  "id": "demo_general_matter_intake_v1",
+  "version": "1.0.0",
+  "title": "General Client / Matter Intake (Demo)",
+  "matter_type": "general_legal_matter",
+  "client_type": "individual_or_business",
+  "jurisdiction": "Demo / jurisdiction-neutral",
+  "effective_from": "2026-01-01",
+  "effective_to": null,
+  "sections": [
+    {"key": "client", "title": "Client details", "description": "Basic prospective-client contact and identity information."},
+    {"key": "matter", "title": "Matter details", "description": "High-level facts used to route and review the matter."},
+    {"key": "conflicts", "title": "Conflict-check preparation", "description": "Prompts used to prepare names for a separate conflicts search."}
+  ],
+  "fields": [
+    {"key": "client_name", "label": "Client / prospective client name", "section": "client", "field_type": "text", "required": true, "max_length": 300, "include_in_conflict_terms": true},
+    {"key": "client_type", "label": "Client type", "section": "client", "field_type": "choice", "required": true, "allowed_values": ["Individual", "Business"]},
+    {"key": "organization_name", "label": "Organization name", "section": "client", "field_type": "text", "max_length": 300, "include_in_conflict_terms": true, "applies_if_all": [{"field": "client_type", "values": ["Business"]}], "required_if_all": [{"field": "client_type", "values": ["Business"]}]},
+    {"key": "email", "label": "Email", "section": "client", "field_type": "email", "required": true, "max_length": 320},
+    {"key": "phone", "label": "Phone", "section": "client", "field_type": "phone", "required": true, "max_length": 30},
+    {"key": "address", "label": "Address", "section": "client", "field_type": "textarea", "required": false, "max_length": 1200},
+    {"key": "matter_title", "label": "Matter title", "section": "matter", "field_type": "text", "required": true, "max_length": 300},
+    {"key": "matter_category", "label": "Matter category", "section": "matter", "field_type": "choice", "required": true, "allowed_values": ["Civil dispute", "Contract", "Employment", "Property", "Family", "Corporate", "Other"]},
+    {"key": "matter_summary", "label": "Matter summary", "section": "matter", "field_type": "textarea", "required": true, "max_length": 5000},
+    {"key": "key_date", "label": "Known key date / deadline", "section": "matter", "field_type": "date", "required": false},
+    {"key": "claim_amount", "label": "Claim / transaction amount", "section": "matter", "field_type": "number", "required": false},
+    {"key": "urgency", "label": "Urgency", "section": "matter", "field_type": "choice", "required": true, "allowed_values": ["Routine", "Time-sensitive", "Immediate review"]},
+    {"key": "has_opposing_parties", "label": "Are opposing or counter-parties known?", "section": "conflicts", "field_type": "boolean", "required": true},
+    {"key": "conflict_notes", "label": "Additional conflict-check notes", "section": "conflicts", "field_type": "textarea", "required": false, "max_length": 2000, "applies_if_all": [{"field": "has_opposing_parties", "values": ["yes"]}]}
+  ],
+  "consents": [
+    {"key": "accuracy_confirmation", "label": "Accuracy confirmation", "text": "The information supplied for intake is accurate to the best of the submitter's knowledge.", "required": true},
+    {"key": "intake_processing_ack", "label": "Intake processing acknowledgement", "text": "Submitting intake information does not itself create a lawyer-client relationship or confirm acceptance of the matter.", "required": true}
+  ],
+  "conflict_requirements": [
+    {"description": "Opposing/counter-party information was indicated, but no conflict-check party record was supplied.", "min_parties": 1, "applies_if_all": [{"field": "has_opposing_parties", "values": ["yes"]}]}
+  ],
+  "source_note": "Demo workflow only. Replace with a firm-reviewed intake schema, privacy notice, conflicts protocol, engagement process, and jurisdiction-specific professional-responsibility requirements."
+}

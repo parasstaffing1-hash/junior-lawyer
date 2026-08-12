@@ -1,0 +1,65 @@
+{
+  "id": "demo-payment-demand-v1",
+  "version": "1.0.0",
+  "title": "Payment Demand Notice",
+  "notice_type": "payment_demand",
+  "jurisdiction": "DEMO / JURISDICTION-NEUTRAL",
+  "effective_from": "2026-01-01",
+  "effective_to": null,
+  "fields": [
+    {"key": "sender_name", "label": "Sender name", "kind": "text", "required": true, "max_length": 200},
+    {"key": "sender_address", "label": "Sender address", "kind": "multiline", "required": true, "max_length": 1000},
+    {"key": "recipient_name", "label": "Recipient name", "kind": "text", "required": true, "max_length": 200},
+    {"key": "recipient_address", "label": "Recipient address", "kind": "multiline", "required": true, "max_length": 1000},
+    {"key": "amount_due", "label": "Amount due", "kind": "money", "required": true, "max_length": 100},
+    {"key": "currency", "label": "Currency", "kind": "text", "required": true, "max_length": 20},
+    {"key": "payment_due_date", "label": "Payment due date", "kind": "date", "required": true, "max_length": 80},
+    {"key": "payment_deadline", "label": "Demand deadline", "kind": "date", "required": true, "max_length": 80},
+    {"key": "transaction_description", "label": "Transaction description", "kind": "multiline", "required": true, "max_length": 2500},
+    {"key": "contract_reference", "label": "Contract/reference", "kind": "text", "required": false, "max_length": 300},
+    {"key": "payment_instructions", "label": "Payment instructions", "kind": "multiline", "required": false, "max_length": 1500},
+    {"key": "lawyer_name", "label": "Lawyer name", "kind": "text", "required": false, "max_length": 200}
+  ],
+  "subject_template": "Demand for payment of {currency} {amount_due}",
+  "sections": [
+    {
+      "id": "addresses",
+      "heading": null,
+      "body_template": "From:\n{sender_name}\n{sender_address}\n\nTo:\n{recipient_name}\n{recipient_address}"
+    },
+    {
+      "id": "reference",
+      "heading": "Reference",
+      "body_template": "This notice concerns {contract_reference}.",
+      "include_if_all_present": ["contract_reference"]
+    },
+    {
+      "id": "background",
+      "heading": "Background",
+      "body_template": "The payment arises from the following transaction or obligation: {transaction_description}. The stated payment fell due on {payment_due_date}."
+    },
+    {
+      "id": "demand",
+      "heading": "Demand",
+      "body_template": "You are requested to pay {currency} {amount_due} on or before {payment_deadline}."
+    },
+    {
+      "id": "payment_instructions",
+      "heading": "Payment Instructions",
+      "body_template": "{payment_instructions}",
+      "include_if_all_present": ["payment_instructions"]
+    },
+    {
+      "id": "reservation",
+      "heading": "Reservation",
+      "body_template": "Nothing in this notice waives any right or remedy that may be available. The sender reserves all rights subject to applicable law."
+    },
+    {
+      "id": "signature",
+      "heading": null,
+      "body_template": "Issued on {generation_date}.\n\n{lawyer_name}",
+      "include_if_all_present": ["lawyer_name"]
+    }
+  ],
+  "source_note": "Fictional demonstration template only. It is not based on any specific statute, court rule, or jurisdiction."
+}

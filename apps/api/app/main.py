@@ -37,6 +37,7 @@ from app.api.routes.remedies import router as remedies_router
 from app.api.routes.security import router as security_router
 from app.api.routes.search import router as search_router
 from app.api.routes.system_health import router as system_health_router
+from app.api.routes.tools import router as tools_router
 from app.api.routes.qa import router as qa_router
 from app.api.routes.release import router as release_router
 from app.api.routes.procedure import router as procedure_router
@@ -134,3 +135,4 @@ app.include_router(release_router, prefix=settings.api_v1_prefix)
 app.include_router(procedure_router, prefix=settings.api_v1_prefix)
 app.include_router(deployment_router, prefix=settings.api_v1_prefix)
 app.include_router(validation_router, prefix=settings.api_v1_prefix)
+app.include_router(tools_router, prefix=settings.api_v1_prefix)

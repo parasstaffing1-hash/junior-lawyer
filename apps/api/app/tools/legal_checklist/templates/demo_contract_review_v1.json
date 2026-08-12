@@ -1,0 +1,79 @@
+{
+  "id": "demo_contract_review_v1",
+  "version": "1.0.0",
+  "title": "Contract Review Matter Checklist (Demo)",
+  "matter_type": "contract_review",
+  "jurisdiction": "Generic / Demo Only",
+  "effective_from": "2026-01-01",
+  "context_fields": [
+    {
+      "key": "has_amendments",
+      "label": "Contract has amendments?",
+      "required": true,
+      "allowed_values": ["yes", "no"]
+    },
+    {
+      "key": "contains_personal_data",
+      "label": "Personal data processing involved?",
+      "required": true,
+      "allowed_values": ["yes", "no"]
+    }
+  ],
+  "items": [
+    {
+      "key": "base_contract",
+      "title": "Current contract / draft",
+      "category": "Agreement",
+      "kind": "document",
+      "requirement": "required"
+    },
+    {
+      "key": "amendments",
+      "title": "All amendments, addenda, and side letters",
+      "category": "Agreement",
+      "kind": "document",
+      "requirement": "recommended",
+      "applies_if_all": [
+        {"field": "has_amendments", "values": ["yes"]}
+      ],
+      "required_if_all": [
+        {"field": "has_amendments", "values": ["yes"]}
+      ]
+    },
+    {
+      "key": "commercial_summary",
+      "title": "Commercial terms / deal summary",
+      "category": "Commercial",
+      "kind": "information",
+      "requirement": "recommended"
+    },
+    {
+      "key": "counterparty_details",
+      "title": "Counterparty legal name and signing details",
+      "category": "Parties",
+      "kind": "information",
+      "requirement": "required"
+    },
+    {
+      "key": "data_processing_material",
+      "title": "Data processing / privacy schedule",
+      "category": "Privacy",
+      "kind": "document",
+      "requirement": "recommended",
+      "applies_if_all": [
+        {"field": "contains_personal_data", "values": ["yes"]}
+      ],
+      "required_if_all": [
+        {"field": "contains_personal_data", "values": ["yes"]}
+      ]
+    },
+    {
+      "key": "approval_record",
+      "title": "Internal approval / deviation record",
+      "category": "Approvals",
+      "kind": "task",
+      "requirement": "recommended"
+    }
+  ],
+  "source_note": "Demo contract-review workflow only. It does not represent a jurisdiction-specific legal or regulatory checklist."
+}

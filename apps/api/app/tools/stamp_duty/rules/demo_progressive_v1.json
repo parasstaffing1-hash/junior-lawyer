@@ -1,0 +1,25 @@
+{
+  "id": "demo-stamp-progressive-v1",
+  "version": "1.0.0",
+  "jurisdiction": "DEMO-STATE",
+  "instrument_type": "Demo Lease",
+  "currency": "INR",
+  "effective_from": "2026-01-01",
+  "effective_to": null,
+  "valuation_basis": "assessable_value",
+  "method": "progressive",
+  "fixed_duty": null,
+  "rate_percent": null,
+  "slabs": [
+    {"up_to": "100000", "rate_percent": "1"},
+    {"up_to": "500000", "rate_percent": "2"},
+    {"up_to": null, "rate_percent": "3"}
+  ],
+  "minimum_duty": "250",
+  "maximum_duty": "50000",
+  "mandatory_charges": [],
+  "optional_charges": [],
+  "rounding_method": "nearest",
+  "rounding_unit": "1",
+  "source_note": "DEMONSTRATION DATA ONLY. These are fictional rates for software testing, not an official stamp-duty schedule."
+}

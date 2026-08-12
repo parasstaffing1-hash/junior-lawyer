@@ -1,0 +1,59 @@
+{
+  "id": "demo-general-affidavit-v1",
+  "version": "1.0.0",
+  "title": "General Affidavit",
+  "affidavit_type": "general",
+  "jurisdiction": "DEMO / JURISDICTION-NEUTRAL",
+  "effective_from": "2026-01-01",
+  "effective_to": null,
+  "fields": [
+    {"key": "deponent_name", "label": "Deponent name", "kind": "text", "required": true, "max_length": 200},
+    {"key": "deponent_age", "label": "Deponent age", "kind": "integer", "required": true, "max_length": 20},
+    {"key": "deponent_address", "label": "Deponent address", "kind": "multiline", "required": true, "max_length": 1200},
+    {"key": "deponent_occupation", "label": "Deponent occupation", "kind": "text", "required": false, "max_length": 200},
+    {"key": "place", "label": "Place of verification", "kind": "text", "required": true, "max_length": 200},
+    {"key": "verification_date", "label": "Verification date", "kind": "date", "required": true, "max_length": 80},
+    {"key": "identifier", "label": "Optional identifier", "kind": "text", "required": false, "max_length": 300}
+  ],
+  "sections": [
+    {
+      "id": "deponent",
+      "heading": "Deponent",
+      "body_template": "I, {deponent_name}, aged {deponent_age}, residing at {deponent_address}, do hereby state on oath/affirmation as follows:"
+    },
+    {
+      "id": "occupation",
+      "heading": null,
+      "body_template": "Occupation: {deponent_occupation}",
+      "include_if_all_present": ["deponent_occupation"]
+    },
+    {
+      "id": "identifier",
+      "heading": null,
+      "body_template": "Reference/Identifier: {identifier}",
+      "include_if_all_present": ["identifier"]
+    },
+    {
+      "id": "statements",
+      "heading": "Statements",
+      "body_template": "{numbered_statements}"
+    },
+    {
+      "id": "annexures",
+      "heading": "Annexure Schedule",
+      "body_template": "The following {annexure_count} annexure(s) are referenced:\n{annexure_schedule}",
+      "include_if_all_present": ["annexure_schedule"]
+    },
+    {
+      "id": "verification",
+      "heading": "Verification",
+      "body_template": "Verified at {place} on {verification_date} that the contents of statements 1 through {statement_count} are stated by the deponent for review and execution in the form required by applicable law."
+    },
+    {
+      "id": "signature",
+      "heading": null,
+      "body_template": "Deponent: {deponent_name}\nGenerated on: {generation_date}"
+    }
+  ],
+  "source_note": "Fictional demonstration template only. It is not a prescribed affidavit form for any court, tribunal, statute, or jurisdiction."
+}

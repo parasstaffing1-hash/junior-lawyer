@@ -1,0 +1,1 @@
+"""Deterministic limitation-period calculator."""

@@ -1,0 +1,21 @@
+{
+  "id": "demo-stamp-fixed-v1",
+  "version": "1.0.0",
+  "jurisdiction": "DEMO-STATE",
+  "instrument_type": "Demo Affidavit",
+  "currency": "INR",
+  "effective_from": "2026-01-01",
+  "effective_to": null,
+  "valuation_basis": "assessable_value",
+  "method": "fixed",
+  "fixed_duty": "100",
+  "rate_percent": null,
+  "slabs": [],
+  "minimum_duty": null,
+  "maximum_duty": null,
+  "mandatory_charges": [],
+  "optional_charges": [],
+  "rounding_method": "none",
+  "rounding_unit": "1",
+  "source_note": "DEMONSTRATION DATA ONLY. This is a fictional fixed duty for software testing, not an official stamp-duty schedule."
+}

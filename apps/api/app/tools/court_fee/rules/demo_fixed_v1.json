@@ -1,0 +1,21 @@
+{
+  "id": "demo-fixed-v1",
+  "version": "1.0.0",
+  "jurisdiction": "DEMO ONLY",
+  "court": "Example Appellate Court",
+  "case_type": "Fixed-fee application",
+  "currency": "INR",
+  "effective_from": "2026-01-01",
+  "effective_to": null,
+  "method": "fixed",
+  "fixed_fee": "750",
+  "slabs": [],
+  "minimum_fee": null,
+  "maximum_fee": null,
+  "additional_fees": [
+    {"code": "PROCESS", "label": "Example process fee", "amount": "100"}
+  ],
+  "rounding_method": "none",
+  "rounding_unit": "1",
+  "source_note": "Demonstration rule pack only. These values are not an official court-fee schedule."
+}

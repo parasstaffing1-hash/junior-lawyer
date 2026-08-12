@@ -1,0 +1,35 @@
+{
+  "id": "demo-stamp-percentage-v1",
+  "version": "1.0.0",
+  "jurisdiction": "DEMO-STATE",
+  "instrument_type": "Demo Conveyance",
+  "currency": "INR",
+  "effective_from": "2026-01-01",
+  "effective_to": null,
+  "valuation_basis": "greater_of_consideration_or_market",
+  "method": "percentage",
+  "fixed_duty": null,
+  "rate_percent": "5",
+  "slabs": [],
+  "minimum_duty": "500",
+  "maximum_duty": null,
+  "mandatory_charges": [
+    {
+      "code": "CESS",
+      "label": "Demo mandatory cess",
+      "amount": null,
+      "percent_of_duty": "10"
+    }
+  ],
+  "optional_charges": [
+    {
+      "code": "COPY",
+      "label": "Demo certified-copy charge",
+      "amount": "100",
+      "percent_of_duty": null
+    }
+  ],
+  "rounding_method": "up",
+  "rounding_unit": "10",
+  "source_note": "DEMONSTRATION DATA ONLY. These are fictional rates for software testing, not an official stamp-duty schedule."
+}
