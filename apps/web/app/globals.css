@@ -1614,7 +1614,7 @@ a.tool-card:hover { border-color: #cfd8d2; box-shadow: var(--shadow); }
 
 .tool-layout { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 18px; align-items: start; margin-top: 18px; }
 .tool-form { display: flex; flex-direction: column; }
-.tool-form > *:not(.card-header) { margin: 0 20px; }
+.tool-form > *:not(.card-header) { margin-left: 20px; margin-right: 20px; }
 .tool-form > .card-header { margin-bottom: 16px; }
 .tool-form > .button { margin: 18px 20px 20px; }
 .tool-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; border: 0; padding: 0; }
@@ -1669,3 +1669,8 @@ a.tool-card:hover { border-color: #cfd8d2; box-shadow: var(--shadow); }
 .tool-check-row select { padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: 12px; }
 .tool-form input[type="file"] { padding: 8px; background: var(--surface-subtle); }
 @media (max-width: 1000px) { .tool-layout-wide { grid-template-columns: minmax(0, 1fr); } }
+
+/* .button is inline-flex, but a flex item blockifies to flex and then stretches
+   to the column's width. align-self is what actually sizes it to its label. */
+.tool-form fieldset > .button, .tool-row-item > .button { align-self: flex-start; }
+.tool-form fieldset > .button { margin-top: 4px; }
