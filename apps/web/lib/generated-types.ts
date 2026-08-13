@@ -2616,6 +2616,43 @@ export interface DraftFindingUpdate {
   status: DraftFindingStatus;
 }
 
+export interface DraftLibrary {
+  categories: DraftLibraryCategory[];
+  templates: DraftLibraryItem[];
+  total: number;
+}
+
+export interface DraftLibraryCategory {
+  key: string;
+  name_en: string;
+  name_hi: string;
+  template_count: number;
+}
+
+export interface DraftLibraryItem {
+  code: string;
+  draft_type: string;
+  category: string;
+  category_name_en: string;
+  category_name_hi: string;
+  forum: string;
+  name_en: string;
+  name_hi: string;
+  description: string;
+  authority?: string | null;
+  section_count: number;
+  question_count: number;
+  verified: boolean;
+}
+
+export interface DraftPreview {
+  subject: string;
+  body: string;
+  draft_status: string;
+  sendable: boolean;
+  blocked_reason?: string | null;
+}
+
 export interface DraftQuestion {
   key: string;
   label_en: string;
@@ -2674,6 +2711,26 @@ export interface DraftSectionUpdate {
   position?: number | null;
   reviewed?: boolean | null;
   locked?: boolean | null;
+}
+
+export interface DraftSendRequest {
+  to: string[];
+  recipient_kind: string;
+  subject?: string | null;
+  covering_note?: string | null;
+  cc?: string[];
+  bcc?: string[];
+  reply_to?: string | null;
+  connection_id?: string | null;
+  confirm: boolean;
+}
+
+export interface DraftSendResult {
+  draft_id: string;
+  recipient_kind: string;
+  recipients: string[];
+  message_id?: string | null;
+  sent_at: string;
 }
 
 export interface DraftSourceRead {

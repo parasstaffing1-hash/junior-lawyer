@@ -217,3 +217,72 @@ class DraftContextPreview(BaseModel):
     admissions: int
     denials: int
     open_contradictions: int
+
+
+class DraftLibraryItem(BaseModel):
+    """One instrument in the drafting library."""
+
+    code: str
+    draft_type: str
+    category: str
+    category_name_en: str
+    category_name_hi: str
+    forum: str
+    name_en: str
+    name_hi: str
+    description: str
+    authority: str | None = None
+    section_count: int
+    question_count: int
+    # False until a qualified advocate signs the template off for a named
+    # jurisdiction. Shown in the UI rather than hidden.
+    verified: bool
+
+
+class DraftLibraryCategory(BaseModel):
+    key: str
+    name_en: str
+    name_hi: str
+    template_count: int
+
+
+class DraftLibrary(BaseModel):
+    categories: list[DraftLibraryCategory]
+    templates: list[DraftLibraryItem]
+    total: int
+
+
+class DraftSendRequest(BaseModel):
+    """Dispatch an approved draft by email."""
+
+    to: list[str] = Field(min_length=1, max_length=25)
+    # Recorded because a notice to an opposite party and a copy to one's own
+    # client are different acts, and the file should say which happened.
+    recipient_kind: str = Field(pattern="^(client|opposite_party|court|other)$")
+    subject: str | None = Field(default=None, max_length=300)
+    covering_note: str | None = Field(default=None, max_length=5000)
+    cc: list[str] = Field(default_factory=list, max_length=25)
+    bcc: list[str] = Field(default_factory=list, max_length=25)
+    reply_to: str | None = Field(default=None, max_length=320)
+    connection_id: UUID | None = None
+    # Explicit acknowledgement of the recipient list. A mis-addressed legal
+    # notice cannot be recalled.
+    confirm: bool = False
+
+
+class DraftSendResult(BaseModel):
+    draft_id: str
+    recipient_kind: str
+    recipients: list[str]
+    message_id: str | None = None
+    sent_at: datetime
+
+
+class DraftPreview(BaseModel):
+    """What would be sent, without sending it."""
+
+    subject: str
+    body: str
+    draft_status: str
+    sendable: bool
+    blocked_reason: str | None = None

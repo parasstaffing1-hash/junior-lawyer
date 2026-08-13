@@ -39,6 +39,7 @@ from app.services.security.permissions import decide_matter_access, visible_matt
 from app.schemas.drafting import LegalDraftCreate, LegalDraftUpdate
 from app.services.drafting.builder import build_sections, health_score, safe_facts
 from app.services.drafting.catalog import DRAFT_DEFINITIONS
+from app.services.drafting import library
 from app.services.drafting.renderer import generate_docx, resolve_draft_storage_key
 
 
@@ -50,8 +51,51 @@ def _draft_options():
     )
 
 
+async def _seed_library(db: AsyncSession) -> int:
+    """Seed the instrument-level library.
+
+    Every entry is stored unverified. The drafting service surfaces that on the
+    draft itself, so nobody mistakes a structural scaffold for a settled form.
+    """
+    created = 0
+    for entry in library.TEMPLATES.values():
+        existing = await db.scalar(
+            select(LegalDraftTemplate).where(
+                LegalDraftTemplate.code == entry["code"],
+                LegalDraftTemplate.version == 1,
+            )
+        )
+        if existing:
+            continue
+        db.add(LegalDraftTemplate(
+            code=entry["code"],
+            draft_type=entry["draft_type"],
+            name_en=entry["name_en"],
+            name_hi=entry["name_hi"],
+            description=entry["description"],
+            structure_json=entry["sections"],
+            questions_json=entry["questions"],
+            version=1,
+            active=True,
+            metadata_json={
+                "source": "library",
+                "category": entry["category"],
+                "forum": entry["forum"],
+                "authority": entry["authority"],
+                "verified": False,
+                "verification_note": (
+                    "Structural scaffold only. Not reviewed by a practitioner; "
+                    "local format, court fee and annexure rules vary."
+                ),
+            },
+        ))
+        created += 1
+    return created
+
+
 async def seed_templates(db: AsyncSession) -> int:
     created = 0
+    created += await _seed_library(db)
     for code, definition in DRAFT_DEFINITIONS.items():
         existing = await db.scalar(
             select(LegalDraftTemplate).where(

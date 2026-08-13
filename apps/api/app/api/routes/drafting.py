@@ -6,6 +6,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
 from app.schemas.drafting import (
+    DraftPreview,
+    DraftSendRequest,
+    DraftSendResult,
+    DraftLibrary,
+    DraftLibraryCategory,
+    DraftLibraryItem,
     DraftCatalogItem,
     DraftContextPreview,
     DraftQuestion,
@@ -22,7 +28,10 @@ from app.schemas.drafting import (
     LegalDraftUpdate,
     LegalDraftVersionRead,
 )
-from app.services.drafting import service
+from app.models.drafting import LegalDraftStatus
+from app.services.drafting import dispatch, library, service
+from app.services.security.context import ActorContext
+from app.services.security.dependencies import require_actor
 from app.services.drafting.catalog import DRAFT_DEFINITIONS, get_draft_catalog
 
 router = APIRouter(prefix="/drafting", tags=["legal-drafting"])
@@ -52,6 +61,32 @@ async def drafting_questionnaire(draft_type: str) -> DraftQuestionnaire:
 @router.post("/templates/seed", response_model=TemplateSeedResult)
 async def seed_templates(db: AsyncSession = Depends(get_db)) -> TemplateSeedResult:
     return TemplateSeedResult(created=await service.seed_templates(db))
+
+
+@router.get("/library", response_model=DraftLibrary)
+async def draft_library(
+    category: str | None = None,
+    forum: str | None = None,
+    search: str | None = None,
+) -> DraftLibrary:
+    """The instrument-level catalogue: what can actually be drafted."""
+    rows = library.list_templates(category=category, forum=forum, search=search)
+    counts: dict[str, int] = {}
+    for entry in library.list_templates():
+        counts[entry["category"]] = counts.get(entry["category"], 0) + 1
+    return DraftLibrary(
+        categories=[
+            DraftLibraryCategory(
+                key=key,
+                name_en=value["name_en"],
+                name_hi=value["name_hi"],
+                template_count=counts.get(key, 0),
+            )
+            for key, value in library.CATEGORIES.items()
+        ],
+        templates=[DraftLibraryItem(**row) for row in rows],
+        total=len(rows),
+    )
 
 
 @router.get("/templates", response_model=list[DraftTemplateRead])
@@ -186,3 +221,49 @@ async def download_draft(
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         filename=draft.generated_filename or "legal-draft.docx",
     )
+
+
+@router.get("/{draft_id}/email-preview", response_model=DraftPreview)
+async def preview_draft_email(
+    draft_id: UUID,
+    actor: ActorContext = Depends(require_actor),
+    db: AsyncSession = Depends(get_db),
+) -> DraftPreview:
+    """Exactly what would be sent, and whether it may be sent at all."""
+    draft = await service.get_draft(db, draft_id)
+    approved = draft.status == LegalDraftStatus.APPROVED
+    return DraftPreview(
+        subject=draft.title or "Legal draft",
+        body=dispatch.render_plain_text(draft),
+        draft_status=draft.status.value,
+        sendable=approved,
+        blocked_reason=(
+            None if approved
+            else f"Draft is '{draft.status.value}'. Only an approved draft can be sent."
+        ),
+    )
+
+
+@router.post("/{draft_id}/send", response_model=DraftSendResult)
+async def send_draft(
+    draft_id: UUID,
+    payload: DraftSendRequest,
+    actor: ActorContext = Depends(require_actor),
+    db: AsyncSession = Depends(get_db),
+) -> DraftSendResult:
+    """Email an approved draft to a client, opposite party or court."""
+    result = await dispatch.send_draft(
+        db,
+        actor,
+        draft_id,
+        to=payload.to,
+        recipient_kind=payload.recipient_kind,
+        subject=payload.subject,
+        covering_note=payload.covering_note,
+        cc=payload.cc,
+        bcc=payload.bcc,
+        reply_to=payload.reply_to,
+        connection_id=payload.connection_id,
+        confirm=payload.confirm,
+    )
+    return DraftSendResult(**result)
