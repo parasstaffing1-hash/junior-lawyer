@@ -1833,3 +1833,221 @@ a.tool-card:hover { border-color: #cfd8d2; box-shadow: var(--shadow); }
 .dictate-error {
   color: var(--danger, #b42318);
 }
+
+/* Phone layout ------------------------------------------------------------- */
+/* A tehsil practice works from a phone in a court corridor, so these are the
+   sizes that matter most, not an afterthought below the desktop rules. */
+@media (max-width: 640px) {
+  /* The composer laid the textarea and the send controls side by side, which
+     at 375px left the question box a few characters wide and clipped Send. */
+  .conversation-composer-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .conversation-composer-row textarea {
+    width: 100%;
+    min-height: 88px;
+  }
+  .conversation-composer-actions {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .conversation-composer-actions .primary-button {
+    flex: 1;
+    min-height: 44px;
+  }
+  .dictate {
+    flex: 1;
+  }
+  .dictate-button {
+    width: 100%;
+    min-height: 44px;
+  }
+  /* Hints belong under the row rather than stealing width from the buttons. */
+  .dictate-hint,
+  .dictate-error {
+    display: block;
+  }
+
+  /* Each control on its own line; label above field, not beside it. */
+  .conversation-composer-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+  .conversation-composer-controls label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 100%;
+  }
+  .conversation-composer-controls label.checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .conversation-composer-controls select {
+    width: 100%;
+    min-height: 44px;
+  }
+  .conversation-composer-controls input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    flex: none;
+  }
+
+  /* The message list had a fixed 60vh cap that fought the on-screen keyboard. */
+  .conversation-messages {
+    max-height: none;
+  }
+  .conversation-thread {
+    min-height: auto;
+  }
+  .conversation-list li > button {
+    min-height: 44px;
+  }
+  .conversation-row-actions button {
+    min-height: 32px;
+    padding: 0 0.25rem;
+  }
+}
+
+@media (max-width: 430px) {
+  /* At this width the search field, language switcher and two icon buttons
+     could not share a row without overlapping. */
+  .topbar {
+    gap: 4px;
+    padding: 0 8px;
+  }
+  .search-button {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+  }
+  .search-button span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .language-switcher select {
+    max-width: 74px;
+  }
+  .top-actions {
+    flex: none;
+  }
+}
+
+/* Tap targets and overflow, at every phone width ---------------------------- */
+@media (max-width: 640px) {
+  .primary-button,
+  .secondary-button,
+  .ghost-button,
+  .danger-button {
+    min-height: 44px;
+  }
+  /* Wide content scrolls inside its own container rather than pushing the
+     whole page sideways. */
+  table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  pre,
+  code {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  .page {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .mfa-secret,
+  .mfa-uri {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .recovery-code-list {
+    grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  /* Form controls need a finger-sized target, not a mouse-sized one. */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    min-height: 40px;
+    font-size: 16px; /* iOS zooms the page when a focused field is under 16px */
+  }
+  .language-switcher select {
+    min-height: 36px;
+  }
+}
+
+/* Two-factor panel --------------------------------------------------------- */
+/* Icons in this design system are sized per context; without a rule the SVG
+   expands to fill its container, which rendered the shield at 200px. */
+.panel-card {
+  border: 1px solid var(--line, var(--border));
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--surface);
+}
+.panel-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.panel-card-head h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 15px;
+}
+.panel-card-head svg,
+.panel-card-body svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.panel-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+}
+.panel-card-body p {
+  margin: 0;
+}
+.stacked-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+}
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Only .primary-button constrained its icon, so an icon in any other button
+   variant expanded to fill the button — a 97px shield on the security page. */
+.secondary-button svg,
+.ghost-button svg,
+.danger-button svg,
+.auth-setup-link svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+.primary-button svg {
+  height: 17px;
+  flex: none;
+}
