@@ -15,4 +15,4 @@ def test_batch24_deployment_tables_registered():
         "deployment_rollouts", "deployment_rollout_steps", "deployment_secret_references",
     }
     assert expected <= names
-    assert len(names) == 254
+    assert len(names) == 255

@@ -4818,6 +4818,53 @@ export interface MatterOpenRequest {
   team_membership_ids?: string[];
 }
 
+export interface MatterPartyCreate {
+  role: PartyRole;
+  kind: PartyKind;
+  name: string;
+  client_id?: string | null;
+  representing_firm?: string | null;
+  advocate_name?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  address?: string | null;
+  notes?: string | null;
+  is_active: boolean;
+}
+
+export interface MatterPartyRead {
+  role: PartyRole;
+  kind: PartyKind;
+  name: string;
+  client_id?: string | null;
+  representing_firm?: string | null;
+  advocate_name?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  address?: string | null;
+  notes?: string | null;
+  is_active: boolean;
+  id: string;
+  matter_id: string;
+  normalized_name: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MatterPartyUpdate {
+  role?: PartyRole | null;
+  kind?: PartyKind | null;
+  name?: string | null;
+  client_id?: string | null;
+  representing_firm?: string | null;
+  advocate_name?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  address?: string | null;
+  notes?: string | null;
+  is_active?: boolean | null;
+}
+
 export interface MatterPlaybookCreate {
   code: string;
   name_en: string;
@@ -5219,6 +5266,26 @@ export interface ParsedTable {
   char_start: number;
   char_end: number;
 }
+
+export interface PartyConflictHit {
+  party_id: string;
+  matter_id: string;
+  matter_title: string;
+  name: string;
+  role: PartyRole;
+  is_active: boolean;
+}
+
+export interface PartyConflictReport {
+  query: string;
+  normalized_query: string;
+  hits?: PartyConflictHit[];
+  opposing_hit: boolean;
+}
+
+export type PartyKind = "individual" | "company" | "government" | "other";
+
+export type PartyRole = "client" | "opposing" | "co_party" | "third_party" | "court" | "regulator" | "witness";
 
 export interface PaymentCreate {
   client_id: string;

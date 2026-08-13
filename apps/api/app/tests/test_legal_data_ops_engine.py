@@ -19,7 +19,7 @@ def test_batch26_tables_registered():
         "legal_data_alerts", "legal_corpus_checkpoints",
     }
     assert expected <= set(Base.metadata.tables)
-    assert len(Base.metadata.tables) == 254
+    assert len(Base.metadata.tables) == 255
 
 
 def test_canonical_hash_ignores_dict_key_order():

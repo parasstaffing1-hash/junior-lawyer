@@ -11,7 +11,7 @@ def test_batch21_system_health_tables_registered():
         "system_metric_snapshots",
     }
     assert expected <= set(Base.metadata.tables)
-    assert len(Base.metadata.tables) == 254
+    assert len(Base.metadata.tables) == 255
 
 
 def test_batch21_schema_creates_on_sqlite():
@@ -21,4 +21,4 @@ def test_batch21_schema_creates_on_sqlite():
         names = set(engine.dialect.get_table_names(connection))
     assert "backup_runs" in names
     assert "system_metric_snapshots" in names
-    assert len(names) == 254
+    assert len(names) == 255

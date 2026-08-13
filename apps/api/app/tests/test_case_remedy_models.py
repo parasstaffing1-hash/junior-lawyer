@@ -11,4 +11,4 @@ def test_case_lookup_and_remedy_tables_registered():
         "remedy_analyses", "remedy_candidates", "remedy_candidate_authorities", "remedy_memos", "remedy_draft_links",
     }
     assert expected <= names
-    assert len(names) == 254
+    assert len(names) == 255

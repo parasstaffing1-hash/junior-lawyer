@@ -6,7 +6,7 @@ from uuid import uuid4
 
 def test_batch25_schema_count_and_tables():
     names = set(Base.metadata.tables)
-    assert len(names) == 254
+    assert len(names) == 255
     expected = {
         "integration_connections", "integration_secret_references", "integration_oauth_states",
         "integration_accounts", "integration_sync_runs", "integration_resource_mappings",

@@ -9,7 +9,7 @@ from app.models.release import (
 
 def test_release_tables_expand_schema():
     names = set(Base.metadata.tables)
-    assert len(names) == 254
+    assert len(names) == 255
     required = {
         "release_pipelines",
         "release_runs",
