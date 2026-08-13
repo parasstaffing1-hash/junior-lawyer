@@ -14,14 +14,31 @@ services:
       - key: DATABASE_URL
         sync: false
         
-      # LLM APIs (Will be configured securely in dashboard)
-      - key: GEMINI_KEYS
+      # LLM provider. These names must match app/core/config.py exactly —
+      # Settings ignores anything else, so a key under a different name leaves
+      # AI silently disabled rather than failing loudly.
+      - key: AI_ENABLED
+        value: true
+      - key: AI_REMOTE_ENABLED
+        value: true
+      # Gemini exposes an OpenAI-compatible surface, so no adapter is needed.
+      - key: AI_REMOTE_BASE_URL
+        value: https://generativelanguage.googleapis.com/v1beta/openai
+      - key: AI_REMOTE_MODEL
+        value: gemini-3.5-flash
+      # Secrets: set the values in the Render dashboard, never in this file.
+      - key: AI_REMOTE_API_KEY
         sync: false
-      - key: GROQ_KEYS
+      # Optional, comma separated. Rotated on 429/5xx so one exhausted free-tier
+      # key does not stall every AI feature.
+      - key: AI_REMOTE_API_KEY_FALLBACKS
         sync: false
-      - key: OPENROUTER_KEYS
-        sync: false
-        
+      # Remote calls stay opt-in per request; the local tier is unused in
+      # production because there is no model server alongside the container.
+      - key: AI_LOCAL_ENABLED
+        value: false
+
+
       # General settings
       - key: APP_ENV
         value: production

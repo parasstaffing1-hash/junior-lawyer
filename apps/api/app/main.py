@@ -63,7 +63,54 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     if settings.app_env.casefold() == "development":
         async with engine.begin() as connection:
             await connection.run_sync(Base.metadata.create_all)
+    _log_ai_configuration()
     yield
+
+
+def _log_ai_configuration() -> None:
+    """Say at startup whether a model is actually reachable.
+
+    Misconfigured AI settings fail silently: the router simply blocks every
+    run, which reads like a product decision rather than a missing key. One
+    line at boot turns that into something you can see in the deploy log.
+    """
+    logger = logging.getLogger("junior_lawyer.ai")
+    if not settings.ai_enabled:
+        logger.info("ai_disabled", extra={"event": "ai.config", "reason": "AI_ENABLED is false"})
+        return
+
+    from app.services.ai.providers import ProviderRegistry
+
+    registry = ProviderRegistry.from_settings(settings)
+    if not registry.providers:
+        missing = [
+            name
+            for name, value in (
+                ("AI_REMOTE_BASE_URL", settings.ai_remote_base_url),
+                ("AI_REMOTE_MODEL", settings.ai_remote_model),
+                ("AI_REMOTE_API_KEY", settings.ai_remote_api_key),
+            )
+            if not value
+        ]
+        logger.warning(
+            "ai_enabled_but_no_provider",
+            extra={
+                "event": "ai.config",
+                # Names only. Never the values.
+                "missing_settings": missing or ["AI_REMOTE_ENABLED / AI_LOCAL_ENABLED"],
+            },
+        )
+        return
+
+    logger.info(
+        "ai_ready",
+        extra={
+            "event": "ai.config",
+            "providers": sorted(registry.providers),
+            "remote_model": settings.ai_remote_model,
+            "spare_credentials": len(settings.ai_remote_fallback_api_keys),
+        },
+    )
 
 
 app = FastAPI(
