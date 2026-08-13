@@ -195,3 +195,82 @@ class AIUsageEvent(Base, UUIDMixin, TimestampMixin):
     metadata_json: Mapped[dict] = mapped_column(JSON, default=dict)
 
     run = relationship("AIRun", back_populates="usage_events")
+
+
+class ConversationStatus(StrEnum):
+    ACTIVE = "active"
+    ARCHIVED = "archived"
+
+
+class ConversationMessageRole(StrEnum):
+    USER = "user"
+    ASSISTANT = "assistant"
+
+
+class AIConversation(Base, UUIDMixin, TimestampMixin):
+    """A named thread of questions and answers.
+
+    Scoped to an organization rather than a matter, because the most common
+    question ("what does this clause mean?") has no matter behind it. When a
+    matter is attached, every run in the thread inherits it and picks up that
+    matter's retrieval and confidentiality rules.
+    """
+
+    __tablename__ = "ai_conversations"
+
+    organization_id: Mapped[UUID] = mapped_column(
+        ForeignKey("organizations.id", ondelete="CASCADE"), index=True
+    )
+    created_by_user_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("security_users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    matter_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("matters.id", ondelete="CASCADE"), nullable=True, index=True
+    )
+    title: Mapped[str] = mapped_column(String(250))
+    jurisdiction: Mapped[str] = mapped_column(String(120), default="India", index=True)
+    output_language: Mapped[str] = mapped_column(String(20), default="en")
+    status: Mapped[ConversationStatus] = mapped_column(
+        Enum(ConversationStatus, native_enum=False), default=ConversationStatus.ACTIVE, index=True
+    )
+    # Documents pinned to the thread, so "chat with this document" survives
+    # across turns instead of being re-attached each time.
+    document_ids_json: Mapped[list] = mapped_column(JSON, default=list)
+    last_message_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    message_count: Mapped[int] = mapped_column(Integer, default=0)
+
+    messages = relationship(
+        "AIConversationMessage",
+        back_populates="conversation",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="AIConversationMessage.ordinal",
+    )
+
+
+class AIConversationMessage(Base, UUIDMixin, TimestampMixin):
+    """One turn. Assistant turns point at the AIRun that produced them, which
+    is where sources, claims, citations and verification already live."""
+
+    __tablename__ = "ai_conversation_messages"
+    __table_args__ = (
+        UniqueConstraint("conversation_id", "ordinal", name="uq_conversation_message_ordinal"),
+    )
+
+    conversation_id: Mapped[UUID] = mapped_column(
+        ForeignKey("ai_conversations.id", ondelete="CASCADE"), index=True
+    )
+    ordinal: Mapped[int] = mapped_column(Integer, index=True)
+    role: Mapped[ConversationMessageRole] = mapped_column(
+        Enum(ConversationMessageRole, native_enum=False), index=True
+    )
+    content: Mapped[str] = mapped_column(Text)
+    run_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("ai_runs.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    author_user_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("security_users.id", ondelete="SET NULL"), nullable=True
+    )
+
+    conversation = relationship("AIConversation", back_populates="messages")
+    run = relationship("AIRun", lazy="selectin")

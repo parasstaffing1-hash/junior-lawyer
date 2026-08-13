@@ -6,6 +6,8 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.models.ai import (
+    ConversationMessageRole,
+    ConversationStatus,
     AICitationStatus,
     AIClaimStatus,
     AIReviewStatus,
@@ -171,3 +173,71 @@ class AIProviderStatusRead(BaseModel):
     remote_model: str | None
     remote_calls_require_explicit_opt_in: bool = True
     secrets_persisted: bool = False
+
+
+class ConversationCreate(BaseModel):
+    title: str | None = Field(default=None, max_length=250)
+    matter_id: UUID | None = None
+    jurisdiction: str = Field(default="India", max_length=120)
+    output_language: str = Field(default="en", pattern="^(en|hi|bilingual)$")
+    document_ids: list[UUID] = Field(default_factory=list)
+
+
+class ConversationRename(BaseModel):
+    title: str = Field(min_length=1, max_length=250)
+
+
+class ConversationStatusUpdate(BaseModel):
+    status: ConversationStatus
+
+
+class ConversationMessageCreate(BaseModel):
+    question: str = Field(min_length=2, max_length=8000)
+    task_type: AITaskType = AITaskType.RESEARCH_SYNTHESIS
+    prefer_local: bool = True
+    allow_remote: bool = False
+    allow_local_for_high_complexity: bool = False
+    include_corpus: bool = True
+    max_sources: int = Field(default=12, ge=2, le=24)
+    max_input_tokens: int = Field(default=6000, ge=500, le=30000)
+    max_output_tokens: int = Field(default=1200, ge=128, le=8000)
+
+
+class ConversationMessageRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: UUID
+    ordinal: int
+    role: ConversationMessageRole
+    content: str
+    run_id: UUID | None
+    created_at: datetime
+
+
+class ConversationRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: UUID
+    title: str
+    matter_id: UUID | None
+    jurisdiction: str
+    output_language: str
+    status: ConversationStatus
+    document_ids_json: list[str] = Field(default_factory=list)
+    message_count: int
+    last_message_at: datetime | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class ConversationDetail(BaseModel):
+    conversation: ConversationRead
+    messages: list[ConversationMessageRead] = Field(default_factory=list)
+
+
+class ConversationTurn(BaseModel):
+    """What a posted question produces: both turns plus the run behind the
+    answer, so the client never needs a second request to show citations."""
+
+    conversation: ConversationRead
+    question: ConversationMessageRead
+    answer: ConversationMessageRead
+    run: AIRunRead

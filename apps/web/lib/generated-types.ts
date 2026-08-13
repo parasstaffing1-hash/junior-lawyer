@@ -1798,6 +1798,73 @@ export interface ContradictionValue {
   confidence: number;
 }
 
+export interface ConversationCreate {
+  title?: string | null;
+  matter_id?: string | null;
+  jurisdiction: string;
+  output_language: string;
+  document_ids?: string[];
+}
+
+export interface ConversationDetail {
+  conversation: ConversationRead;
+  messages?: ConversationMessageRead[];
+}
+
+export interface ConversationMessageCreate {
+  question: string;
+  task_type: AITaskType;
+  prefer_local: boolean;
+  allow_remote: boolean;
+  allow_local_for_high_complexity: boolean;
+  include_corpus: boolean;
+  max_sources: number;
+  max_input_tokens: number;
+  max_output_tokens: number;
+}
+
+export interface ConversationMessageRead {
+  id: string;
+  ordinal: number;
+  role: ConversationMessageRole;
+  content: string;
+  run_id: string | null;
+  created_at: string;
+}
+
+export type ConversationMessageRole = "user" | "assistant";
+
+export interface ConversationRead {
+  id: string;
+  title: string;
+  matter_id: string | null;
+  jurisdiction: string;
+  output_language: string;
+  status: ConversationStatus;
+  document_ids_json?: string[];
+  message_count: number;
+  last_message_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ConversationRename {
+  title: string;
+}
+
+export type ConversationStatus = "active" | "archived";
+
+export interface ConversationStatusUpdate {
+  status: ConversationStatus;
+}
+
+export interface ConversationTurn {
+  conversation: ConversationRead;
+  question: ConversationMessageRead;
+  answer: ConversationMessageRead;
+  run: AIRunRead;
+}
+
 export interface ConvertLeadRequest {
   client_type: ClientType;
   legal_name?: string | null;

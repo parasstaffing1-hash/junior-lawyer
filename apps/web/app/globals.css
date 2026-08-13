@@ -1701,3 +1701,108 @@ a.tool-card:hover { border-color: #cfd8d2; box-shadow: var(--shadow); }
 .recovery-code-list code {
   font-family: var(--font-mono, monospace);
 }
+
+/* Conversation threads ---------------------------------------------------- */
+.conversation-layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .conversation-layout { grid-template-columns: 1fr; }
+}
+.conversation-list {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  background: var(--surface);
+}
+.conversation-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.conversation-list ul { list-style: none; margin: 0; padding: 0; }
+.conversation-list li {
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+}
+.conversation-list li.active { background: var(--surface-muted); }
+.conversation-list li > button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0.15rem 0;
+  cursor: pointer;
+}
+.conversation-list li strong { display: block; font-size: 0.9rem; }
+.conversation-list li small { color: var(--text-muted); font-size: 0.75rem; }
+.conversation-row-actions { display: flex; gap: 0.5rem; }
+.conversation-row-actions button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.conversation-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 60vh;
+}
+.conversation-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+  max-height: 60vh;
+  padding-right: 0.25rem;
+}
+.conversation-empty { padding: 2rem 0; }
+.conversation-message {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  background: var(--surface);
+}
+.conversation-message.user { background: var(--surface-muted); }
+.conversation-message-role {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+.conversation-message-body { white-space: pre-wrap; line-height: 1.55; }
+.conversation-message-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.conversation-composer {
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.conversation-composer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.8rem;
+}
+.conversation-composer-row { display: flex; gap: 0.5rem; align-items: flex-end; }
+.conversation-composer-row textarea { flex: 1; resize: vertical; }

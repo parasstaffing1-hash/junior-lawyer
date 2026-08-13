@@ -49,6 +49,35 @@ export function securityLogin(payload: {
 export type MFAStatus = G.MFAStatusRead;
 export type MFAEnrolmentStart = G.MFAEnrolmentStart;
 
+export type Conversation = G.ConversationRead;
+export type ConversationDetail = G.ConversationDetail;
+export type ConversationMessage = G.ConversationMessageRead;
+export type ConversationTurn = G.ConversationTurn;
+
+export const listConversations = (params: { matter_id?: string; conversation_status?: string; limit?: number } = {}): Promise<Conversation[]> =>
+  apiFetch(`/ai/conversations${query({ matter_id: params.matter_id, conversation_status: params.conversation_status, limit: params.limit })}`);
+export const createConversation = (payload: { title?: string; matter_id?: string; jurisdiction?: string; output_language?: string; document_ids?: string[] }): Promise<Conversation> =>
+  apiFetch("/ai/conversations", jsonBody(payload));
+export const getConversation = (conversationId: string): Promise<ConversationDetail> =>
+  apiFetch(`/ai/conversations/${conversationId}`);
+export const renameConversation = (conversationId: string, title: string): Promise<Conversation> =>
+  apiFetch(`/ai/conversations/${conversationId}`, patchBody({ title }));
+export const setConversationStatus = (conversationId: string, status: "active" | "archived"): Promise<Conversation> =>
+  apiFetch(`/ai/conversations/${conversationId}/status`, patchBody({ status }));
+export const deleteConversation = (conversationId: string): Promise<void> =>
+  apiFetch(`/ai/conversations/${conversationId}`, { method: "DELETE" });
+export const postConversationMessage = (
+  conversationId: string,
+  payload: {
+    question: string;
+    task_type?: G.AITaskType;
+    prefer_local?: boolean;
+    allow_remote?: boolean;
+    allow_local_for_high_complexity?: boolean;
+    include_corpus?: boolean;
+  },
+): Promise<ConversationTurn> => apiFetch(`/ai/conversations/${conversationId}/messages`, jsonBody(payload));
+
 export const getMFAStatus = (): Promise<G.MFAStatusRead> => apiFetch("/security/auth/mfa");
 export const startMFAEnrolment = (): Promise<G.MFAEnrolmentStart> => apiFetch("/security/auth/mfa/enrol", { method: "POST" });
 export const confirmMFAEnrolment = (code: string): Promise<G.MFAConfirmResponse> => apiFetch("/security/auth/mfa/confirm", jsonBody({ code }));

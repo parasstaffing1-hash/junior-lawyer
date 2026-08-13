@@ -13,7 +13,7 @@ def test_security_schema_tables_are_registered():
         "user_mfa_credentials", "user_recovery_codes",
     }
     assert expected.issubset(set(Base.metadata.tables))
-    assert len(Base.metadata.tables) == 252
+    assert len(Base.metadata.tables) == 254
 
 
 def test_role_baseline_is_least_privilege_for_non_legal_roles():

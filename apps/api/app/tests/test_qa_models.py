@@ -16,4 +16,4 @@ def test_qa_tables_present():
         "evaluation_baselines",
     }
     assert required <= names
-    assert len(names) == 252
+    assert len(names) == 254

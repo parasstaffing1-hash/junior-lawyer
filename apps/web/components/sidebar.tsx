@@ -16,6 +16,7 @@ const items = [
   { key:"legal-data", label: "Legal data", hi:"कानूनी डेटा", href: "/legal-data", icon: BookIcon },
   { key:"evidence", label: "Evidence", hi:"साक्ष्य", href: "/evidence", icon: ScaleIcon },
   { key:"knowledge", label: "Knowledge", hi:"ज्ञान", href: "/knowledge", icon: GridIcon },
+  { key:"chat", label: "Ask", hi:"पूछें", href: "/chat", icon: SparklesIcon },
   { key:"assistant", label: "Assistant", hi:"सहायक", href: "/assistant", icon: SparklesIcon },
   { key:"contracts", label: "Contracts", hi:"अनुबंध", href: "/contracts", icon: DocumentIcon },
   { key:"drafting", label: "Drafting", hi:"ड्राफ्टिंग", href: "/drafting", icon: ArchiveIcon },

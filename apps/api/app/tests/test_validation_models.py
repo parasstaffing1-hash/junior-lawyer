@@ -4,7 +4,7 @@ from app.db.base import Base
 
 def test_batch28_schema_contains_release_candidate_validation_tables():
     names = set(Base.metadata.tables)
-    assert len(names) == 252
+    assert len(names) == 254
     assert {
         "validation_campaigns",
         "validation_scenarios",
