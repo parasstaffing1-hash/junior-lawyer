@@ -61,3 +61,6 @@ venv.bak/
 release-source-gate.json
 rc-local-gate.json
 security-baseline-report.json
+
+# Uploaded document storage (runtime data, not source)
+apps/api/data/
