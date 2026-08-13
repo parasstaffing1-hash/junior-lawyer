@@ -9,10 +9,14 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app import models  # noqa: F401
 from app.core.config import settings
+from app.db.url import prepare_database_url
 from app.db.base import Base
 
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.database_url)
+# Migrations must read the connection string exactly as the application does,
+# or a managed-Postgres URL passes here and fails there.
+target = prepare_database_url(settings.database_url)
+config.set_main_option("sqlalchemy.url", target.url.replace("%", "%%"))
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -22,12 +26,12 @@ target_metadata = Base.metadata
 
 def run_migrations_offline() -> None:
     context.configure(
-        url=settings.database_url,
+        url=target.url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         compare_type=True,
-        render_as_batch=settings.database_url.startswith("sqlite"),
+        render_as_batch=target.is_sqlite,
     )
     with context.begin_transaction():
         context.run_migrations()
@@ -46,7 +50,7 @@ def do_run_migrations(connection) -> None:
 
 async def run_async_migrations() -> None:
     configuration = config.get_section(config.config_ini_section, {})
-    configuration["sqlalchemy.url"] = settings.database_url
+    configuration["sqlalchemy.url"] = target.url
     connectable = async_engine_from_config(
         configuration,
         prefix="sqlalchemy.",
@@ -58,7 +62,7 @@ async def run_async_migrations() -> None:
 
 
 def run_sync_migrations() -> None:
-    connectable = create_engine(settings.database_url, poolclass=pool.NullPool)
+    connectable = create_engine(target.url, poolclass=pool.NullPool, connect_args=target.connect_args)
     with connectable.connect() as connection:
         do_run_migrations(connection)
     connectable.dispose()
@@ -68,7 +72,7 @@ def run_migrations_online() -> None:
     # Alembic supports a synchronous URL for migration/testing workflows even though
     # the application normally runs on SQLAlchemy's async engine.
     async_markers = ("+aiosqlite", "+asyncpg", "+asyncmy", "+aiomysql")
-    if any(marker in settings.database_url for marker in async_markers):
+    if any(marker in target.url for marker in async_markers):
         asyncio.run(run_async_migrations())
     else:
         run_sync_migrations()

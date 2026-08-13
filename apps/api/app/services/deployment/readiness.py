@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from urllib.parse import urlparse
 
+from app.db.url import prepare_database_url
+
 
 def _is_https(value: str) -> bool:
     try:
@@ -19,7 +21,10 @@ def evaluate_runtime_readiness(settings) -> dict:
 
     add("production_env", str(settings.app_env).casefold() == "production", "APP_ENV must be production")
     add("debug_disabled", not bool(settings.debug), "DEBUG must be false")
-    add("postgresql", str(settings.database_url).startswith("postgresql+asyncpg://"), "Production database must use PostgreSQL + asyncpg")
+    # Judge the normalised URL: a managed-Postgres string such as
+    # postgres://…?sslmode=require is valid configuration and must not be
+    # reported as a failed gate just because the provider spells it that way.
+    add("postgresql", prepare_database_url(settings.database_url).url.startswith("postgresql+asyncpg://"), "Production database must use PostgreSQL + asyncpg")
     add("auth_enforced", bool(settings.security_enforce_auth), "Internal authentication enforcement must be enabled")
     add("secure_cookie", bool(settings.security_cookie_secure), "Internal session cookie must be Secure")
     add("audit_hmac", bool(settings.security_audit_hmac_key), "Security audit HMAC key must be configured")

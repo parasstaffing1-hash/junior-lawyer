@@ -20,6 +20,7 @@ from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.db.url import prepare_database_url
 from app.services.documents.storage import backup_object_storage_to_zip, check_storage_health
 from app.models.jobs import BackgroundJob, BackgroundWorker, JobStatus
 from app.models.operations import CourtCaseTracker, CourtTrackerStatus
@@ -473,7 +474,7 @@ def _local_destination(policy: BackupPolicy, run: BackupRun) -> Path:
 
 
 def _sqlite_source_path() -> Path:
-    url = make_url(settings.database_url)
+    url = make_url(prepare_database_url(settings.database_url).url)
     database = url.database
     if not database or database == ":memory:":
         raise RuntimeError("In-memory SQLite cannot be backed up as a durable artifact")
@@ -498,7 +499,7 @@ def _postgres_pg_dump(target: Path) -> None:
     executable = shutil.which("pg_dump")
     if not executable:
         raise RuntimeError("pg_dump is required for PostgreSQL backups but is not installed")
-    url = make_url(settings.database_url)
+    url = make_url(prepare_database_url(settings.database_url).url)
     if not url.database:
         raise RuntimeError("PostgreSQL database name is missing")
     cmd = [executable, "--format=custom", "--file", str(target)]
@@ -515,11 +516,11 @@ def _postgres_pg_dump(target: Path) -> None:
 
 
 def _backup_database(target_dir: Path) -> Path:
-    if settings.database_url.startswith("sqlite"):
+    if prepare_database_url(settings.database_url).is_sqlite:
         target = target_dir / "database.sqlite3"
         _backup_sqlite(target)
         return target
-    if settings.database_url.startswith("postgresql"):
+    if prepare_database_url(settings.database_url).url.startswith("postgresql"):
         target = target_dir / "database.pg_dump"
         _postgres_pg_dump(target)
         return target
@@ -576,7 +577,7 @@ async def execute_backup(db: AsyncSession, actor: ActorContext, policy_id: UUID,
         document_count = 0
         if policy.include_database:
             db_path = await asyncio.to_thread(_backup_database, destination)
-            artifacts.append(await _add_artifact(db, run, BackupArtifactKind.DATABASE, db_path, {"database_dialect": make_url(settings.database_url).get_backend_name()}))
+            artifacts.append(await _add_artifact(db, run, BackupArtifactKind.DATABASE, db_path, {"database_dialect": make_url(prepare_database_url(settings.database_url).url).get_backend_name()}))
             run.database_status = "succeeded"
         else:
             run.database_status = "not_included"

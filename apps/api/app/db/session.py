@@ -4,16 +4,20 @@ from sqlalchemy import event
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.core.config import settings
+from app.db.url import prepare_database_url
 
+
+target = prepare_database_url(settings.database_url)
 
 engine = create_async_engine(
-    settings.database_url,
+    target.url,
     echo=settings.debug,
     pool_pre_ping=True,
+    connect_args=target.connect_args,
 )
 
 
-if settings.database_url.startswith("sqlite"):
+if target.is_sqlite:
     @event.listens_for(engine.sync_engine, "connect")
     def _enable_sqlite_foreign_keys(dbapi_connection, _connection_record) -> None:
         cursor = dbapi_connection.cursor()
