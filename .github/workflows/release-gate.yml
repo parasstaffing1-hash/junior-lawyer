@@ -22,6 +22,12 @@ jobs:
       - name: Install API dependencies
         working-directory: apps/api
         run: pip install -e '.[dev]'
+      # The gate's frontend-static stage transpiles the web app with the
+      # TypeScript compiler from apps/web, so its dependencies must exist here
+      # too — without them the stage fails on a missing module, not on code.
+      - name: Install frontend dependencies
+        working-directory: apps/web
+        run: npm install --no-audit --no-fund
       - name: Run source release gate
         working-directory: apps/api
         run: python scripts/run_release_source_gate.py --output ../../release-source-gate.json
