@@ -12,10 +12,14 @@ from app.core.config import Settings
 
 
 class _TransientProviderError(RuntimeError):
-    """An upstream failure worth retrying on a different credential."""
+    """An upstream failure worth retrying.
 
-    def __init__(self, status: int, detail: str) -> None:
-        super().__init__(f"Provider HTTP {status}: {detail}")
+    `status` is None for connection-level failures, which carry no HTTP status.
+    """
+
+    def __init__(self, status: int | None, detail: str) -> None:
+        self.label = f"HTTP {status}" if status is not None else detail
+        super().__init__(f"Provider {self.label}")
         self.status = status
         self.detail = detail
 
@@ -77,22 +81,32 @@ class OpenAICompatibleProvider:
     # retrying it with another key only multiplies the same failure.
     RETRYABLE_STATUSES = frozenset({408, 429, 500, 502, 503, 504})
 
+    # A dropped TLS connection is not the credential's fault, so one credential
+    # alone still deserves a second attempt. Cycling through the credentials
+    # covers quota exhaustion; the extra pass covers a transport blip.
+    MAX_ATTEMPTS = 5
+    RETRY_BACKOFF_SECONDS = 0.5
+
     def _sync_complete(self, *, system: str, user: str, max_output_tokens: int) -> ProviderResponse:
+        credentials = self._credentials
+        budget = min(len(credentials) + 1, self.MAX_ATTEMPTS)
         attempts: list[str] = []
-        for index, credential in enumerate(self._credentials):
+        for attempt in range(budget):
+            index = attempt % len(credentials)
             try:
                 return self._call_once(
                     system=system,
                     user=user,
                     max_output_tokens=max_output_tokens,
-                    api_key=credential,
+                    api_key=credentials[index],
                     credential_index=index,
                 )
             except _TransientProviderError as exc:
-                attempts.append(f"credential {index}: HTTP {exc.status}")
-                continue
+                attempts.append(f"credential {index}: {exc.label}")
+                if attempt + 1 < budget:
+                    time.sleep(self.RETRY_BACKOFF_SECONDS * (attempt + 1))
         raise RuntimeError(
-            "Every configured credential failed with a retryable error — " + "; ".join(attempts)
+            "Every attempt failed with a retryable error — " + "; ".join(attempts)
         )
 
     def _call_once(
@@ -130,8 +144,16 @@ class OpenAICompatibleProvider:
             if exc.code in self.RETRYABLE_STATUSES:
                 raise _TransientProviderError(exc.code, detail) from exc
             raise RuntimeError(f"Provider HTTP {exc.code}: {detail}") from exc
-        except urllib.error.URLError as exc:
-            raise RuntimeError(f"Provider connection failed: {exc.reason}") from exc
+        except OSError as exc:
+            # No HTTP status at all. URLError covers DNS and TLS failures, but a
+            # connection dropped while reading the response surfaces as
+            # http.client.RemoteDisconnected, which is an OSError and not a
+            # URLError — catching only the latter let it escape the retry loop
+            # entirely. Both are transient: a dropped connection says nothing
+            # about the request. HTTPError is handled above and is also an
+            # OSError subclass, so its clause must stay first.
+            reason = getattr(exc, "reason", None) or exc
+            raise _TransientProviderError(None, f"connection failed: {reason}") from exc
         latency_ms = int((time.perf_counter() - started) * 1000)
 
         choices = payload.get("choices") or []
