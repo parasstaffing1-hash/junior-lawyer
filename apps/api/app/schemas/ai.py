@@ -241,3 +241,13 @@ class ConversationTurn(BaseModel):
     question: ConversationMessageRead
     answer: ConversationMessageRead
     run: AIRunRead
+
+
+class TranscriptRead(BaseModel):
+    """A dictated recording turned into text. The audio itself is not stored."""
+
+    text: str
+    model_name: str
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    latency_ms: int | None = None

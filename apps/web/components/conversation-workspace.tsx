@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { DictateButton } from "@/components/dictate-button";
 import { ShieldIcon } from "@/components/icons";
 import {
   createConversation,
@@ -207,9 +208,18 @@ export function ConversationWorkspace({
               rows={3}
               required
             />
-            <button className="primary-button" type="submit" disabled={busy}>
-              {busy ? "Thinking…" : "Send"}
-            </button>
+            <div className="conversation-composer-actions">
+              <DictateButton
+                allowRemote={allowRemote}
+                disabled={busy}
+                onTranscript={(text) =>
+                  setQuestion((current) => (current ? `${current.trim()} ${text}` : text))
+                }
+              />
+              <button className="primary-button" type="submit" disabled={busy}>
+                {busy ? "Thinking…" : "Send"}
+              </button>
+            </div>
           </div>
         </form>
       </section>

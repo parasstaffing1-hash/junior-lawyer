@@ -78,6 +78,14 @@ export const postConversationMessage = (
   },
 ): Promise<ConversationTurn> => apiFetch(`/ai/conversations/${conversationId}/messages`, jsonBody(payload));
 
+/** Sends a recording for transcription. The audio is not stored server-side. */
+export const transcribeAudio = (audio: Blob, mimeType: string): Promise<G.TranscriptRead> => {
+  const form = new FormData();
+  // A filename is required for the multipart part to carry its content type.
+  form.append("audio", new File([audio], "dictation", { type: mimeType }));
+  return apiFetch("/ai/transcribe?allow_remote=true", { method: "POST", body: form });
+};
+
 export const getMFAStatus = (): Promise<G.MFAStatusRead> => apiFetch("/security/auth/mfa");
 export const startMFAEnrolment = (): Promise<G.MFAEnrolmentStart> => apiFetch("/security/auth/mfa/enrol", { method: "POST" });
 export const confirmMFAEnrolment = (code: string): Promise<G.MFAConfirmResponse> => apiFetch("/security/auth/mfa/confirm", jsonBody({ code }));

@@ -621,6 +621,10 @@ export interface Body_stamp_api_v1_tools_bates_numbering_stamp_post {
   options_json: string;
 }
 
+export interface Body_transcribe_api_v1_ai_transcribe_post {
+  audio: string;
+}
+
 export interface BootstrapAdmin {
   id: string;
   email: string;
@@ -7222,6 +7226,14 @@ export interface TokenDiff {
   operation: DiffOperation;
   original: string;
   revised: string;
+}
+
+export interface TranscriptRead {
+  text: string;
+  model_name: string;
+  input_tokens?: number | null;
+  output_tokens?: number | null;
+  latency_ms?: number | null;
 }
 
 export interface TransferDecision {

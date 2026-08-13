@@ -1,10 +1,11 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
 from app.models.ai import ConversationStatus
+from app.core.config import settings
 from app.schemas.ai import (
     AIPrepareResponse,
     AIProviderStatusRead,
@@ -19,10 +20,14 @@ from app.schemas.ai import (
     ConversationRename,
     ConversationStatusUpdate,
     ConversationTurn,
+    TranscriptRead,
 )
-from app.services.ai import conversations, service
+from app.services.ai import conversations, service, speech
 from app.services.security.context import ActorContext
 from app.services.security.dependencies import require_actor
+from app.services.security.audit import append_audit_event
+from app.models.security import AuditOutcome
+from starlette.concurrency import run_in_threadpool
 
 router = APIRouter(prefix="/ai", tags=["verified-ai"])
 
@@ -181,4 +186,53 @@ async def post_conversation_message(
         question=ConversationMessageRead.model_validate(question),
         answer=ConversationMessageRead.model_validate(answer),
         run=AIRunRead.model_validate(run),
+    )
+
+
+@router.post("/transcribe", response_model=TranscriptRead)
+async def transcribe(
+    audio: UploadFile = File(...),
+    # Dictation sends the recording to the remote model, so it carries the same
+    # explicit permission as any other remote call rather than a quieter one.
+    allow_remote: bool = Query(default=False),
+    actor: ActorContext = Depends(require_actor),
+    db: AsyncSession = Depends(get_db),
+) -> TranscriptRead:
+    if not allow_remote:
+        raise HTTPException(
+            status_code=403,
+            detail="Dictation sends audio to the remote model. Enable remote AI for this request to use it.",
+        )
+    payload = await audio.read()
+    try:
+        result = await run_in_threadpool(
+            speech.transcribe,
+            payload,
+            mime_type=audio.content_type or "",
+            settings=settings,
+        )
+    except speech.SpeechUnavailable as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    await append_audit_event(
+        db,
+        organization_id=actor.organization_id,
+        actor=actor,
+        action="ai.dictation",
+        resource_type="ai_transcript",
+        outcome=AuditOutcome.ALLOWED,
+        metadata={
+            "model_name": result.model_name,
+            "audio_bytes": len(payload),
+            "input_tokens": result.input_tokens,
+            "output_tokens": result.output_tokens,
+        },
+    )
+    await db.commit()
+    return TranscriptRead(
+        text=result.text,
+        model_name=result.model_name,
+        input_tokens=result.input_tokens,
+        output_tokens=result.output_tokens,
+        latency_ms=result.latency_ms,
     )
