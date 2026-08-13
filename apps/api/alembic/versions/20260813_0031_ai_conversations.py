@@ -15,6 +15,9 @@ import sqlalchemy as sa
 from alembic import op
 
 
+conversation_status = sa.Enum("ACTIVE", "ARCHIVED", name="conversationstatus", native_enum=False)
+message_role = sa.Enum("USER", "ASSISTANT", name="conversationmessagerole", native_enum=False)
+
 revision: str = '20260813_0031'
 down_revision: Union[str, None] = '20260813_0030'
 branch_labels: Union[str, Sequence[str], None] = None
@@ -31,7 +34,7 @@ def upgrade() -> None:
         sa.Column('title', sa.String(length=250), nullable=False),
         sa.Column('jurisdiction', sa.String(length=120), nullable=False, server_default='India'),
         sa.Column('output_language', sa.String(length=20), nullable=False, server_default='en'),
-        sa.Column('status', sa.String(length=20), nullable=False, server_default='active'),
+        sa.Column('status', conversation_status, nullable=False, server_default='ACTIVE'),
         sa.Column('document_ids_json', sa.JSON(), nullable=False),
         sa.Column('last_message_at', sa.DateTime(timezone=True), nullable=True),
         sa.Column('message_count', sa.Integer(), nullable=False, server_default='0'),
@@ -54,7 +57,7 @@ def upgrade() -> None:
         sa.Column('id', sa.Uuid(), nullable=False),
         sa.Column('conversation_id', sa.Uuid(), nullable=False),
         sa.Column('ordinal', sa.Integer(), nullable=False),
-        sa.Column('role', sa.String(length=20), nullable=False),
+        sa.Column('role', message_role, nullable=False),
         sa.Column('content', sa.Text(), nullable=False),
         sa.Column('run_id', sa.Uuid(), nullable=True),
         sa.Column('author_user_id', sa.Uuid(), nullable=True),
