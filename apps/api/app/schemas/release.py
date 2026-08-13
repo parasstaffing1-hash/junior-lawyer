@@ -149,6 +149,22 @@ class DeploymentApprovalRead(ORMModel):
     decided_at: datetime
 
 
+class ReleaseGateSummary(BaseModel):
+    """Gate verdict returned by POST /release/runs/{run_id}/evaluate.
+
+    The same shape is persisted as ReleaseRun.summary_json.
+    """
+
+    passed: bool
+    reasons: list[str]
+    critical_security_failures: int
+    stage_status: dict[str, str]
+    performance_runs: int
+    security_runs: int
+    rollback_ready: bool
+    artifact_passed: bool
+
+
 class ReleaseRunDetail(BaseModel):
     run: ReleaseRunRead
     stages: list[ReleaseStageRead]

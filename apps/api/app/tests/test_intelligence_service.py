@@ -96,7 +96,7 @@ async def test_rebuild_detects_single_value_date_contradiction(db: AsyncSession)
     assert len(contradictions) == 1
     assert contradictions[0].fact_key == "agreement_execution_date"
     assert contradictions[0].severity == ContradictionSeverity.HIGH
-    assert {value["value"] for value in contradictions[0].values_json} == {
+    assert {value.value for value in contradictions[0].values_json} == {
         "2025-03-12",
         "2025-03-15",
     }

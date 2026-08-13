@@ -163,7 +163,7 @@ export function SearchWorkspace() {
               <div className="search-result-top"><span className="result-type">{ENTITY_LABEL[result.entity_type]}</span><span className="result-score">{Math.round(result.score * 100)}</span></div>
               <strong>{result.title}</strong>{result.subtitle && <span className="result-subtitle">{result.subtitle}</span>}
               {result.snippet && <p>{result.snippet}</p>}
-              <div className="result-badges">{result.badges.slice(0, 4).map((badge) => <span key={badge}>{badge}</span>)}</div>
+              <div className="result-badges">{(result.badges ?? []).slice(0, 4).map((badge) => <span key={badge}>{badge}</span>)}</div>
             </button>)}</div>
           </section>)}
         </section>

@@ -100,11 +100,25 @@ class AIUsageRead(BaseModel):
     metadata_json: dict
 
 
+class AIBudget(BaseModel):
+    """Token budget for a prepared run.
+
+    Deterministic tasks never build a prompt, so only the input ceiling is
+    populated for those; the remaining fields keep their defaults.
+    """
+
+    max_input_tokens: int
+    max_output_tokens: int = 0
+    estimated_input_tokens: int = 0
+    within_budget: bool = True
+    retrieval: dict = Field(default_factory=dict)
+
+
 class AIPrepareResponse(BaseModel):
     routing: AIRouteDecisionRead
     sources: list[AISourceRead]
     prompt_preview: str
-    budget: dict
+    budget: AIBudget
 
 
 class AIRunRead(BaseModel):

@@ -53,3 +53,11 @@ venv.bak/
 
 # Local dev database
 *.db
+
+# Build caches
+*.tsbuildinfo
+
+# Gate reports (uploaded as CI artifacts, not source)
+release-source-gate.json
+rc-local-gate.json
+security-baseline-report.json

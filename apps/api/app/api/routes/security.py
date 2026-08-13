@@ -23,7 +23,9 @@ from app.schemas.security import (
     ActorRead,
     AuditEntryRead,
     AuditVerifyRead,
+    BootstrapAdmin,
     BootstrapRequest,
+    BootstrapResponse,
     DeletionDecisionRequest,
     DeletionRequestCreate,
     DeletionRequestRead,
@@ -62,20 +64,20 @@ from app.services.security import service
 router = APIRouter(prefix="/security", tags=["security"])
 
 
-@router.post("/bootstrap", status_code=status.HTTP_201_CREATED)
-async def bootstrap(payload: BootstrapRequest, db: AsyncSession = Depends(get_db)) -> dict:
+@router.post("/bootstrap", status_code=status.HTTP_201_CREATED, response_model=BootstrapResponse)
+async def bootstrap(payload: BootstrapRequest, db: AsyncSession = Depends(get_db)) -> BootstrapResponse:
     organization, user, membership = await service.bootstrap(db, payload)
-    return {
-        "organization": OrganizationRead.model_validate(organization),
-        "admin": {
-            "id": str(user.id),
-            "email": user.email,
-            "display_name": user.display_name,
-            "membership_id": str(membership.id),
-            "role": membership.role.value,
-        },
-        "message": "Security bootstrap complete. Sign in with the owner account.",
-    }
+    return BootstrapResponse(
+        organization=OrganizationRead.model_validate(organization),
+        admin=BootstrapAdmin(
+            id=str(user.id),
+            email=user.email,
+            display_name=user.display_name,
+            membership_id=str(membership.id),
+            role=membership.role.value,
+        ),
+        message="Security bootstrap complete. Sign in with the owner account.",
+    )
 
 
 @router.post("/auth/login", response_model=LoginResponse)

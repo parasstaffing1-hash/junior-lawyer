@@ -40,7 +40,7 @@ class UniversalSearchResponse(BaseModel):
 class SearchPreferenceRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: UUID
-    default_scopes_json: list
+    default_scopes_json: list[SearchEntityType]
     default_language: str
     max_results: int
     include_legal_corpus: bool
@@ -49,7 +49,7 @@ class SearchPreferenceRead(BaseModel):
 
 
 class SearchPreferenceUpdate(BaseModel):
-    default_scopes_json: list[str] | None = None
+    default_scopes_json: list[SearchEntityType] | None = None
     default_language: str | None = None
     max_results: int | None = Field(default=None, ge=5, le=100)
     include_legal_corpus: bool | None = None
@@ -70,7 +70,7 @@ class SavedSearchRead(BaseModel):
     id: UUID
     name: str
     query: str
-    scopes_json: list
+    scopes_json: list[SearchEntityType]
     filters_json: dict
     pinned: bool
     last_run_at: datetime | None
@@ -136,11 +136,19 @@ class SearchIndexHealth(BaseModel):
     snapshot_hash: str
 
 
+class SearchDuplicateSide(BaseModel):
+    """One side of a detected duplicate pair."""
+
+    title: str
+    href: str
+    matter_id: UUID | None = None
+
+
 class SearchDuplicateItem(BaseModel):
     id: UUID
     kind: str
     similarity: float
     hamming_distance: int
     shingle_jaccard: float
-    left: dict
-    right: dict
+    left: SearchDuplicateSide
+    right: SearchDuplicateSide

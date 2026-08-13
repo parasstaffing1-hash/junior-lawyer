@@ -11,7 +11,7 @@ from app.schemas.operations import (
     AgendaItem, CourtChangeRead, CourtSnapshotCaptureRead, CourtSnapshotCreate, CourtSnapshotRead,
     CourtSourceCapabilityRead, CourtTrackerCreate, CourtTrackerRead, NotificationRead,
     OperationsDashboard, OperationsPreferenceRead, OperationsPreferenceUpdate, SweepRequest,
-    WorkflowTaskCreate, WorkflowTaskRead, WorkflowTaskUpdate, WorkflowTemplateRead,
+    SupervisionSummary, TemplateSeedResult, WorkflowTaskCreate, WorkflowTaskRead, WorkflowTaskUpdate, WorkflowTemplateRead,
 )
 from app.services.operations import service
 from app.services.operations.providers import source_capabilities
@@ -31,14 +31,14 @@ async def agenda(days: int = Query(7, ge=1, le=90), actor: ActorContext = Depend
     return [AgendaItem(**item) for item in await service.daily_agenda(db, actor, days)]
 
 
-@router.get("/supervision")
+@router.get("/supervision", response_model=SupervisionSummary)
 async def supervision(actor: ActorContext = Depends(require_actor), db: AsyncSession = Depends(get_db)):
-    return await service.partner_supervision(db, actor)
+    return SupervisionSummary.model_validate(await service.partner_supervision(db, actor))
 
 
-@router.post("/templates/seed")
+@router.post("/templates/seed", response_model=TemplateSeedResult)
 async def seed_templates(actor: ActorContext = Depends(require_actor), db: AsyncSession = Depends(get_db)):
-    return {"created": await service.seed_builtin_templates(db)}
+    return TemplateSeedResult(created=await service.seed_builtin_templates(db))
 
 
 @router.get("/templates", response_model=list[WorkflowTemplateRead])

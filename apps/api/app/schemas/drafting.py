@@ -22,6 +22,44 @@ class AuthorityReference(BaseModel):
     source_id: UUID
 
 
+class DraftQuestion(BaseModel):
+    """One questionnaire field, as built by drafting catalog.q()."""
+
+    key: str
+    label_en: str
+    label_hi: str
+    required: bool
+    kind: str
+
+
+class DraftSectionDefinition(BaseModel):
+    key: str
+    title_en: str
+    title_hi: str
+
+
+class DraftCatalogItem(BaseModel):
+    draft_type: str
+    name_en: str
+    name_hi: str
+    description: str
+    section_count: int
+    questions: list[DraftQuestion]
+
+
+class DraftQuestionnaire(BaseModel):
+    draft_type: str
+    name_en: str
+    name_hi: str
+    description: str
+    questions: list[DraftQuestion]
+    sections: list[DraftSectionDefinition]
+
+
+class TemplateSeedResult(BaseModel):
+    created: int
+
+
 class LegalDraftCreate(BaseModel):
     matter_id: UUID
     draft_type: LegalDraftType

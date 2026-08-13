@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { BookIcon, DocumentIcon, FolderIcon, SearchIcon, SettingsIcon } from "@/components/icons";
 import { getOnboardingProgress, updateOnboardingProgress, type OnboardingProgress } from "@/lib/api";
+
+// The checklist renders before the API answers, so the local state carries only
+// the fields the UI reads; `id`/`updated_at` exist on a persisted progress row
+// but have no meaning until the first save.
+type OnboardingProgressState = Pick<OnboardingProgress, "completed_steps_json" | "current_step" | "completed_at" | "dismissed_at">;
 import { useExperience } from "@/components/experience-provider";
 
 const steps = [
@@ -15,7 +20,7 @@ const steps = [
 ];
 
 export function OnboardingWorkspace(){
-  const {preferences,update}=useExperience(); const [progress,setProgress]=useState<OnboardingProgress>({completed_steps_json:[],current_step:null,completed_at:null,dismissed_at:null}); const [saving,setSaving]=useState(false);
+  const {preferences,update}=useExperience(); const [progress,setProgress]=useState<OnboardingProgressState>({completed_steps_json:[],current_step:null,completed_at:null,dismissed_at:null}); const [saving,setSaving]=useState(false);
   useEffect(()=>{void getOnboardingProgress().then(setProgress).catch(()=>undefined)},[]);
   const completed=new Set(progress.completed_steps_json); const percent=Math.round((completed.size/steps.length)*100);
   const labels=useMemo(()=>preferences.ui_language==='hi'?{eyebrow:'शुरुआत',title:'Junior Lawyer सेट करें',sub:'लगभग पाँच छोटे चरण। सभी सेटिंग बाद में बदली जा सकती हैं।',done:'पूर्ण',mark:'पूर्ण चिह्नित करें'}:{eyebrow:'Getting started',title:'Set up Junior Lawyer',sub:'Five short steps. Everything can be changed later.',done:'Complete',mark:'Mark complete'},[preferences.ui_language]);

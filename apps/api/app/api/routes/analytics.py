@@ -18,6 +18,7 @@ from app.schemas.analytics import (
     MatterHealthRead,
     MetricDefinitionRead,
     QualitySummary,
+    RiskRebuildSummary,
     RiskSignalRead,
     RiskSignalUpdate,
     SnapshotCreate,
@@ -91,9 +92,9 @@ async def snapshots(limit: int = Query(50, ge=1, le=250), actor: ActorContext = 
     return [SnapshotRead.model_validate(row) for row in await service.list_snapshots(db, actor, limit)]
 
 
-@router.post("/risks/rebuild")
+@router.post("/risks/rebuild", response_model=RiskRebuildSummary)
 async def rebuild_risks(actor: ActorContext = Depends(require_actor), db: AsyncSession = Depends(get_db)):
-    return await service.rebuild_risk_signals(db, actor)
+    return RiskRebuildSummary.model_validate(await service.rebuild_risk_signals(db, actor))
 
 
 @router.get("/risks", response_model=list[RiskSignalRead])

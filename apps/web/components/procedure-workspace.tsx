@@ -218,7 +218,7 @@ export function ProcedureWorkspace({
           {procedures.length ? procedures.map((procedure) => (
             <div className="procedure-workflow" key={procedure.id}>
               <div className="procedure-workflow-head"><strong>{procedure.pack_name}</strong><span>v{procedure.pack_version} · {procedure.status}</span></div>
-              {procedure.compliances.map((item, index) => (
+              {(procedure.compliances ?? []).map((item, index) => (
                 <button className={`compliance-row ${item.status}`} key={item.id} type="button" onClick={() => toggleCompliance(procedure, item.id, item.status)} disabled={busy}>
                   <span className="compliance-index">{String(index + 1).padStart(2, "0")}</span>
                   <span><strong>{item.title}</strong><small>{Array.isArray(item.metadata_json.checklist) ? (item.metadata_json.checklist as string[]).slice(0, 2).join(" · ") : "Workflow step"}</small></span>
@@ -249,7 +249,7 @@ export function ProcedureWorkspace({
           <article className="hearing-row" key={hearing.id}>
             <div className="hearing-date"><strong>{formatDay(hearing.scheduled_for)}</strong><span>{new Intl.DateTimeFormat("en-IN", { hour: "2-digit", minute: "2-digit" }).format(new Date(hearing.scheduled_for))}</span></div>
             <div className="hearing-main"><span>{hearing.court_name ?? selectedMatter?.court_name ?? "Court"}</span><strong>{hearing.purpose ?? "Hearing"}</strong><small>{hearing.judge_or_bench ?? "Bench not recorded"}</small></div>
-            <div className="hearing-direction-count"><strong>{hearing.directions.filter((item) => item.status === "open").length}</strong><span>open directions</span></div>
+            <div className="hearing-direction-count"><strong>{(hearing.directions ?? []).filter((item) => item.status === "open").length}</strong><span>open directions</span></div>
             <span className={`hearing-status ${hearing.status}`}>{human(hearing.status)}</span>
           </article>
         ))}</div> : <div className="empty-state compact"><div className="empty-state-title">No hearings recorded</div><div className="empty-state-copy">Add the next court date above. Orders can later be processed for reviewable directions.</div></div>}

@@ -12,16 +12,21 @@
 import { cookies } from "next/headers";
 
 import type {
+  AIProviderStatusRead,
+  AIRunRead,
+  ContractCatalogItem as ContractCatalogItemSchema,
   ContractListItem as ContractListItemSchema,
   ContractReviewListItem as ContractReviewListItemSchema,
   CorpusStatsRead,
   ContradictionRead,
+  DraftCatalogItem,
   DocumentRead,
   EvidenceMatrixRead,
   FactRead,
   IntelligenceSummaryRead,
   LegalDraftListItem,
   MatterRead,
+  ProcedureAgendaItem,
   ProcedurePackRead,
   ProcedureStats as ProcedureStatsSchema,
   ReviewItemRead,
@@ -46,7 +51,7 @@ export type ResearchStats = CorpusStatsRead;
 export type ProcedurePack = ProcedurePackRead;
 export type ProcedureStats = ProcedureStatsSchema;
 export type ContractListItem = ContractListItemSchema;
-export type ContractCatalogItem = Record<string, unknown>;
+export type ContractCatalogItem = ContractCatalogItemSchema;
 export type ContractReviewListItem = ContractReviewListItemSchema;
 export type { LegalDraftListItem };
 
@@ -118,15 +123,15 @@ export function getResearchStats() {
 }
 
 export function getAIProviderStatus() {
-  return get<Record<string, unknown> | null>("/ai/providers", null);
+  return get<AIProviderStatusRead | null>("/ai/providers", null);
 }
 
 export function getAIRuns() {
-  return get<Record<string, unknown>[]>("/ai/runs", []);
+  return get<AIRunRead[]>("/ai/runs", []);
 }
 
 export function getAgenda(days = 7) {
-  return get<Record<string, unknown>[]>(`/procedure/agenda?days=${days}`, []);
+  return get<ProcedureAgendaItem[]>(`/procedure/agenda?days=${days}`, []);
 }
 
 export function getProcedurePacks() {
@@ -154,5 +159,5 @@ export function getDrafts(matterId?: string) {
 }
 
 export function getDraftCatalog() {
-  return get<Record<string, unknown>[]>("/drafting/catalog", []);
+  return get<DraftCatalogItem[]>("/drafting/catalog", []);
 }

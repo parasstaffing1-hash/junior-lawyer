@@ -3,12 +3,13 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Body, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
 from app.schemas.case_lookup import (
     CaseCandidateRead,
+    CaseWorkspaceResult,
     CaseLookupPreferenceRead,
     CaseLookupPreferenceUpdate,
     CaseLookupRequest,
@@ -16,6 +17,7 @@ from app.schemas.case_lookup import (
     CaseRecordData,
     LinkCaseMatterRequest,
     OfficialCaseImportRequest,
+    SavedCaseChange,
     SavedCaseDetailRead,
     SavedCaseSummaryRead,
 )
@@ -65,15 +67,15 @@ async def import_official(payload: OfficialCaseImportRequest, actor: ActorContex
         id=row.id,
         matter_id=row.matter_id,
         record=CaseRecordData.model_validate(record),
-        changes=[{
-            "id": str(change.id),
-            "field": change.field_name,
-            "change_type": change.change_type.value if hasattr(change.change_type, "value") else change.change_type,
-            "old": change.old_value_json,
-            "new": change.new_value_json,
-            "summary": change.summary,
-            "detected_at": change.detected_at,
-        } for change in changes],
+        changes=[SavedCaseChange(
+            id=str(change.id),
+            field=change.field_name,
+            change_type=change.change_type.value if hasattr(change.change_type, "value") else change.change_type,
+            old=change.old_value_json,
+            new=change.new_value_json,
+            summary=change.summary,
+            detected_at=change.detected_at,
+        ) for change in changes],
         stale=bool(row.stale_after and row.stale_after < datetime.now(UTC)),
     )
 
@@ -95,20 +97,20 @@ async def saved_detail(saved_case_id: UUID, actor: ActorContext = Depends(requir
         id=row.id,
         matter_id=row.matter_id,
         record=CaseRecordData.model_validate(record),
-        changes=[{
-            "id": str(change.id),
-            "field": change.field_name,
-            "change_type": change.change_type.value if hasattr(change.change_type, "value") else change.change_type,
-            "old": change.old_value_json,
-            "new": change.new_value_json,
-            "summary": change.summary,
-            "detected_at": change.detected_at,
-        } for change in changes],
+        changes=[SavedCaseChange(
+            id=str(change.id),
+            field=change.field_name,
+            change_type=change.change_type.value if hasattr(change.change_type, "value") else change.change_type,
+            old=change.old_value_json,
+            new=change.new_value_json,
+            summary=change.summary,
+            detected_at=change.detected_at,
+        ) for change in changes],
         stale=bool(row.stale_after and row.stale_after < datetime.now(UTC)),
     )
 
 
-@router.post("/saved/{saved_case_id}/workspace")
-async def workspace(saved_case_id: UUID, payload: LinkCaseMatterRequest, actor: ActorContext = Depends(require_actor), db: AsyncSession = Depends(get_db)):
+@router.post("/saved/{saved_case_id}/workspace", response_model=CaseWorkspaceResult)
+async def workspace(saved_case_id: UUID, actor: ActorContext = Depends(require_actor), db: AsyncSession = Depends(get_db), payload: LinkCaseMatterRequest = Body(default_factory=LinkCaseMatterRequest)):
     matter = await service.link_or_create_matter(db, actor, saved_case_id, payload.matter_id, payload.create_workspace)
-    return {"matter_id": str(matter.id), "title": matter.title}
+    return CaseWorkspaceResult(matter_id=str(matter.id), title=matter.title)

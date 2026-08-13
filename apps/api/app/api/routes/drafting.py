@@ -6,7 +6,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
 from app.schemas.drafting import (
+    DraftCatalogItem,
     DraftContextPreview,
+    DraftQuestion,
+    DraftQuestionnaire,
+    DraftSectionDefinition,
+    TemplateSeedResult,
     DraftFindingUpdate,
     DraftRenderResult,
     DraftSectionUpdate,
@@ -23,30 +28,30 @@ from app.services.drafting.catalog import DRAFT_DEFINITIONS, get_draft_catalog
 router = APIRouter(prefix="/drafting", tags=["legal-drafting"])
 
 
-@router.get("/catalog")
-async def drafting_catalog() -> list[dict]:
-    return get_draft_catalog()
+@router.get("/catalog", response_model=list[DraftCatalogItem])
+async def drafting_catalog() -> list[DraftCatalogItem]:
+    return [DraftCatalogItem.model_validate(item) for item in get_draft_catalog()]
 
 
-@router.get("/questionnaire/{draft_type}")
-async def drafting_questionnaire(draft_type: str) -> dict:
+@router.get("/questionnaire/{draft_type}", response_model=DraftQuestionnaire)
+async def drafting_questionnaire(draft_type: str) -> DraftQuestionnaire:
     definition = DRAFT_DEFINITIONS.get(draft_type)
     if not definition:
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Unknown legal draft type")
-    return {
-        "draft_type": draft_type,
-        "name_en": definition["name_en"],
-        "name_hi": definition["name_hi"],
-        "description": definition["description"],
-        "questions": definition["questions"],
-        "sections": definition["sections"],
-    }
+    return DraftQuestionnaire(
+        draft_type=draft_type,
+        name_en=definition["name_en"],
+        name_hi=definition["name_hi"],
+        description=definition["description"],
+        questions=[DraftQuestion.model_validate(item) for item in definition["questions"]],
+        sections=[DraftSectionDefinition.model_validate(item) for item in definition["sections"]],
+    )
 
 
-@router.post("/templates/seed")
-async def seed_templates(db: AsyncSession = Depends(get_db)) -> dict[str, int]:
-    return {"created": await service.seed_templates(db)}
+@router.post("/templates/seed", response_model=TemplateSeedResult)
+async def seed_templates(db: AsyncSession = Depends(get_db)) -> TemplateSeedResult:
+    return TemplateSeedResult(created=await service.seed_templates(db))
 
 
 @router.get("/templates", response_model=list[DraftTemplateRead])
