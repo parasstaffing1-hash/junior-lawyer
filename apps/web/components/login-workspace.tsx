@@ -10,6 +10,10 @@ export function LoginWorkspace() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [organizationSlug, setOrganizationSlug] = useState("");
+  const [mfaCode, setMfaCode] = useState("");
+  // Only revealed after the server says this account has MFA, so accounts
+  // without it never see a field they cannot fill in.
+  const [mfaRequired, setMfaRequired] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [setupOpen, setSetupOpen] = useState(false);
@@ -22,11 +26,23 @@ export function LoginWorkspace() {
     event.preventDefault();
     setBusy(true); setError("");
     try {
-      await securityLogin({ email, password, organization_slug: organizationSlug || undefined });
+      await securityLogin({
+        email,
+        password,
+        organization_slug: organizationSlug || undefined,
+        mfa_code: mfaCode.trim() || undefined,
+      });
       router.push("/matters");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to sign in");
+      const message = err instanceof Error ? err.message : "Unable to sign in";
+      if (message.includes("Multi-factor code required")) {
+        setMfaRequired(true);
+        setError("Enter the 6-digit code from your authenticator app.");
+      } else {
+        if (message.includes("multi-factor")) setMfaCode("");
+        setError(message);
+      }
     } finally { setBusy(false); }
   }
 
@@ -67,6 +83,19 @@ export function LoginWorkspace() {
           <label>Email<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required /></label>
           <label>Password<input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required /></label>
           <label>Organization slug <span>optional</span><input value={organizationSlug} onChange={(e) => setOrganizationSlug(e.target.value)} placeholder="firm-name" /></label>
+          {mfaRequired ? (
+            <label>Authenticator code <span>or a recovery code</span>
+              <input
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value)}
+                autoComplete="one-time-code"
+                inputMode="text"
+                placeholder="123456"
+                autoFocus
+                required
+              />
+            </label>
+          ) : null}
           {error ? <div className="auth-error">{error}</div> : null}
           {setupMessage ? <div className="success-panel">{setupMessage}</div> : null}
           <button className="primary-button auth-submit" disabled={busy} type="submit">{busy ? "Signing in…" : "Sign in securely"}</button>

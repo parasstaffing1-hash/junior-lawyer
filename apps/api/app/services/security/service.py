@@ -36,6 +36,8 @@ from app.models.security import (
     RetentionResourceType,
     SecurityAuditEntry,
     SecurityUser,
+    UserMFACredential,
+    UserRecoveryCode,
     UserSession,
     UserStatus,
 )
@@ -62,6 +64,7 @@ from app.services.security.crypto import (
     privacy_hash,
 )
 from app.services.security.permissions import SECURITY_MANAGER_ROLES, decide_matter_access
+from app.services.security import totp
 
 
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
@@ -186,6 +189,7 @@ async def login(
     email: str,
     password: str,
     organization_slug: str | None = None,
+    mfa_code: str | None = None,
     ip_address: str | None = None,
     user_agent: str | None = None,
 ) -> tuple[ActorContext, Organization, str, str, UserSession]:
@@ -227,6 +231,42 @@ async def login(
         await db.commit()
         raise HTTPException(status_code=401, detail="Invalid email, password, or organization")
 
+    credential = await db.scalar(
+        select(UserMFACredential).where(
+            UserMFACredential.user_id == user.id,
+            UserMFACredential.confirmed_at.is_not(None),
+        )
+    )
+    auth_method = "password"
+    if credential:
+        if not mfa_code:
+            # The password was right, so say precisely what is missing rather
+            # than failing as if the credentials were wrong.
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Multi-factor code required",
+                headers={"X-MFA-Required": "totp"},
+            )
+        if not await _consume_mfa_code(db, user, credential, mfa_code, now=now):
+            await append_audit_event(
+                db,
+                organization_id=organization.id,
+                actor=None,
+                action="auth.mfa",
+                resource_type="session",
+                outcome=AuditOutcome.FAILURE,
+                reason="Invalid multi-factor code",
+                ip_address=ip_address,
+                user_agent=user_agent,
+                metadata={"email_hash": privacy_hash(normalized)},
+            )
+            await db.commit()
+            raise HTTPException(status_code=401, detail="Invalid multi-factor code")
+        auth_method = "totp"
+    elif user.mfa_enrolled:
+        # Flag and credential disagree: trust the credential and clear the flag.
+        user.mfa_enrolled = False
+
     user.failed_login_attempts = 0
     user.locked_until = None
     user.last_login_at = now
@@ -246,6 +286,7 @@ async def login(
         last_seen_at=now,
         ip_hash=None,
         user_agent_hash=None,
+        auth_method=auth_method,
     )
     session.ip_hash = privacy_hash(ip_address)
     session.user_agent_hash = privacy_hash(user_agent)
@@ -858,3 +899,158 @@ async def adopt_legacy_matter(db: AsyncSession, actor: ActorContext, matter_id: 
     await db.commit()
     await db.refresh(matter)
     return matter
+
+
+async def _consume_mfa_code(
+    db: AsyncSession,
+    user: SecurityUser,
+    credential: UserMFACredential,
+    code: str,
+    *,
+    now: datetime,
+) -> bool:
+    """Verify a TOTP code, or spend a recovery code. Either one is single-use."""
+    counter = totp.verify(
+        credential.secret,
+        code,
+        last_used_counter=credential.last_used_counter,
+    )
+    if counter is not None:
+        credential.last_used_counter = counter
+        credential.last_used_at = now
+        return True
+
+    candidate = (code or "").strip().lower()
+    if not candidate:
+        return False
+    recovery = await db.scalar(
+        select(UserRecoveryCode).where(
+            UserRecoveryCode.user_id == user.id,
+            UserRecoveryCode.code_hash == token_hash(candidate),
+            UserRecoveryCode.used_at.is_(None),
+        )
+    )
+    if not recovery:
+        return False
+    recovery.used_at = now
+    return True
+
+
+async def start_mfa_enrolment(
+    db: AsyncSession, actor: ActorContext
+) -> tuple[UserMFACredential, str]:
+    """Create (or replace) an unconfirmed authenticator and return its URI.
+
+    Re-enrolling while a confirmed credential exists is allowed — the new secret
+    only takes effect once confirmed, so a half-finished enrolment is harmless.
+    """
+    user = await db.get(SecurityUser, actor.user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    existing = await db.scalar(
+        select(UserMFACredential).where(UserMFACredential.user_id == user.id)
+    )
+    secret = totp.new_secret()
+    if existing and existing.confirmed_at is None:
+        existing.secret = secret
+        existing.last_used_counter = None
+        credential = existing
+    elif existing:
+        raise HTTPException(
+            status_code=409,
+            detail="Multi-factor authentication is already enabled; disable it before re-enrolling",
+        )
+    else:
+        credential = UserMFACredential(user_id=user.id, secret=secret)
+        db.add(credential)
+    await db.flush()
+    uri = totp.provisioning_uri(secret, account=user.email, issuer=settings.app_name)
+    await db.commit()
+    await db.refresh(credential)
+    return credential, uri
+
+
+async def confirm_mfa_enrolment(
+    db: AsyncSession, actor: ActorContext, code: str
+) -> list[str]:
+    """Prove possession of the authenticator, then issue recovery codes."""
+    credential = await db.scalar(
+        select(UserMFACredential).where(UserMFACredential.user_id == actor.user_id)
+    )
+    if not credential:
+        raise HTTPException(status_code=404, detail="Start enrolment before confirming it")
+    if credential.confirmed_at is not None:
+        raise HTTPException(status_code=409, detail="Multi-factor authentication is already enabled")
+    counter = totp.verify(credential.secret, code, last_used_counter=credential.last_used_counter)
+    if counter is None:
+        raise HTTPException(status_code=400, detail="That code is not valid")
+    now = _now()
+    credential.confirmed_at = now
+    credential.last_used_counter = counter
+    credential.last_used_at = now
+
+    user = await db.get(SecurityUser, actor.user_id)
+    if user:
+        user.mfa_enrolled = True
+    await db.execute(
+        UserRecoveryCode.__table__.delete().where(UserRecoveryCode.user_id == actor.user_id)
+    )
+    codes = totp.new_recovery_codes()
+    for value in codes:
+        db.add(UserRecoveryCode(user_id=actor.user_id, code_hash=token_hash(value)))
+    await append_audit_event(
+        db,
+        organization_id=actor.organization_id,
+        actor=actor,
+        action="auth.mfa.enrolled",
+        resource_type="user",
+        resource_id=str(actor.user_id),
+        outcome=AuditOutcome.SUCCESS,
+    )
+    await db.commit()
+    # Returned once and never again — only their hashes are stored.
+    return codes
+
+
+async def disable_mfa(db: AsyncSession, actor: ActorContext, *, password: str) -> None:
+    """Turn MFA off. Requires the password, so a borrowed session cannot do it."""
+    user = await db.get(SecurityUser, actor.user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not verify_password(password, user.password_hash):
+        raise HTTPException(status_code=403, detail="Password is incorrect")
+    await db.execute(
+        UserMFACredential.__table__.delete().where(UserMFACredential.user_id == user.id)
+    )
+    await db.execute(
+        UserRecoveryCode.__table__.delete().where(UserRecoveryCode.user_id == user.id)
+    )
+    user.mfa_enrolled = False
+    await append_audit_event(
+        db,
+        organization_id=actor.organization_id,
+        actor=actor,
+        action="auth.mfa.disabled",
+        resource_type="user",
+        resource_id=str(user.id),
+        outcome=AuditOutcome.SUCCESS,
+    )
+    await db.commit()
+
+
+async def mfa_status(db: AsyncSession, actor: ActorContext) -> dict:
+    credential = await db.scalar(
+        select(UserMFACredential).where(UserMFACredential.user_id == actor.user_id)
+    )
+    remaining = await db.scalar(
+        select(func.count())
+        .select_from(UserRecoveryCode)
+        .where(UserRecoveryCode.user_id == actor.user_id, UserRecoveryCode.used_at.is_(None))
+    )
+    return {
+        "enabled": bool(credential and credential.confirmed_at),
+        "enrolment_started": bool(credential),
+        "confirmed_at": credential.confirmed_at if credential else None,
+        "last_used_at": credential.last_used_at if credential else None,
+        "recovery_codes_remaining": int(remaining or 0),
+    }

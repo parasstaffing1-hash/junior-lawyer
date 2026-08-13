@@ -35,6 +35,11 @@ from app.schemas.security import (
     LegalHoldRead,
     LoginRequest,
     LoginResponse,
+    MFAConfirmRequest,
+    MFAConfirmResponse,
+    MFADisableRequest,
+    MFAEnrolmentStart,
+    MFAStatusRead,
     MatterGrantCreate,
     MatterGrantRead,
     MatterSecurityProfileRead,
@@ -49,6 +54,7 @@ from app.schemas.security import (
     SecurityPolicyUpdate,
     UserCreateRequest,
 )
+from app.services.security import totp
 from app.services.security.context import ActorContext
 from app.services.security.dependencies import require_actor
 from app.services.security.permissions import (
@@ -92,6 +98,7 @@ async def login(
         email=payload.email,
         password=payload.password,
         organization_slug=payload.organization_slug,
+        mfa_code=payload.mfa_code,
         ip_address=request.client.host if request.client else None,
         user_agent=request.headers.get("user-agent"),
     )
@@ -118,6 +125,46 @@ async def login(
         expires_at=session.expires_at,
         absolute_expires_at=session.absolute_expires_at,
     )
+
+
+@router.get("/auth/mfa", response_model=MFAStatusRead)
+async def mfa_state(
+    actor: ActorContext = Depends(require_actor), db: AsyncSession = Depends(get_db)
+) -> MFAStatusRead:
+    return MFAStatusRead.model_validate(await service.mfa_status(db, actor))
+
+
+@router.post("/auth/mfa/enrol", response_model=MFAEnrolmentStart, status_code=201)
+async def mfa_enrol(
+    actor: ActorContext = Depends(require_actor), db: AsyncSession = Depends(get_db)
+) -> MFAEnrolmentStart:
+    credential, uri = await service.start_mfa_enrolment(db, actor)
+    return MFAEnrolmentStart(
+        secret=credential.secret,
+        provisioning_uri=uri,
+        digits=totp.DIGITS,
+        period_seconds=totp.PERIOD_SECONDS,
+    )
+
+
+@router.post("/auth/mfa/confirm", response_model=MFAConfirmResponse)
+async def mfa_confirm(
+    payload: MFAConfirmRequest,
+    actor: ActorContext = Depends(require_actor),
+    db: AsyncSession = Depends(get_db),
+) -> MFAConfirmResponse:
+    codes = await service.confirm_mfa_enrolment(db, actor, payload.code)
+    return MFAConfirmResponse(enabled=True, recovery_codes=codes)
+
+
+@router.post("/auth/mfa/disable", response_model=MFAStatusRead)
+async def mfa_disable(
+    payload: MFADisableRequest,
+    actor: ActorContext = Depends(require_actor),
+    db: AsyncSession = Depends(get_db),
+) -> MFAStatusRead:
+    await service.disable_mfa(db, actor, password=payload.password)
+    return MFAStatusRead.model_validate(await service.mfa_status(db, actor))
 
 
 @router.post("/auth/logout", status_code=status.HTTP_204_NO_CONTENT)

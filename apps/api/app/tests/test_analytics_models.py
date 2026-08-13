@@ -19,7 +19,7 @@ def test_batch17_analytics_tables_registered():
         "analytics_goal_progress",
     }
     assert expected <= set(Base.metadata.tables)
-    assert len(Base.metadata.tables) == 250
+    assert len(Base.metadata.tables) == 252
 
 
 def test_batch17_schema_creates_on_sqlite():
@@ -28,7 +28,7 @@ def test_batch17_schema_creates_on_sqlite():
     names = set(engine.dialect.get_table_names(engine.connect()))
     assert "analytics_snapshots" in names
     assert "analytics_risk_signals" in names
-    assert len(names) == 250
+    assert len(names) == 252
 
 
 def test_batch17_enum_values_are_stable():

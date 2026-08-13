@@ -10,9 +10,10 @@ def test_security_schema_tables_are_registered():
         "organization_security_policies", "user_sessions", "matter_security_profiles",
         "matter_access_grants", "document_access_grants", "audit_chain_heads",
         "security_audit_entries", "retention_policies", "legal_holds", "deletion_requests",
+        "user_mfa_credentials", "user_recovery_codes",
     }
     assert expected.issubset(set(Base.metadata.tables))
-    assert len(Base.metadata.tables) == 250
+    assert len(Base.metadata.tables) == 252
 
 
 def test_role_baseline_is_least_privilege_for_non_legal_roles():

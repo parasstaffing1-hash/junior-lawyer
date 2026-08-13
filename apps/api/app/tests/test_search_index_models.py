@@ -11,7 +11,7 @@ def test_batch19_search_index_tables_registered():
         "search_duplicate_relations", "search_index_health_snapshots", "search_performance_preferences",
     }
     assert expected <= set(Base.metadata.tables)
-    assert len(Base.metadata.tables) == 250
+    assert len(Base.metadata.tables) == 252
 
 
 def test_batch19_schema_creates_on_sqlite():
@@ -21,4 +21,4 @@ def test_batch19_schema_creates_on_sqlite():
     assert SearchIndexEntry.__tablename__ in names
     assert SearchIndexJob.__tablename__ in names
     assert SearchPerformancePreference.__tablename__ in names
-    assert len(names) == 250
+    assert len(names) == 252

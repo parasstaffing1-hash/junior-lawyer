@@ -212,6 +212,42 @@ class OrganizationSecurityPolicy(Base, UUIDMixin, TimestampMixin):
     organization = relationship("Organization", back_populates="security_policy")
 
 
+class UserMFACredential(Base, UUIDMixin, TimestampMixin):
+    """A user's enrolled authenticator.
+
+    The row exists from the moment enrolment starts; `confirmed_at` is what
+    makes it binding, so an abandoned enrolment can never lock anyone out.
+    """
+
+    __tablename__ = "user_mfa_credentials"
+    __table_args__ = (UniqueConstraint("user_id", name="uq_mfa_credential_user"),)
+
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("security_users.id", ondelete="CASCADE"), index=True
+    )
+    secret: Mapped[str] = mapped_column(String(64))
+    label: Mapped[str] = mapped_column(String(120), default="Authenticator app")
+    confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Highest TOTP counter already spent, so a code cannot be replayed inside
+    # the window it was issued for.
+    last_used_counter: Mapped[int | None] = mapped_column(Integer)
+
+    user = relationship("SecurityUser", lazy="selectin")
+
+
+class UserRecoveryCode(Base, UUIDMixin, TimestampMixin):
+    """Single-use fallback for a lost authenticator. Stored hashed, never raw."""
+
+    __tablename__ = "user_recovery_codes"
+
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("security_users.id", ondelete="CASCADE"), index=True
+    )
+    code_hash: Mapped[str] = mapped_column(String(64), index=True)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
 class UserSession(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "user_sessions"
 

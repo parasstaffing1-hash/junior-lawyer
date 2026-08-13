@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { LockIcon, ShieldIcon, UsersIcon } from "@/components/icons";
 import { MatterSecurityPanel } from "@/components/matter-security-panel";
+import { MFAPanel } from "@/components/mfa-panel";
 import {
   createSecurityMember,
   getSecurityAudit,
@@ -89,6 +90,7 @@ export function SecurityWorkspace() {
   return (
     <div className="security-stack">
       {error ? <div className="notice-panel">{error}</div> : null}
+      <MFAPanel />
       <section className="security-summary card">
         <div>
           <div className="eyebrow">{overview.organization.slug}</div>

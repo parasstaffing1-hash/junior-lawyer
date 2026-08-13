@@ -4610,6 +4610,7 @@ export interface LoginRequest {
   email: string;
   password: string;
   organization_slug?: string | null;
+  mfa_code?: string | null;
 }
 
 export interface LoginResponse {
@@ -4618,6 +4619,34 @@ export interface LoginResponse {
   csrf_token: string;
   expires_at: string;
   absolute_expires_at: string;
+}
+
+export interface MFAConfirmRequest {
+  code: string;
+}
+
+export interface MFAConfirmResponse {
+  enabled: boolean;
+  recovery_codes: string[];
+}
+
+export interface MFADisableRequest {
+  password: string;
+}
+
+export interface MFAEnrolmentStart {
+  secret: string;
+  provisioning_uri: string;
+  digits: number;
+  period_seconds: number;
+}
+
+export interface MFAStatusRead {
+  enabled: boolean;
+  enrolment_started: boolean;
+  confirmed_at?: string | null;
+  last_used_at?: string | null;
+  recovery_codes_remaining: number;
 }
 
 export type MatchBasis = "heading" | "body" | "heading_and_body";

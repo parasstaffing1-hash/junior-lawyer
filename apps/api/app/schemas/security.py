@@ -84,6 +84,37 @@ class LoginRequest(BaseModel):
     email: str = Field(min_length=3, max_length=320)
     password: str = Field(min_length=1, max_length=1024)
     organization_slug: str | None = Field(default=None, max_length=120)
+    # A TOTP code or a recovery code; only required once MFA is confirmed.
+    mfa_code: str | None = Field(default=None, max_length=64)
+
+
+class MFAStatusRead(BaseModel):
+    enabled: bool
+    enrolment_started: bool
+    confirmed_at: datetime | None = None
+    last_used_at: datetime | None = None
+    recovery_codes_remaining: int
+
+
+class MFAEnrolmentStart(BaseModel):
+    secret: str
+    provisioning_uri: str
+    digits: int
+    period_seconds: int
+
+
+class MFAConfirmRequest(BaseModel):
+    code: str = Field(min_length=6, max_length=10)
+
+
+class MFAConfirmResponse(BaseModel):
+    enabled: bool
+    # Shown exactly once; only their hashes are kept.
+    recovery_codes: list[str]
+
+
+class MFADisableRequest(BaseModel):
+    password: str = Field(min_length=1, max_length=1024)
 
 
 class LoginResponse(BaseModel):

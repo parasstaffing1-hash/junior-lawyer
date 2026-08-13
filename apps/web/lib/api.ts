@@ -40,9 +40,19 @@ export function securityLogin(payload: {
   email: string;
   password: string;
   organization_slug?: string;
+  /** TOTP or recovery code; only required once the account has MFA enabled. */
+  mfa_code?: string;
 }): Promise<LoginResult> {
   return apiFetch<LoginResult>("/security/auth/login", jsonBody(payload));
 }
+
+export type MFAStatus = G.MFAStatusRead;
+export type MFAEnrolmentStart = G.MFAEnrolmentStart;
+
+export const getMFAStatus = (): Promise<G.MFAStatusRead> => apiFetch("/security/auth/mfa");
+export const startMFAEnrolment = (): Promise<G.MFAEnrolmentStart> => apiFetch("/security/auth/mfa/enrol", { method: "POST" });
+export const confirmMFAEnrolment = (code: string): Promise<G.MFAConfirmResponse> => apiFetch("/security/auth/mfa/confirm", jsonBody({ code }));
+export const disableMFA = (password: string): Promise<G.MFAStatusRead> => apiFetch("/security/auth/mfa/disable", jsonBody({ password }));
 
 export function securityLogout(): Promise<void> {
   return apiFetch<void>("/security/auth/logout", { method: "POST" });
