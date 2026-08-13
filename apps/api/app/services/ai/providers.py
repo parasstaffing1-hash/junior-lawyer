@@ -11,6 +11,15 @@ from typing import Protocol
 from app.core.config import Settings
 
 
+class _TransientProviderError(RuntimeError):
+    """An upstream failure worth retrying on a different credential."""
+
+    def __init__(self, status: int, detail: str) -> None:
+        super().__init__(f"Provider HTTP {status}: {detail}")
+        self.status = status
+        self.detail = detail
+
+
 @dataclass(slots=True)
 class ProviderResponse:
     content: str
@@ -42,14 +51,59 @@ class OpenAICompatibleProvider:
         model_name: str,
         api_key: str | None,
         timeout_seconds: int = 90,
+        fallback_api_keys: tuple[str, ...] = (),
     ) -> None:
         self.key = key
         self.base_url = base_url.rstrip("/")
         self.model_name = model_name
         self.api_key = api_key
         self.timeout_seconds = timeout_seconds
+        # Additional credentials, tried in order when the first is rate-limited
+        # or the upstream is briefly overloaded. Free tiers meter per key, so a
+        # second key is the difference between a stalled workspace and a slow
+        # one.
+        self.fallback_api_keys = tuple(fallback_api_keys)
+
+    @property
+    def _credentials(self) -> tuple[str | None, ...]:
+        seen: list[str | None] = [self.api_key]
+        for candidate in self.fallback_api_keys:
+            if candidate and candidate not in seen:
+                seen.append(candidate)
+        return tuple(seen)
+
+    # Statuses worth retrying on a different credential: quota exhaustion and a
+    # briefly overloaded upstream. A 401/403/404 is a configuration error and
+    # retrying it with another key only multiplies the same failure.
+    RETRYABLE_STATUSES = frozenset({408, 429, 500, 502, 503, 504})
 
     def _sync_complete(self, *, system: str, user: str, max_output_tokens: int) -> ProviderResponse:
+        attempts: list[str] = []
+        for index, credential in enumerate(self._credentials):
+            try:
+                return self._call_once(
+                    system=system,
+                    user=user,
+                    max_output_tokens=max_output_tokens,
+                    api_key=credential,
+                    credential_index=index,
+                )
+            except _TransientProviderError as exc:
+                attempts.append(f"credential {index}: HTTP {exc.status}")
+                continue
+        raise RuntimeError(
+            "Every configured credential failed with a retryable error — " + "; ".join(attempts)
+        )
+
+    def _call_once(
+        self,
+        *,
+        system: str,
+        user: str,
+        max_output_tokens: int,
+        api_key: str | None,
+        credential_index: int,
+    ) -> ProviderResponse:
         body = json.dumps(
             {
                 "model": self.model_name,
@@ -62,8 +116,8 @@ class OpenAICompatibleProvider:
             }
         ).encode("utf-8")
         headers = {"Content-Type": "application/json"}
-        if self.api_key:
-            headers["Authorization"] = f"Bearer {self.api_key}"
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
         request = urllib.request.Request(
             f"{self.base_url}/chat/completions", data=body, headers=headers, method="POST"
         )
@@ -73,15 +127,37 @@ class OpenAICompatibleProvider:
                 payload = json.loads(response.read().decode("utf-8"))
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="replace")[:1000]
+            if exc.code in self.RETRYABLE_STATUSES:
+                raise _TransientProviderError(exc.code, detail) from exc
             raise RuntimeError(f"Provider HTTP {exc.code}: {detail}") from exc
         except urllib.error.URLError as exc:
             raise RuntimeError(f"Provider connection failed: {exc.reason}") from exc
         latency_ms = int((time.perf_counter() - started) * 1000)
 
-        try:
-            content = payload["choices"][0]["message"]["content"]
-        except (KeyError, IndexError, TypeError) as exc:
-            raise RuntimeError("Provider returned an unsupported chat-completion payload") from exc
+        choices = payload.get("choices") or []
+        if not choices:
+            raise RuntimeError("Provider returned no choices in the chat-completion payload")
+        choice = choices[0] or {}
+        message = choice.get("message") or {}
+        content = message.get("content")
+        finish_reason = choice.get("finish_reason")
+        if not content:
+            # Reasoning models spend the output budget on hidden thinking tokens
+            # before emitting anything visible, so a truncated answer arrives as
+            # a message with no content at all. Say that plainly instead of
+            # calling a well-formed response unsupported.
+            if finish_reason == "length":
+                raise RuntimeError(
+                    "Provider stopped at the output-token limit before returning any text. "
+                    "Raise max_output_tokens, or choose a model that does not spend the "
+                    "budget on hidden reasoning tokens."
+                )
+            if finish_reason == "content_filter":
+                raise RuntimeError("Provider blocked the response with its content filter.")
+            raise RuntimeError(
+                "Provider returned an empty chat-completion payload"
+                + (f" (finish_reason={finish_reason})" if finish_reason else "")
+            )
         usage = payload.get("usage") or {}
         return ProviderResponse(
             content=str(content).strip(),
@@ -90,7 +166,11 @@ class OpenAICompatibleProvider:
             output_tokens=_int_or_none(usage.get("completion_tokens")),
             total_tokens=_int_or_none(usage.get("total_tokens")),
             latency_ms=latency_ms,
-            metadata={"provider_request_id": payload.get("id")},
+            metadata={
+                "provider_request_id": payload.get("id"),
+                "credential_index": credential_index,
+                "finish_reason": finish_reason,
+            },
         )
 
     async def complete(self, *, system: str, user: str, max_output_tokens: int) -> ProviderResponse:
@@ -157,6 +237,7 @@ class ProviderRegistry:
                 model_name=settings.ai_remote_model,
                 api_key=settings.ai_remote_api_key,
                 timeout_seconds=settings.ai_request_timeout_seconds,
+                fallback_api_keys=settings.ai_remote_fallback_api_keys,
             )
         return cls(providers)
 

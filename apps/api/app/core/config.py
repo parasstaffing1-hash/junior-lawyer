@@ -66,6 +66,11 @@ class Settings(BaseSettings):
     ai_remote_enabled: bool = False
     ai_remote_base_url: str | None = None
     ai_remote_api_key: str | None = None
+    # Comma-separated spare credentials for the same endpoint. Free tiers meter
+    # per key, so a second key turns a quota stall into a slower answer rather
+    # than a failed one. Never logged; only the index of the key that served a
+    # request is recorded.
+    ai_remote_api_key_fallbacks: str | None = None
     ai_remote_model: str | None = None
     ai_default_max_sources: int = 12
     ai_default_max_input_tokens: int = 6000
@@ -105,6 +110,12 @@ class Settings(BaseSettings):
     portal_invite_hours: int = 168
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=False, extra="ignore")
+
+    @property
+    def ai_remote_fallback_api_keys(self) -> tuple[str, ...]:
+        """Spare remote credentials, parsed from the comma-separated setting."""
+        raw = self.ai_remote_api_key_fallbacks or ""
+        return tuple(part.strip() for part in raw.split(",") if part.strip())
 
     @field_validator("frontend_origins", mode="before")
     @classmethod
