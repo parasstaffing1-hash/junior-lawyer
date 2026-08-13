@@ -30,8 +30,8 @@ function listFromDetail(detail: ContractReviewDetail): ContractReviewListItem {
     status: detail.status,
     language: detail.language,
     health_score: detail.health_score,
-    clause_count: detail.clauses.length,
-    open_high_risks: detail.findings.filter((item) => item.level === "high" && item.status === "open").length,
+    clause_count: (detail.clauses ?? []).length,
+    open_high_risks: (detail.findings ?? []).filter((item) => item.level === "high" && item.status === "open").length,
     source_filename: detail.source_filename,
     updated_at: detail.updated_at,
   };
@@ -97,7 +97,7 @@ export function ContractReviewWorkspace({
       setSelected(detail);
       sync(detail);
       setUploadOpen(false);
-      setMessage(`Reviewed ${detail.clauses.length} clauses locally with ${detail.findings.length} playbook findings.`);
+      setMessage(`Reviewed ${(detail.clauses ?? []).length} clauses locally with ${(detail.findings ?? []).length} playbook findings.`);
       setFile(null);
       if (fileRef.current) fileRef.current.value = "";
     } catch (error) {
@@ -227,28 +227,28 @@ export function ContractReviewWorkspace({
                     <div><div className="eyebrow">{pretty(selected.contract_type)} · {selected.language}</div><h2>{selected.title}</h2><p>{selected.source_filename}{selected.counterparty_name ? ` · ${selected.counterparty_name}` : ""}</p></div>
                     <div className={`contract-health ${selected.health_score < 70 ? "warning" : ""}`}><strong>{selected.health_score}</strong><span>Review health</span></div>
                   </div>
-                  <div className="contract-detail-meta"><span className={`contract-status ${selected.status}`}>{pretty(selected.status)}</span><span>{selected.clauses.length} clauses</span><span>{selected.findings.filter((item) => item.status === "open").length} open findings</span><span>SHA {selected.source_sha256.slice(0, 10)}…</span></div>
+                  <div className="contract-detail-meta"><span className={`contract-status ${selected.status}`}>{pretty(selected.status)}</span><span>{(selected.clauses ?? []).length} clauses</span><span>{(selected.findings ?? []).filter((item) => item.status === "open").length} open findings</span><span>SHA {selected.source_sha256.slice(0, 10)}…</span></div>
                   <div className="contract-actions"><button className="secondary-button" onClick={refreshAnalysis} disabled={loading}>Reanalyze</button><button className="primary-button" onClick={makeRedline} disabled={loading}>Generate redline</button></div>
                 </section>
 
                 <section className="card contract-risk-card">
-                  <div className="card-header"><div><div className="card-title">Negotiation findings</div><div className="card-subtitle">Similarity is evidence for review—not an enforceability decision</div></div><div className="card-action">{selected.findings.length} findings</div></div>
+                  <div className="card-header"><div><div className="card-title">Negotiation findings</div><div className="card-subtitle">Similarity is evidence for review—not an enforceability decision</div></div><div className="card-action">{(selected.findings ?? []).length} findings</div></div>
                   <div className="contract-risk-list">
-                    {selected.findings.map((finding) => (
+                    {(selected.findings ?? []).map((finding) => (
                       <div className="contract-risk-row" key={finding.id}>
                         <span className={`risk-indicator ${finding.level}`} />
                         <div><div className="contract-risk-title"><strong>{finding.title}</strong><span className={`risk-level ${finding.level}`}>{finding.level}</span></div><p>{finding.explanation}</p><small>{finding.recommended_action}</small></div>
                         <div className="contract-risk-actions">{finding.status === "open" ? <><button onClick={() => setFinding(finding.id, "resolved")}>Resolve</button><button onClick={() => setFinding(finding.id, "accepted")}>Accept risk</button></> : <span className={`risk-status ${finding.status}`}>{finding.status}</span>}</div>
                       </div>
                     ))}
-                    {selected.findings.length === 0 && <div className="empty-mini padded">No playbook deviations detected.</div>}
+                    {(selected.findings ?? []).length === 0 && <div className="empty-mini padded">No playbook deviations detected.</div>}
                   </div>
                 </section>
 
                 <section className="card review-clauses-card">
-                  <div className="card-header"><div><div className="card-title">Clause-by-clause review</div><div className="card-subtitle">Counterparty text ↔ approved position</div></div><div className="card-action">{selected.clauses.length} sections</div></div>
+                  <div className="card-header"><div><div className="card-title">Clause-by-clause review</div><div className="card-subtitle">Counterparty text ↔ approved position</div></div><div className="card-action">{(selected.clauses ?? []).length} sections</div></div>
                   <div className="review-clause-list">
-                    {selected.clauses.map((clause) => (
+                    {(selected.clauses ?? []).map((clause) => (
                       <details className="review-clause" key={clause.id}>
                         <summary><span>{String(clause.position).padStart(2, "0")}</span><div><strong>{clause.heading || pretty(clause.clause_type)}</strong><small>{pretty(clause.clause_type)} · {Math.round(clause.similarity * 100)}% library similarity</small></div><em className={`deviation ${clause.deviation_status}`}>{clause.deviation_status}</em></summary>
                         <div className="review-clause-compare">
@@ -264,7 +264,7 @@ export function ContractReviewWorkspace({
                   </div>
                 </section>
 
-                {selected.redlines.length > 0 && <section className="card redline-versions"><div className="card-header"><div><div className="card-title">Redline versions</div><div className="card-subtitle">Immutable negotiation packages</div></div></div>{[...selected.redlines].reverse().map((version) => <a key={version.id} href={contractRedlineDownloadUrl(selected.id, version.id)}><span>v{version.version_number}</span><div><strong>{version.generated_filename}</strong><small>{version.changes_json.length} clause decisions · SHA {version.sha256.slice(0, 10)}…</small></div><em>Download</em></a>)}</section>}
+                {(selected.redlines ?? []).length > 0 && <section className="card redline-versions"><div className="card-header"><div><div className="card-title">Redline versions</div><div className="card-subtitle">Immutable negotiation packages</div></div></div>{[...(selected.redlines ?? [])].reverse().map((version) => <a key={version.id} href={contractRedlineDownloadUrl(selected.id, version.id)}><span>v{version.version_number}</span><div><strong>{version.generated_filename}</strong><small>{version.changes_json.length} clause decisions · SHA {version.sha256.slice(0, 10)}…</small></div><em>Download</em></a>)}</section>}
               </>
             ) : (
               <div className="card contract-empty-detail"><div className="contract-empty-mark"><DocumentIcon /></div><h2>Select a review</h2><p>Inspect deviations, compare approved wording, record negotiation decisions and generate a redline package.</p></div>

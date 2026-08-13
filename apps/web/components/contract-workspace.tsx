@@ -37,8 +37,8 @@ function detailToList(contract: ContractDetail): ContractListItem {
     party_a_name: contract.party_a_name,
     party_b_name: contract.party_b_name,
     health_score: contract.health_score,
-    clause_count: contract.clauses.length,
-    open_high_risks: contract.risks.filter((risk) => risk.level === "high" && risk.status === "open").length,
+    clause_count: (contract.clauses ?? []).length,
+    open_high_risks: (contract.risks ?? []).filter((risk) => risk.level === "high" && risk.status === "open").length,
     updated_at: contract.updated_at,
   };
 }
@@ -73,7 +73,7 @@ function AnswerField({
         <span>{question.label_en}<small>{question.label_hi}</small></span>
         <select id={id} value={String(value ?? "")} onChange={(event) => onChange(event.target.value)} required={question.required}>
           <option value="">Select</option>
-          {question.options.map((option) => <option key={option.value} value={option.value}>{option.label_en} · {option.label_hi}</option>)}
+          {(question.options ?? []).map((option) => <option key={option.value} value={option.value}>{option.label_en} · {option.label_hi}</option>)}
         </select>
       </label>
     );
@@ -351,9 +351,9 @@ export function ContractWorkspace({
                 </section>
 
                 <section className="card contract-risk-card">
-                  <div className="card-header"><div><div className="card-title">Playbook review</div><div className="card-subtitle">Deterministic checks · no LLM call</div></div><div className="card-action">{selected.risks.filter((risk) => risk.status === "open").length} open</div></div>
+                  <div className="card-header"><div><div className="card-title">Playbook review</div><div className="card-subtitle">Deterministic checks · no LLM call</div></div><div className="card-action">{(selected.risks ?? []).filter((risk) => risk.status === "open").length} open</div></div>
                   <div className="contract-risk-list">
-                    {selected.risks.map((risk) => (
+                    {(selected.risks ?? []).map((risk) => (
                       <div className="contract-risk-row" key={risk.id}>
                         <span className={`risk-indicator ${risk.level}`} />
                         <div><div className="contract-risk-title"><strong>{risk.title}</strong><span className={`risk-level ${risk.level}`}>{risk.level}</span></div><p>{risk.explanation}</p><small>{risk.rule_code}</small></div>
@@ -362,14 +362,14 @@ export function ContractWorkspace({
                         </div>
                       </div>
                     ))}
-                    {selected.risks.length === 0 && <div className="empty-mini padded">No playbook risks detected.</div>}
+                    {(selected.risks ?? []).length === 0 && <div className="empty-mini padded">No playbook risks detected.</div>}
                   </div>
                 </section>
 
                 <section className="card contract-clauses-card">
-                  <div className="card-header"><div><div className="card-title">Selected clauses</div><div className="card-subtitle">Canonical library IDs stay separate from language rendering</div></div><div className="card-action">{selected.clauses.length} clauses</div></div>
+                  <div className="card-header"><div><div className="card-title">Selected clauses</div><div className="card-subtitle">Canonical library IDs stay separate from language rendering</div></div><div className="card-action">{(selected.clauses ?? []).length} clauses</div></div>
                   <div className="contract-clause-list">
-                    {selected.clauses.map((clause, index) => (
+                    {(selected.clauses ?? []).map((clause, index) => (
                       <details key={clause.id} className="contract-clause-row">
                         <summary><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{clause.title_en}</strong><small>{clause.title_hi}</small></div><em>{clause.variant_key.replaceAll("_", " ")}</em></summary>
                         <div className="contract-clause-copy"><p>{clause.body_en}</p>{selected.language !== "en" && clause.body_hi && <p className="hindi-copy">{clause.body_hi}</p>}<code>{clause.clause_code}</code></div>

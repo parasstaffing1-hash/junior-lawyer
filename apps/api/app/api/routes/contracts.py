@@ -6,6 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
 from app.schemas.contract import (
+    ContractCatalogItem,
+    ContractQuestion,
+    ContractQuestionnaire,
     ClauseLibraryRead,
     ClauseUpdate,
     ContractComparison,
@@ -23,26 +26,26 @@ from app.services.contracts.catalog import CONTRACT_DEFINITIONS, get_contract_ca
 router = APIRouter(prefix="/contracts", tags=["contracts"])
 
 
-@router.get("/catalog")
-async def contract_catalog() -> list[dict]:
-    return get_contract_catalog()
+@router.get("/catalog", response_model=list[ContractCatalogItem])
+async def contract_catalog() -> list[ContractCatalogItem]:
+    return [ContractCatalogItem.model_validate(item) for item in get_contract_catalog()]
 
 
-@router.get("/questionnaire/{contract_type}")
-async def contract_questionnaire(contract_type: str) -> dict:
+@router.get("/questionnaire/{contract_type}", response_model=ContractQuestionnaire)
+async def contract_questionnaire(contract_type: str) -> ContractQuestionnaire:
     definition = CONTRACT_DEFINITIONS.get(contract_type)
     if definition is None:
         from fastapi import HTTPException
 
         raise HTTPException(status_code=404, detail="Unknown contract type")
-    return {
-        "contract_type": contract_type,
-        "name_en": definition["name_en"],
-        "name_hi": definition["name_hi"],
-        "description": definition["description"],
-        "questions": definition["questions"],
-        "default_clauses": definition["clauses"],
-    }
+    return ContractQuestionnaire(
+        contract_type=contract_type,
+        name_en=definition["name_en"],
+        name_hi=definition["name_hi"],
+        description=definition["description"],
+        questions=[ContractQuestion.model_validate(item) for item in definition["questions"]],
+        default_clauses=definition["clauses"],
+    )
 
 
 @router.get("/clause-library", response_model=list[ClauseLibraryRead])

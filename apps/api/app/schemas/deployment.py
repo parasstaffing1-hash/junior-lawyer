@@ -145,9 +145,18 @@ class DeploymentRolloutDetail(BaseModel):
     steps: list[DeploymentRolloutStepRead]
 
 
+class ReadinessCheck(BaseModel):
+    """One runtime readiness probe result."""
+
+    key: str
+    passed: bool
+    critical: bool
+    message: str
+
+
 class RuntimeReadiness(BaseModel):
     ready: bool
-    checks: list[dict]
+    checks: list[ReadinessCheck]
     app_version: str
     build_ref: str | None
     commit_ref: str | None

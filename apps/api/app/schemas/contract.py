@@ -17,6 +17,36 @@ from app.models.contract import (
 )
 
 
+class ContractQuestion(BaseModel):
+    """One field of a contract questionnaire, as built by catalog.question()."""
+
+    key: str
+    label_en: str
+    label_hi: str
+    kind: str
+    required: bool
+    placeholder: str | None = None
+    options: list[dict[str, str]] = Field(default_factory=list)
+    default: Any = None
+
+
+class ContractCatalogItem(BaseModel):
+    contract_type: ContractType
+    name_en: str
+    name_hi: str
+    description: str
+    required_fields: list[str] = Field(default_factory=list)
+
+
+class ContractQuestionnaire(BaseModel):
+    contract_type: ContractType
+    name_en: str
+    name_hi: str
+    description: str
+    questions: list[ContractQuestion]
+    default_clauses: list[str]
+
+
 class ContractCreate(BaseModel):
     matter_id: UUID | None = None
     title: str = Field(min_length=2, max_length=350)

@@ -16,6 +16,28 @@ class ORMModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class SupervisionMember(BaseModel):
+    """Per-assignee workload in the partner supervision view."""
+
+    name: str
+    role: str
+    open: int
+    overdue: int
+    high: int
+
+
+class SupervisionSummary(BaseModel):
+    team: dict[str, SupervisionMember]
+    total_open: int
+    generated_at: str
+
+
+class TemplateSeedResult(BaseModel):
+    """Count returned by POST /operations/templates/seed."""
+
+    created: int
+
+
 class WorkflowTemplateRead(ORMModel):
     id: UUID
     organization_id: UUID | None

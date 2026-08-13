@@ -90,6 +90,15 @@ class RemedyAuthorityRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class RemedyDocumentRequirement(BaseModel):
+    """One document a remedy candidate needs, with availability resolved."""
+
+    name: str
+    available: bool = False
+
+    model_config = ConfigDict(extra="allow")
+
+
 class RemedyCandidateRead(BaseModel):
     id: UUID
     rule_id: UUID | None
@@ -102,7 +111,7 @@ class RemedyCandidateRead(BaseModel):
     forum_json: dict[str, Any]
     deadline_json: dict[str, Any]
     maintainability_json: dict[str, Any]
-    required_documents_json: list[Any]
+    required_documents_json: list[RemedyDocumentRequirement]
     procedural_steps_json: list[Any]
     risks_json: list[Any]
     drafting_json: dict[str, Any]

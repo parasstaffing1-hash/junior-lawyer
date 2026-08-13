@@ -94,6 +94,26 @@ class LoginResponse(BaseModel):
     absolute_expires_at: datetime
 
 
+class BootstrapAdmin(BaseModel):
+    id: str
+    email: str
+    display_name: str
+    membership_id: str
+    role: str
+
+
+class BootstrapResponse(BaseModel):
+    """Result of POST /security/bootstrap.
+
+    Bootstrap creates the first organization and owner; it does not sign the
+    caller in, so this is deliberately not a LoginResponse.
+    """
+
+    organization: OrganizationRead
+    admin: BootstrapAdmin
+    message: str
+
+
 class UserCreateRequest(BaseModel):
     email: str = Field(min_length=3, max_length=320)
     display_name: str = Field(min_length=2, max_length=250)

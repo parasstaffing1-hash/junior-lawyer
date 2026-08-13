@@ -9,7 +9,8 @@ from app.db.session import get_db
 from app.models.crm import ConflictCandidate
 from app.models.matter import Matter
 from app.schemas.crm import (
-    ClientCreate, ClientGrantCreate, ClientGrantRead, ClientRead, ClientSecurityRead, ClientSecurityUpdate, ClientUpdate, CommunicationCreate, ConflictCandidateRead,
+    ClientCommunicationRead, ClientCreate, ClientDetail, ClientGrantCreate, ClientGrantRead, ClientMatterSummary, ClientNoteRead,
+    ClientRead, ClientSecurityRead, ClientSecurityUpdate, ClientUpdate, CommunicationCreate, ConflictCandidateRead,
     ConflictCheckCreate, ConflictCheckRead, ConflictDecision, ContactCreate, ContactRead,
     ConvertLeadRequest, CRMOverview, EngagementCreate, EngagementRead, KYCRecordCreate,
     KYCRecordRead, KYCVerifyRequest, LeadCreate, LeadRead, LeadUpdate, MatterOpenRequest,
@@ -65,20 +66,20 @@ async def create_client(payload: ClientCreate, actor: ActorContext = Depends(req
     return ClientRead.model_validate(await service.create_client(db, actor, payload))
 
 
-@router.get("/clients/{client_id}")
+@router.get("/clients/{client_id}", response_model=ClientDetail)
 async def get_client(client_id: UUID, actor: ActorContext = Depends(require_actor), db: AsyncSession = Depends(get_db)):
     data = await service.client_detail(db, actor, client_id)
-    return {
-        "client": ClientRead.model_validate(data["client"]),
-        "onboarding": OnboardingRead.model_validate(data["onboarding"]),
-        "contacts": [ContactRead.model_validate(row) for row in data["contacts"]],
-        "kyc": [KYCRecordRead.model_validate(row) for row in data["kyc"]],
-        "engagements": [EngagementRead.model_validate(row) for row in data["engagements"]],
-        "matters": data["matters"],
-        "notes": [{"id": str(row.id), "title": row.title, "body": row.body, "matter_id": str(row.matter_id) if row.matter_id else None, "is_private": row.is_private, "created_at": row.created_at} for row in data["notes"]],
-        "communications": [{"id": str(row.id), "type": row.communication_type.value, "occurred_at": row.occurred_at, "direction": row.direction, "subject": row.subject, "summary": row.summary, "matter_id": str(row.matter_id) if row.matter_id else None} for row in data["communications"]],
-        "portal_access": [PortalAccessRead.model_validate(row) for row in data["portal_access"]],
-    }
+    return ClientDetail(
+        client=ClientRead.model_validate(data["client"]),
+        onboarding=OnboardingRead.model_validate(data["onboarding"]),
+        contacts=[ContactRead.model_validate(row) for row in data["contacts"]],
+        kyc=[KYCRecordRead.model_validate(row) for row in data["kyc"]],
+        engagements=[EngagementRead.model_validate(row) for row in data["engagements"]],
+        matters=[ClientMatterSummary.model_validate(row) for row in data["matters"]],
+        notes=[ClientNoteRead(id=str(row.id), title=row.title, body=row.body, matter_id=str(row.matter_id) if row.matter_id else None, is_private=row.is_private, created_at=row.created_at) for row in data["notes"]],
+        communications=[ClientCommunicationRead(id=str(row.id), type=row.communication_type.value, occurred_at=row.occurred_at, direction=row.direction, subject=row.subject, summary=row.summary, matter_id=str(row.matter_id) if row.matter_id else None) for row in data["communications"]],
+        portal_access=[PortalAccessRead.model_validate(row) for row in data["portal_access"]],
+    )
 
 
 @router.patch("/clients/{client_id}", response_model=ClientRead)

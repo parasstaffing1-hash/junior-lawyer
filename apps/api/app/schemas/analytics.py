@@ -35,8 +35,8 @@ class AnalyticsPreferenceRead(BaseModel):
     organization_id: UUID
     rolling_window_days: int
     currency: str
-    health_weights_json: dict
-    thresholds_json: dict
+    health_weights_json: dict[str, float]
+    thresholds_json: dict[str, float]
     enable_risk_detection: bool
     show_financials_to_partners: bool
     metadata_json: dict
@@ -45,11 +45,21 @@ class AnalyticsPreferenceRead(BaseModel):
 class AnalyticsPreferenceUpdate(BaseModel):
     rolling_window_days: int | None = Field(default=None, ge=7, le=365)
     currency: str | None = Field(default=None, min_length=3, max_length=8)
-    health_weights_json: dict | None = None
-    thresholds_json: dict | None = None
+    health_weights_json: dict[str, float] | None = None
+    thresholds_json: dict[str, float] | None = None
     enable_risk_detection: bool | None = None
     show_financials_to_partners: bool | None = None
     metadata_json: dict | None = None
+
+
+class MatterHealthReason(BaseModel):
+    """One weighted penalty behind a matter health score."""
+
+    key: str
+    count: int
+    weight: float
+    penalty: float
+    label: str
 
 
 class MatterHealthRead(BaseModel):
@@ -66,7 +76,7 @@ class MatterHealthRead(BaseModel):
     open_high_draft_findings: int
     unreviewed_court_changes: int
     open_evidence_gaps: int
-    reasons: list[dict[str, Any]]
+    reasons: list[MatterHealthReason]
 
 
 class TeamPerformanceRead(BaseModel):
@@ -146,6 +156,20 @@ class SnapshotRead(BaseModel):
     summary_json: dict
     notes: str | None
     created_at: datetime
+
+
+class RiskRebuildSummary(BaseModel):
+    """Counts returned by POST /analytics/risks/rebuild.
+
+    `message` is set only when risk detection is disabled by the
+    organization's analytics preferences, in which case the counts are zero.
+    """
+
+    created: int
+    updated: int
+    resolved: int
+    active: int = 0
+    message: str | None = None
 
 
 class RiskSignalRead(BaseModel):

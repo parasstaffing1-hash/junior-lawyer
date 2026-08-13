@@ -346,6 +346,50 @@ class CRMOverview(BaseModel):
     tasks_due: int
     unbilled_minutes: int
 
+class ClientMatterSummary(BaseModel):
+    id: str
+    title: str
+    status: str
+    reference_number: str | None
+
+
+class ClientNoteRead(BaseModel):
+    id: str
+    title: str | None
+    body: str
+    matter_id: str | None
+    is_private: bool
+    created_at: datetime
+
+
+class ClientCommunicationRead(BaseModel):
+    id: str
+    type: str
+    occurred_at: datetime
+    direction: str
+    subject: str | None
+    summary: str
+    matter_id: str | None
+
+
+class ClientDetail(BaseModel):
+    """The composite payload GET /crm/clients/{id} has always returned.
+
+    It was assembled inline in the route, so it never reached the OpenAPI
+    schema and the web client had to fall back to plain ClientRead.
+    """
+
+    client: ClientRead
+    onboarding: OnboardingRead
+    contacts: list[ContactRead]
+    kyc: list[KYCRecordRead]
+    engagements: list[EngagementRead]
+    matters: list[ClientMatterSummary]
+    notes: list[ClientNoteRead]
+    communications: list[ClientCommunicationRead]
+    portal_access: list[PortalAccessRead]
+
+
 class OnboardingUpdate(BaseModel):
     address_complete: bool | None = None
     engagement_complete: bool | None = None

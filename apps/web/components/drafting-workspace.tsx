@@ -127,7 +127,7 @@ function DraftSectionEditor({
 
       <div className="draft-section-footer">
         <div className="source-stack">
-          {section.sources.length ? section.sources.slice(0, 4).map((source) => (
+          {(section.sources ?? []).length ? (section.sources ?? []).slice(0, 4).map((source) => (
             <div className="source-chip" key={source.id} title={source.excerpt ?? undefined}>
               <span>{source.verified ? "✓" : "!"}</span>{source.label}{source.locator ? ` · ${source.locator}` : ""}
             </div>
@@ -181,9 +181,9 @@ export function DraftingWorkspace({
       title: updated.title,
       status: updated.status,
       health_score: updated.health_score,
-      open_high_findings: updated.findings.filter((finding) => finding.level === "high" && finding.status === "open").length,
-      reviewed_sections: updated.sections.filter((section) => section.reviewed).length,
-      section_count: updated.sections.length,
+      open_high_findings: (updated.findings ?? []).filter((finding) => finding.level === "high" && finding.status === "open").length,
+      reviewed_sections: (updated.sections ?? []).filter((section) => section.reviewed).length,
+      section_count: (updated.sections ?? []).length,
       updated_at: updated.updated_at,
     } : item));
   }
@@ -210,9 +210,9 @@ export function DraftingWorkspace({
         language: draft.language,
         status: draft.status,
         health_score: draft.health_score,
-        open_high_findings: draft.findings.filter((finding) => finding.level === "high" && finding.status === "open").length,
+        open_high_findings: (draft.findings ?? []).filter((finding) => finding.level === "high" && finding.status === "open").length,
         reviewed_sections: 0,
-        section_count: draft.sections.length,
+        section_count: (draft.sections ?? []).length,
         updated_at: draft.updated_at,
       }, ...items]);
       setMessage("Source-backed draft created. Review every section before approval.");
@@ -360,10 +360,10 @@ export function DraftingWorkspace({
                 <button className="button primary small" onClick={approve} disabled={busy || current.status === "approved"} type="button">Approve</button>
               </div>
 
-              {current.findings.length ? <section className="draft-findings card">
-                <div className="card-header"><div className="card-title">Draft checks</div><div className="card-action">{current.findings.filter((item) => item.status === "open").length} open</div></div>
+              {(current.findings ?? []).length ? <section className="draft-findings card">
+                <div className="card-header"><div className="card-title">Draft checks</div><div className="card-action">{(current.findings ?? []).filter((item) => item.status === "open").length} open</div></div>
                 <div className="draft-finding-grid">
-                  {current.findings.map((finding) => (
+                  {(current.findings ?? []).map((finding) => (
                     <article className={`draft-finding ${finding.level} ${finding.status}`} key={finding.id}>
                       <div><span className={`severity-badge ${finding.level}`}>{finding.level}</span><span className="finding-status">{finding.status}</span></div>
                       <strong>{finding.title}</strong><p>{finding.explanation}</p>
@@ -377,7 +377,7 @@ export function DraftingWorkspace({
               </section> : null}
 
               <div className="draft-section-stack">
-                {current.sections.map((section) => <DraftSectionEditor draft={current} section={section} onChange={syncDraft} key={section.id} />)}
+                {(current.sections ?? []).map((section) => <DraftSectionEditor draft={current} section={section} onChange={syncDraft} key={section.id} />)}
               </div>
             </>
           ) : (

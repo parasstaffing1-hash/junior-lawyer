@@ -53,6 +53,14 @@ class IntegrationSecretRead(ORMModel):
     last_verified_at: datetime | None
 
 
+class IntegrationCheckResult(BaseModel):
+    """One configuration or secret-resolution probe on a health snapshot."""
+
+    key: str
+    passed: bool
+    message: str
+
+
 class IntegrationHealthRead(ORMModel):
     id: UUID
     connection_id: UUID
@@ -60,7 +68,7 @@ class IntegrationHealthRead(ORMModel):
     checked_at: datetime
     live_probe: bool
     latency_ms: int | None
-    checks_json: list
+    checks_json: list[IntegrationCheckResult]
     error_message: str | None
 
 

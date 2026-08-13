@@ -158,11 +158,30 @@ class SavedCaseSummaryRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class SavedCaseChange(BaseModel):
+    """One field-level change detected between two fetches of a saved case."""
+
+    id: str
+    field: str
+    change_type: str
+    old: Any = None
+    new: Any = None
+    summary: str
+    detected_at: datetime
+
+
+class CaseWorkspaceResult(BaseModel):
+    """Matter linked to (or created for) a saved case."""
+
+    matter_id: str
+    title: str
+
+
 class SavedCaseDetailRead(BaseModel):
     id: UUID
     matter_id: UUID | None
     record: CaseRecordData
-    changes: list[dict[str, Any]] = Field(default_factory=list)
+    changes: list[SavedCaseChange] = Field(default_factory=list)
     stale: bool = False
 
 

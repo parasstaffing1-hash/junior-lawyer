@@ -8,6 +8,14 @@
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+export interface AIBudget {
+  max_input_tokens: number;
+  max_output_tokens: number;
+  estimated_input_tokens: number;
+  within_budget: boolean;
+  retrieval?: Record<string, unknown>;
+}
+
 export interface AICitationRead {
   id: string;
   raw_citation: string;
@@ -37,7 +45,7 @@ export interface AIPrepareResponse {
   routing: AIRouteDecisionRead;
   sources: AISourceRead[];
   prompt_preview: string;
-  budget: Record<string, unknown>;
+  budget: AIBudget;
 }
 
 export interface AIProviderStatusRead {
@@ -46,22 +54,22 @@ export interface AIProviderStatusRead {
   local_model: string | null;
   remote_enabled: boolean;
   remote_model: string | null;
-  remote_calls_require_explicit_opt_in?: boolean;
-  secrets_persisted?: boolean;
+  remote_calls_require_explicit_opt_in: boolean;
+  secrets_persisted: boolean;
 }
 
 export interface AIReasoningRequest {
   matter_id?: string | null;
   task_type: AITaskType;
   query: string;
-  output_language?: string;
-  prefer_local?: boolean;
-  allow_remote?: boolean;
-  allow_local_for_high_complexity?: boolean;
-  include_corpus?: boolean;
-  max_sources?: number;
-  max_input_tokens?: number;
-  max_output_tokens?: number;
+  output_language: string;
+  prefer_local: boolean;
+  allow_remote: boolean;
+  allow_local_for_high_complexity: boolean;
+  include_corpus: boolean;
+  max_sources: number;
+  max_input_tokens: number;
+  max_output_tokens: number;
 }
 
 export interface AIReviewRequest {
@@ -79,8 +87,8 @@ export interface AIRouteDecisionRead {
   model_name?: string | null;
   reason: string;
   quality_warning?: string | null;
-  estimated_input_tokens?: number;
-  source_count?: number;
+  estimated_input_tokens: number;
+  source_count: number;
 }
 
 export type AIRouteTier = "deterministic" | "local" | "strong" | "blocked";
@@ -212,9 +220,9 @@ export interface AffidavitStatement {
 export interface AffidavitTemplateField {
   key: string;
   label: string;
-  kind?: AffidavitFieldKind;
-  required?: boolean;
-  max_length?: number;
+  kind: AffidavitFieldKind;
+  required: boolean;
+  max_length: number;
   help_text?: string | null;
 }
 
@@ -239,11 +247,9 @@ export interface AgendaItem {
   title: string;
   status: string;
   priority?: string | null;
-  requires_action?: boolean;
+  requires_action: boolean;
   detail?: string | null;
 }
-
-// NOTE: app__schemas__procedure__AgendaItem collides with app__schemas__operations__AgendaItem; kept the first.
 
 export interface AlertStatusRequest {
   status: LegalDataAlertStatus;
@@ -269,7 +275,7 @@ export interface AmendmentRead {
 }
 
 export interface AmendmentReviewRequest {
-  status?: AmendmentReviewStatus;
+  status: AmendmentReviewStatus;
   note?: string | null;
 }
 
@@ -294,8 +300,8 @@ export interface AnalyticsPreferenceRead {
   organization_id: string;
   rolling_window_days: number;
   currency: string;
-  health_weights_json: Record<string, unknown>;
-  thresholds_json: Record<string, unknown>;
+  health_weights_json: Record<string, number>;
+  thresholds_json: Record<string, number>;
   enable_risk_detection: boolean;
   show_financials_to_partners: boolean;
   metadata_json: Record<string, unknown>;
@@ -304,8 +310,8 @@ export interface AnalyticsPreferenceRead {
 export interface AnalyticsPreferenceUpdate {
   rolling_window_days?: number | null;
   currency?: string | null;
-  health_weights_json?: Record<string, unknown> | null;
-  thresholds_json?: Record<string, unknown> | null;
+  health_weights_json?: Record<string, number> | null;
+  thresholds_json?: Record<string, number> | null;
   enable_risk_detection?: boolean | null;
   show_financials_to_partners?: boolean | null;
   metadata_json?: Record<string, unknown> | null;
@@ -325,7 +331,7 @@ export interface AnnexureReference {
 }
 
 export interface AnnotationCreate {
-  kind?: KnowledgeAnnotationKind;
+  kind: KnowledgeAnnotationKind;
   body: string;
   anchor_json?: Record<string, unknown>;
 }
@@ -441,17 +447,17 @@ export interface BackupArtifactRead {
 
 export interface BackupPolicyCreate {
   name: string;
-  enabled?: boolean;
-  include_database?: boolean;
-  include_documents?: boolean;
+  enabled: boolean;
+  include_database: boolean;
+  include_documents: boolean;
   schedule_rrule?: string | null;
-  retention_days?: number;
-  max_backups?: number;
-  destination_kind?: string;
+  retention_days: number;
+  max_backups: number;
+  destination_kind: string;
   destination_path?: string | null;
-  encryption_mode?: string;
-  rpo_minutes?: number;
-  rto_minutes?: number;
+  encryption_mode: string;
+  rpo_minutes: number;
+  rto_minutes: number;
 }
 
 export interface BackupPolicyRead {
@@ -566,14 +572,14 @@ export interface BillingProfileUpdate {
   city?: string | null;
   state?: string | null;
   state_code?: string | null;
-  country?: string;
+  country: string;
   gstin?: string | null;
   pan_last4?: string | null;
   email?: string | null;
   phone?: string | null;
-  default_currency?: string;
-  invoice_prefix?: string;
-  default_payment_terms_days?: number;
+  default_currency: string;
+  invoice_prefix: string;
+  default_payment_terms_days: number;
   bank_details?: Record<string, unknown>;
   tax_configuration?: Record<string, unknown>;
 }
@@ -582,7 +588,7 @@ export type BlockType = "heading" | "paragraph" | "table";
 
 export interface Body_analyze_api_v1_tools_legal_ocr_analyze_post {
   file: string;
-  options_json?: string;
+  options_json: string;
 }
 
 export interface Body_create_review_api_v1_contract_reviews_post {
@@ -597,22 +603,30 @@ export interface Body_create_review_api_v1_contract_reviews_post {
 
 export interface Body_parse_document_api_v1_tools_legal_documents_parse_post {
   file: string;
-  options_json?: string;
+  options_json: string;
 }
 
 export interface Body_preview_api_v1_tools_bates_numbering_preview_post {
   file: string;
-  options_json?: string;
+  options_json: string;
 }
 
 export interface Body_process_api_v1_tools_legal_ocr_process_post {
   file: string;
-  options_json?: string;
+  options_json: string;
 }
 
 export interface Body_stamp_api_v1_tools_bates_numbering_stamp_post {
   file: string;
-  options_json?: string;
+  options_json: string;
+}
+
+export interface BootstrapAdmin {
+  id: string;
+  email: string;
+  display_name: string;
+  membership_id: string;
+  role: string;
 }
 
 export interface BootstrapRequest {
@@ -624,9 +638,15 @@ export interface BootstrapRequest {
   bootstrap_secret?: string | null;
 }
 
+export interface BootstrapResponse {
+  organization: OrganizationRead;
+  admin: BootstrapAdmin;
+  message: string;
+}
+
 export interface BundleCreate {
   title: string;
-  bundle_type?: string;
+  bundle_type: string;
   evidence_item_ids?: string[];
   issue_ids?: string[];
   description?: string | null;
@@ -665,11 +685,11 @@ export interface CalendarEventRequest {
   summary: string;
   start: string;
   end: string;
-  timezone?: string;
+  timezone: string;
   description?: string | null;
   location?: string | null;
   attendees?: string[];
-  send_updates?: string;
+  send_updates: string;
   internal_resource_type?: string | null;
   internal_resource_id?: string | null;
 }
@@ -720,7 +740,7 @@ export interface CaseLookupPreferenceRead {
   preferred_district?: string | null;
   preferred_high_court?: string | null;
   preferred_courts_json?: string[];
-  default_refresh_minutes?: number;
+  default_refresh_minutes: number;
   id: string;
   organization_id: string;
   membership_id: string;
@@ -732,7 +752,7 @@ export interface CaseLookupPreferenceUpdate {
   preferred_district?: string | null;
   preferred_high_court?: string | null;
   preferred_courts_json?: string[];
-  default_refresh_minutes?: number;
+  default_refresh_minutes: number;
 }
 
 export interface CaseLookupRequest {
@@ -740,7 +760,7 @@ export interface CaseLookupRequest {
   state?: string | null;
   district?: string | null;
   court?: string | null;
-  include_saved?: boolean;
+  include_saved: boolean;
 }
 
 export interface CaseLookupResponse {
@@ -767,7 +787,7 @@ export interface CaseOrderData {
 export interface CasePartyData {
   name: string;
   side: CaseSide;
-  sequence?: number;
+  sequence: number;
   metadata_json?: Record<string, unknown>;
 }
 
@@ -811,9 +831,9 @@ export type CaseSourceKind = "saved" | "district_court" | "high_court" | "suprem
 
 export interface CaseTimelineRequest {
   case_reference?: string | null;
-  title?: string;
+  title: string;
   events: TimelineEvent[];
-  include_day_gaps?: boolean;
+  include_day_gaps: boolean;
 }
 
 export interface CaseTimelineResponse {
@@ -825,6 +845,11 @@ export interface CaseTimelineResponse {
   csv: string;
   warnings: string[];
   disclaimer: string;
+}
+
+export interface CaseWorkspaceResult {
+  matter_id: string;
+  title: string;
 }
 
 export type ChangeSeverity = "info" | "medium" | "high";
@@ -869,7 +894,7 @@ export interface ChecklistTemplateSummary {
 export interface CitationExtractRequest {
   text: string;
   kinds?: CitationKind[] | null;
-  deduplicate?: boolean;
+  deduplicate: boolean;
 }
 
 export interface CitationExtractResponse {
@@ -964,11 +989,11 @@ export interface ClaimInterestCalculationRequest {
   annual_rate_percent: number | string;
   start_date: string;
   end_date: string;
-  method?: InterestMethod;
-  day_count_convention?: DayCountConvention;
-  compounding_frequency?: CompoundingFrequency;
+  method: InterestMethod;
+  day_count_convention: DayCountConvention;
+  compounding_frequency: CompoundingFrequency;
   principal_adjustments?: PrincipalAdjustment[];
-  currency?: string;
+  currency: string;
 }
 
 export interface ClaimInterestCalculationResponse {
@@ -1001,7 +1026,7 @@ export interface ClauseChange {
   revised_text?: string | null;
   similarity: number;
   token_diff?: TokenDiff[];
-  redline?: string;
+  redline: string;
 }
 
 export interface ClauseDecisionUpdate {
@@ -1033,11 +1058,11 @@ export interface ClauseExtractSummary {
 
 export interface ClauseExtractionOptions {
   clause_types?: ClauseType[] | null;
-  minimum_confidence?: number;
-  use_body_fallback?: boolean;
-  include_heading_in_text?: boolean;
-  max_results?: number;
-  deduplicate?: boolean;
+  minimum_confidence: number;
+  use_body_fallback: boolean;
+  include_heading_in_text: boolean;
+  max_results: number;
+  deduplicate: boolean;
 }
 
 export interface ClauseLibraryRead {
@@ -1113,27 +1138,49 @@ export interface ClientApprovalRequestCreate {
   message?: string | null;
 }
 
+export interface ClientCommunicationRead {
+  id: string;
+  type: string;
+  occurred_at: string;
+  direction: string;
+  subject: string | null;
+  summary: string;
+  matter_id: string | null;
+}
+
 export interface ClientCreate {
   display_name: string;
   legal_name?: string | null;
-  client_type?: ClientType;
+  client_type: ClientType;
   email?: string | null;
   phone?: string | null;
-  preferred_language?: string;
+  preferred_language: string;
   billing_address?: string | null;
   city?: string | null;
   state?: string | null;
-  country?: string;
+  country: string;
   tax_id_last4?: string | null;
   source_lead_id?: string | null;
+}
+
+export interface ClientDetail {
+  client: ClientRead;
+  onboarding: OnboardingRead;
+  contacts: ContactRead[];
+  kyc: KYCRecordRead[];
+  engagements: EngagementRead[];
+  matters: ClientMatterSummary[];
+  notes: ClientNoteRead[];
+  communications: ClientCommunicationRead[];
+  portal_access: PortalAccessRead[];
 }
 
 export type ClientDocumentApprovalStatus = "pending" | "approved" | "changes_requested" | "declined" | "revoked";
 
 export interface ClientGrantCreate {
   membership_id: string;
-  effect?: AccessEffect;
-  access_level?: MatterAccessLevel;
+  effect: AccessEffect;
+  access_level: MatterAccessLevel;
   reason?: string | null;
 }
 
@@ -1188,13 +1235,20 @@ export interface ClientMatterIntakeResponse {
   disclaimer: string;
 }
 
+export interface ClientMatterSummary {
+  id: string;
+  title: string;
+  status: string;
+  reference_number: string | null;
+}
+
 export interface ClientMoneyAccountCreate {
   name: string;
-  currency?: string;
+  currency: string;
   bank_name?: string | null;
   bank_account_last4?: string | null;
   bank_reference?: string | null;
-  require_separate_approver?: boolean;
+  require_separate_approver: boolean;
   notes?: string | null;
 }
 
@@ -1226,10 +1280,10 @@ export interface ClientMoneyDepositCreate {
   client_id: string;
   matter_id?: string | null;
   amount: number | string;
-  currency?: string;
+  currency: string;
   entry_date: string;
   reference?: string | null;
-  description?: string;
+  description: string;
 }
 
 export interface ClientMoneyJournalEntryRead {
@@ -1247,6 +1301,15 @@ export interface ClientMoneyJournalEntryRead {
   invoice_id: string | null;
   reverses_entry_id: string | null;
   content_hash: string;
+  created_at: string;
+}
+
+export interface ClientNoteRead {
+  id: string;
+  title: string | null;
+  body: string;
+  matter_id: string | null;
+  is_private: boolean;
   created_at: string;
 }
 
@@ -1289,7 +1352,7 @@ export interface ClientSecurityUpdate {
 export interface ClientStatement {
   client_id: string;
   currency: string;
-  opening_balance?: string;
+  opening_balance: string;
   closing_balance: string;
   rows: LedgerRow[];
 }
@@ -1318,7 +1381,7 @@ export interface CommandDefinition {
   keywords: string[];
   href: string;
   shortcut?: string | null;
-  write_action?: boolean;
+  write_action: boolean;
 }
 
 export interface CommentCreate {
@@ -1348,7 +1411,7 @@ export type CommentStatus = "open" | "resolved";
 export interface CommunicationCreate {
   communication_type: CommunicationType;
   occurred_at: string;
-  direction?: string;
+  direction: string;
   subject?: string | null;
   summary: string;
   matter_id?: string | null;
@@ -1443,7 +1506,7 @@ export interface ConflictPartyInput {
 export type ConflictPartyRole = "client" | "prospective_client" | "adverse_party" | "counterparty" | "related_party" | "witness" | "other";
 
 export interface ConnectionTestRequest {
-  live_probe?: boolean;
+  live_probe: boolean;
 }
 
 export interface ConnectionTestResult {
@@ -1459,7 +1522,7 @@ export interface ConsentDefinition {
   key: string;
   label: string;
   text: string;
-  required?: boolean;
+  required: boolean;
   applies_if_all?: MatchCondition[];
   applies_if_any?: MatchCondition[];
 }
@@ -1475,7 +1538,7 @@ export interface ContactCreate {
   role_title?: string | null;
   email?: string | null;
   phone?: string | null;
-  is_primary?: boolean;
+  is_primary: boolean;
   notes?: string | null;
 }
 
@@ -1493,9 +1556,17 @@ export interface ContactRead {
 export interface ContextFieldDefinition {
   key: string;
   label: string;
-  required?: boolean;
+  required: boolean;
   allowed_values?: string[];
   help_text?: string | null;
+}
+
+export interface ContractCatalogItem {
+  contract_type: ContractType;
+  name_en: string;
+  name_hi: string;
+  description: string;
+  required_fields?: string[];
 }
 
 export type ContractChangeType = "unchanged" | "added" | "removed" | "modified";
@@ -1507,11 +1578,11 @@ export interface ContractClause {
 }
 
 export interface ContractCompareOptions {
-  ignore_case?: boolean;
-  normalize_whitespace?: boolean;
-  include_unchanged?: boolean;
-  similarity_threshold?: number;
-  max_diff_tokens_per_clause?: number;
+  ignore_case: boolean;
+  normalize_whitespace: boolean;
+  include_unchanged: boolean;
+  similarity_threshold: number;
+  max_diff_tokens_per_clause: number;
 }
 
 export interface ContractCompareRequest {
@@ -1554,9 +1625,9 @@ export interface ContractCreate {
   matter_id?: string | null;
   title: string;
   contract_type: ContractType;
-  language?: ContractLanguage;
-  risk_profile?: ContractRiskProfile;
-  jurisdiction?: string;
+  language: ContractLanguage;
+  risk_profile: ContractRiskProfile;
+  jurisdiction: string;
   governing_state?: string | null;
   party_a_name: string;
   party_b_name: string;
@@ -1579,6 +1650,26 @@ export interface ContractListItem {
   clause_count: number;
   open_high_risks: number;
   updated_at: string;
+}
+
+export interface ContractQuestion {
+  key: string;
+  label_en: string;
+  label_hi: string;
+  kind: string;
+  required: boolean;
+  placeholder?: string | null;
+  options?: Record<string, string>[];
+  default?: unknown;
+}
+
+export interface ContractQuestionnaire {
+  contract_type: ContractType;
+  name_en: string;
+  name_hi: string;
+  description: string;
+  questions: ContractQuestion[];
+  default_clauses: string[];
 }
 
 export interface ContractRead {
@@ -1685,8 +1776,8 @@ export interface ContradictionRead {
   explanation: string;
   severity: ContradictionSeverity;
   status: ContradictionStatus;
-  values_json: unknown[];
-  fact_ids_json: unknown[];
+  values_json: ContradictionValue[];
+  fact_ids_json: string[];
   metadata_json: Record<string, unknown>;
   created_at: string;
   updated_at: string;
@@ -1700,8 +1791,15 @@ export interface ContradictionUpdate {
   status: ContradictionStatus;
 }
 
+export interface ContradictionValue {
+  fact_id: string;
+  value: string;
+  display: string;
+  confidence: number;
+}
+
 export interface ConvertLeadRequest {
-  client_type?: ClientType;
+  client_type: ClientType;
   legal_name?: string | null;
 }
 
@@ -1722,7 +1820,7 @@ export type CorpusLanguage = "en" | "hi" | "mixed" | "other";
 
 export interface CorpusSearchRequest {
   query: string;
-  scope?: SearchScope;
+  scope: SearchScope;
   jurisdiction?: string | null;
   court_level?: CourtLevel | null;
   court_name?: string | null;
@@ -1732,7 +1830,7 @@ export interface CorpusSearchRequest {
   date_from?: string | null;
   date_to?: string | null;
   as_of_date?: string | null;
-  limit?: number;
+  limit: number;
 }
 
 export interface CorpusSearchResponse {
@@ -1825,7 +1923,7 @@ export interface CourtSnapshotCreate {
   stage?: string | null;
   next_hearing_date?: string | null;
   judge_or_bench?: string | null;
-  order_count?: number;
+  order_count: number;
   latest_order_date?: string | null;
   latest_order_reference?: string | null;
   source_payload_json?: Record<string, unknown>;
@@ -1858,7 +1956,7 @@ export type CourtSourceKind = "manual" | "ecourts_manual" | "official_import" | 
 
 export interface CourtTrackerCreate {
   matter_id: string;
-  source_kind?: CourtSourceKind;
+  source_kind: CourtSourceKind;
   cnr_number?: string | null;
   case_number?: string | null;
   court_name?: string | null;
@@ -1897,8 +1995,6 @@ export type DayCountConvention = "actual_365" | "actual_366" | "actual_360" | "a
 
 export type DeadlineAdjustment = "none" | "next_working_day" | "previous_working_day";
 
-// NOTE: app__tools__legal_deadline__models__DeadlineAdjustment collides with app__models__procedure__DeadlineAdjustment; kept the first.
-
 export type DeadlineAdjustmentInput = "none" | "next_working_day" | "previous_working_day";
 
 export interface DeadlineCalculationRead {
@@ -1917,9 +2013,9 @@ export interface DeadlineCalculationRead {
 export interface DeadlineCalculationRequest {
   trigger_date: string;
   offset_days: number;
-  day_basis?: DayBasis;
-  count_from_next_day?: boolean;
-  adjustment?: DeadlineAdjustmentInput;
+  day_basis: DayBasis;
+  count_from_next_day: boolean;
+  adjustment: DeadlineAdjustmentInput;
   holidays?: string[];
 }
 
@@ -1950,16 +2046,16 @@ export interface DeadlineRuleInput {
   name_hi?: string | null;
   trigger_code: string;
   offset_days: number;
-  day_basis?: DayBasis;
-  count_from_next_day?: boolean;
-  adjustment?: DeadlineAdjustmentInput;
-  requires_lawyer_review?: boolean;
+  day_basis: DayBasis;
+  count_from_next_day: boolean;
+  adjustment: DeadlineAdjustmentInput;
+  requires_lawyer_review: boolean;
   source_name?: string | null;
   source_url?: string | null;
   source_citation?: string | null;
   effective_from?: string | null;
   effective_to?: string | null;
-  verified?: boolean;
+  verified: boolean;
   metadata_json?: Record<string, unknown>;
 }
 
@@ -2048,7 +2144,7 @@ export interface DeploymentChangeWindowCreate {
   starts_at: string;
   ends_at: string;
   reason: string;
-  emergency?: boolean;
+  emergency: boolean;
 }
 
 export interface DeploymentChangeWindowRead {
@@ -2073,12 +2169,12 @@ export interface DeploymentDashboard {
 export interface DeploymentEnvironmentCreate {
   environment_key: string;
   name: string;
-  kind?: DeploymentEnvironmentKind;
+  kind: DeploymentEnvironmentKind;
   base_url: string;
-  strategy?: DeploymentStrategy;
-  tls_required?: boolean;
-  object_storage_required?: boolean;
-  change_window_required?: boolean;
+  strategy: DeploymentStrategy;
+  tls_required: boolean;
+  object_storage_required: boolean;
+  change_window_required: boolean;
 }
 
 export type DeploymentEnvironmentKind = "staging" | "production";
@@ -2149,9 +2245,9 @@ export interface DeploymentRolloutStepRead {
 export interface DeploymentSecretReferenceCreate {
   environment_id: string;
   secret_key: string;
-  provider?: SecretReferenceProvider;
+  provider: SecretReferenceProvider;
   reference: string;
-  required?: boolean;
+  required: boolean;
 }
 
 export interface DeploymentSecretReferenceRead {
@@ -2195,7 +2291,7 @@ export interface DirectionCreate {
   due_date?: string | null;
   source_document_id?: string | null;
   page_number?: number | null;
-  requires_review?: boolean;
+  requires_review: boolean;
 }
 
 export interface DirectionExtractionRequest {
@@ -2269,8 +2365,8 @@ export type DocumentFormat = "pdf" | "docx";
 
 export interface DocumentGrantCreate {
   membership_id: string;
-  effect?: AccessEffect;
-  access_level?: DocumentAccessLevel;
+  effect: AccessEffect;
+  access_level: DocumentAccessLevel;
   expires_at?: string | null;
   reason?: string | null;
 }
@@ -2401,9 +2497,18 @@ export interface DocusignEnvelopeRequest {
   signer_name: string;
   signer_email: string;
   email_subject: string;
-  status?: string;
-  internal_resource_type?: string | null;
+  status: string;
+  internal_resource_type: string | null;
   internal_resource_id?: string | null;
+}
+
+export interface DraftCatalogItem {
+  draft_type: string;
+  name_en: string;
+  name_hi: string;
+  description: string;
+  section_count: number;
+  questions: DraftQuestion[];
 }
 
 export interface DraftContextPreview {
@@ -2440,6 +2545,23 @@ export interface DraftFindingUpdate {
   status: DraftFindingStatus;
 }
 
+export interface DraftQuestion {
+  key: string;
+  label_en: string;
+  label_hi: string;
+  required: boolean;
+  kind: string;
+}
+
+export interface DraftQuestionnaire {
+  draft_type: string;
+  name_en: string;
+  name_hi: string;
+  description: string;
+  questions: DraftQuestion[];
+  sections: DraftSectionDefinition[];
+}
+
 export interface DraftRenderResult {
   draft: LegalDraftRead;
   version: LegalDraftVersionRead;
@@ -2448,6 +2570,12 @@ export interface DraftRenderResult {
 export interface DraftResult {
   contract: ContractRead;
   version: ContractVersionRead;
+}
+
+export interface DraftSectionDefinition {
+  key: string;
+  title_en: string;
+  title_hi: string;
 }
 
 export interface DraftSectionRead {
@@ -2522,9 +2650,9 @@ export interface EngagementCreate {
   matter_id?: string | null;
   scope?: string | null;
   fee_structure?: string | null;
-  currency?: string;
+  currency: string;
   agreed_fee?: number | null;
-  status?: EngagementStatus;
+  status: EngagementStatus;
 }
 
 export interface EngagementRead {
@@ -2547,7 +2675,7 @@ export type EntityType = "cnr_number" | "case_number" | "case_title" | "party" |
 
 export interface EnvelopeCreate {
   document_version_id: string;
-  provider?: ESignatureProvider;
+  provider: ESignatureProvider;
   title: string;
   signers: SignerCreate[];
   metadata?: Record<string, unknown>;
@@ -2618,8 +2746,8 @@ export interface EvaluationCaseCreate {
   title: string;
   category: string;
   evaluator: string;
-  weight?: number;
-  critical?: boolean;
+  weight: number;
+  critical: boolean;
   input_json?: Record<string, unknown>;
   expected_json?: Record<string, unknown>;
   source_note?: string | null;
@@ -2763,15 +2891,15 @@ export interface EvidenceGraphRead {
 
 export interface EvidenceIndexRequest {
   case_reference?: string | null;
-  title?: string;
-  index_type?: IndexType;
+  title: string;
+  index_type: IndexType;
   documents: IndexDocument[];
-  numbering_style?: NumberingStyle;
+  numbering_style: NumberingStyle;
   label_prefix?: string | null;
-  numbering_start?: number;
-  zero_pad?: number;
-  pagination_mode?: PaginationMode;
-  first_page?: number;
+  numbering_start: number;
+  zero_pad: number;
+  pagination_mode: PaginationMode;
+  first_page: number;
 }
 
 export interface EvidenceIndexResponse {
@@ -2871,9 +2999,9 @@ export interface ExpenseCreate {
   description: string;
   category?: string | null;
   amount: number | string;
-  tax_amount?: number | string;
-  currency?: string;
-  billable?: boolean;
+  tax_amount: number | string;
+  currency: string;
+  billable: boolean;
   receipt_document_id?: string | null;
   notes?: string | null;
 }
@@ -2935,10 +3063,10 @@ export interface ExpiryAdjustmentResult {
 export type ExportFormat = "docx" | "pdf";
 
 export interface ExportOptions {
-  page_size?: PageSize;
-  margin_mm?: number;
-  include_disclaimer?: boolean;
-  include_generated_footer?: boolean;
+  page_size: PageSize;
+  margin_mm: number;
+  include_disclaimer: boolean;
+  include_generated_footer: boolean;
   header_text?: string | null;
   footer_text?: string | null;
   filename?: string | null;
@@ -2949,12 +3077,12 @@ export type ExportSourceType = "legal_notice" | "affidavit" | "case_timeline" | 
 export interface ExtractOptions {
   date_kinds?: DateKind[] | null;
   obligation_types?: ObligationType[] | null;
-  include_other_dates?: boolean;
-  include_other_obligations?: boolean;
-  deduplicate?: boolean;
-  context_chars?: number;
-  max_dates?: number;
-  max_obligations?: number;
+  include_other_dates: boolean;
+  include_other_obligations: boolean;
+  deduplicate: boolean;
+  context_chars: number;
+  max_dates: number;
+  max_obligations: number;
 }
 
 export interface ExtractRequest {
@@ -3062,8 +3190,8 @@ export interface FeeArrangementCreate {
   rate_card_id?: string | null;
   name: string;
   fee_model: FeeModel;
-  status?: FeeArrangementStatus;
-  currency?: string;
+  status: FeeArrangementStatus;
+  currency: string;
   default_hourly_rate?: number | string | null;
   fixed_fee?: number | string | null;
   retainer_amount?: number | string | null;
@@ -3151,7 +3279,7 @@ export interface GmailSendRequest {
   cc?: string[];
   bcc?: string[];
   subject: string;
-  text_body?: string;
+  text_body: string;
   html_body?: string | null;
   reply_to?: string | null;
   internal_resource_type?: string | null;
@@ -3163,9 +3291,9 @@ export type GoalComparison = "at_least" | "at_most" | "exact";
 export interface GoalCreate {
   name: string;
   metric_key: string;
-  scope_type?: AnalyticsScope;
+  scope_type: AnalyticsScope;
   scope_id?: string | null;
-  comparison?: GoalComparison;
+  comparison: GoalComparison;
   target_value: number;
   start_date: string;
   end_date: string;
@@ -3325,7 +3453,7 @@ export interface IndexDocument {
   start_page?: number | null;
   end_page?: number | null;
   notes?: string | null;
-  confidential?: boolean;
+  confidential: boolean;
 }
 
 export type IndexType = "evidence" | "exhibit" | "annexure" | "bundle";
@@ -3380,14 +3508,14 @@ export interface IntakeFieldDefinition {
   key: string;
   label: string;
   section: string;
-  field_type?: IntakeFieldType;
-  required?: boolean;
+  field_type: IntakeFieldType;
+  required: boolean;
   allowed_values?: string[];
-  max_length?: number;
+  max_length: number;
   pattern?: string | null;
   placeholder?: string | null;
   help_text?: string | null;
-  include_in_conflict_terms?: boolean;
+  include_in_conflict_terms: boolean;
   applies_if_all?: MatchCondition[];
   applies_if_any?: MatchCondition[];
   required_if_all?: MatchCondition[];
@@ -3445,6 +3573,12 @@ export interface IntegrationCatalogItem {
   official_docs: string[];
 }
 
+export interface IntegrationCheckResult {
+  key: string;
+  passed: boolean;
+  message: string;
+}
+
 export interface IntegrationConnectionCreate {
   connection_key: string;
   display_name: string;
@@ -3486,7 +3620,7 @@ export interface IntegrationHealthRead {
   checked_at: string;
   live_probe: boolean;
   latency_ms: number | null;
-  checks_json: unknown[];
+  checks_json: IntegrationCheckResult[];
   error_message: string | null;
 }
 
@@ -3530,7 +3664,7 @@ export interface InterestBreakdownLine {
   annual_rate_percent: string;
   method: InterestMethod;
   interest: string;
-  adjustment_at_period_end?: string;
+  adjustment_at_period_end: string;
   closing_principal: string;
   note?: string | null;
 }
@@ -3543,12 +3677,12 @@ export interface InvoiceCreate {
   fee_arrangement_id?: string | null;
   issue_date?: string | null;
   due_date?: string | null;
-  currency?: string;
+  currency: string;
   client_address?: string | null;
   client_gstin?: string | null;
   client_state_code?: string | null;
   place_of_supply?: string | null;
-  reverse_charge?: boolean;
+  reverse_charge: boolean;
   notes?: string | null;
   metadata?: Record<string, unknown>;
   lines?: InvoiceLineCreate[];
@@ -3561,18 +3695,18 @@ export interface InvoiceIssueRequest {
 }
 
 export interface InvoiceLineCreate {
-  kind?: InvoiceLineKind;
+  kind: InvoiceLineKind;
   source_time_entry_id?: string | null;
   source_expense_id?: string | null;
   description: string;
   service_code?: string | null;
-  quantity?: number | string;
+  quantity: number | string;
   unit_price: number | string;
-  discount_amount?: number | string;
-  cgst_rate?: number | string;
-  sgst_rate?: number | string;
-  igst_rate?: number | string;
-  cess_rate?: number | string;
+  discount_amount: number | string;
+  cgst_rate: number | string;
+  sgst_rate: number | string;
+  igst_rate: number | string;
+  cess_rate: number | string;
   metadata?: Record<string, unknown>;
 }
 
@@ -3642,7 +3776,7 @@ export interface InvoiceRead {
 }
 
 export interface InvoiceReviewRequest {
-  tax_treatment_reviewed?: boolean;
+  tax_treatment_reviewed: boolean;
   note?: string | null;
 }
 
@@ -3653,12 +3787,12 @@ export interface IssueCreate {
   title: string;
   description?: string | null;
   burden_side?: string | null;
-  priority?: number;
+  priority: number;
 }
 
 export interface IssueLinkCreate {
   issue_id: string;
-  link_type?: EvidenceLinkType;
+  link_type: EvidenceLinkType;
   rationale?: string | null;
 }
 
@@ -3691,7 +3825,7 @@ export type ItemStatus = "present" | "completed" | "pending" | "missing" | "not_
 export interface JobCreate {
   kind: JobKind;
   payload?: Record<string, unknown>;
-  priority?: JobPriority;
+  priority: JobPriority;
   queue_name?: string | null;
   matter_id?: string | null;
   resource_type?: string | null;
@@ -3758,7 +3892,7 @@ export type JournalEntryType = "deposit" | "refund" | "disbursement" | "fee_tran
 export interface JudgmentImportParagraph {
   paragraph_number?: string | null;
   text: string;
-  language?: CorpusLanguage;
+  language: CorpusLanguage;
   metadata?: Record<string, unknown>;
 }
 
@@ -3771,13 +3905,13 @@ export interface JudgmentImportRequest {
   reported_citations?: string[];
   court_name: string;
   court_level: CourtLevel;
-  jurisdiction?: string;
+  jurisdiction: string;
   decision_date?: string | null;
   judges?: string[];
   bench_strength?: number | null;
   acts?: string[];
   sections?: string[];
-  language?: CorpusLanguage;
+  language: CorpusLanguage;
   source_url?: string | null;
   metadata?: Record<string, unknown>;
   paragraphs?: JudgmentImportParagraph[];
@@ -3815,7 +3949,7 @@ export interface JudgmentRead {
 export interface JurisdictionPackCreate {
   pack_key: string;
   name: string;
-  jurisdiction?: string;
+  jurisdiction: string;
   state?: string | null;
   languages?: string[];
   description?: string | null;
@@ -3841,8 +3975,8 @@ export interface JurisdictionPackRead {
 export interface JurisdictionPackSourceInput {
   source_id: string;
   feed_id?: string | null;
-  required?: boolean;
-  maximum_age_hours?: number;
+  required: boolean;
+  maximum_age_hours: number;
   metadata?: Record<string, unknown>;
 }
 
@@ -3906,11 +4040,11 @@ export interface KnowledgeAssetCreate {
   source_matter_id?: string | null;
   title: string;
   kind: KnowledgeAssetKind;
-  language?: KnowledgeLanguage;
+  language: KnowledgeLanguage;
   body_en?: string | null;
   body_hi?: string | null;
   summary?: string | null;
-  jurisdiction?: string | null;
+  jurisdiction: string | null;
   practice_area?: string | null;
   matter_type?: string | null;
   outcome_label?: string | null;
@@ -3945,7 +4079,7 @@ export interface KnowledgeAssetDetail {
   updated_at: string;
   sources?: KnowledgeSourceRead[];
   tags?: string[];
-  source_access_restricted?: boolean;
+  source_access_restricted: boolean;
 }
 
 export type KnowledgeAssetKind = "pleading_section" | "contract_clause" | "argument" | "research_memo" | "authority_note" | "checklist" | "template" | "practice_note";
@@ -4025,7 +4159,7 @@ export interface KnowledgeDashboard {
 export type KnowledgeLanguage = "en" | "hi" | "bilingual";
 
 export interface KnowledgeReviewRequest {
-  sanitization_status?: SanitizationStatus;
+  sanitization_status: SanitizationStatus;
   review_note?: string | null;
 }
 
@@ -4052,7 +4186,7 @@ export interface KnowledgeSourceCreate {
   label: string;
   locator?: string | null;
   excerpt?: string | null;
-  verified?: boolean;
+  verified: boolean;
   metadata_json?: Record<string, unknown>;
 }
 
@@ -4103,7 +4237,7 @@ export interface LeadCreate {
   phone?: string | null;
   source?: string | null;
   practice_area?: string | null;
-  language?: string;
+  language: string;
   summary?: string | null;
   next_action?: string | null;
   next_action_at?: string | null;
@@ -4214,13 +4348,13 @@ export interface LegalDataFeedCreate {
   connection_id?: string | null;
   code: string;
   name: string;
-  jurisdiction?: string;
+  jurisdiction: string;
   state?: string | null;
-  content_kind?: LegalDataContentKind;
-  mode?: LegalDataFeedMode;
+  content_kind: LegalDataContentKind;
+  mode: LegalDataFeedMode;
   allowed_domains?: string[];
-  schedule_interval_minutes?: number;
-  stale_after_hours?: number;
+  schedule_interval_minutes: number;
+  stale_after_hours: number;
   import_path?: string | null;
   metadata?: Record<string, unknown>;
 }
@@ -4277,12 +4411,20 @@ export interface LegalDataManifestItem {
   source_sha256?: string | null;
 }
 
+// NOTE: app__tools__legal_deadline__models__DeadlineAdjustment shares a class name with app__models__procedure__DeadlineAdjustment; emitted as LegalDeadlineDeadlineAdjustment.
+
+export interface LegalDeadlineDeadlineAdjustment {
+  original_date: string;
+  adjusted_date: string;
+  reason: string;
+}
+
 export interface LegalDeadlineRequest {
   start_date: string;
   days: number;
-  count_mode?: CountMode;
-  include_start_date?: boolean;
-  roll_if_non_business?: boolean;
+  count_mode: CountMode;
+  include_start_date: boolean;
+  roll_if_non_business: boolean;
   excluded_dates?: string[];
   weekend_weekdays?: number[];
 }
@@ -4294,14 +4436,14 @@ export interface LegalDeadlineResponse {
   count_mode: CountMode;
   include_start_date: boolean;
   excluded_dates_used: string[];
-  adjustment?: DeadlineAdjustment | null;
+  adjustment?: LegalDeadlineDeadlineAdjustment | null;
   disclaimer: string;
 }
 
 export interface LegalDraftCreate {
   matter_id: string;
   draft_type: LegalDraftType;
-  language?: LegalDraftLanguage;
+  language: LegalDraftLanguage;
   title?: string | null;
   questionnaire_json?: Record<string, unknown>;
   selected_fact_ids?: string[];
@@ -4440,7 +4582,7 @@ export interface LimitationPeriodRequest {
   period_value: number;
   period_unit: PeriodUnit;
   extension_periods?: LimitationExtension[];
-  expiry_adjustment?: ExpiryAdjustment;
+  expiry_adjustment: ExpiryAdjustment;
   excluded_dates?: string[];
   weekend_weekdays?: number[];
 }
@@ -4461,7 +4603,7 @@ export interface LimitationPeriodResponse {
 
 export interface LinkCaseMatterRequest {
   matter_id?: string | null;
-  create_workspace?: boolean;
+  create_workspace: boolean;
 }
 
 export interface LoginRequest {
@@ -4496,22 +4638,22 @@ export interface MatterCreate {
   court_name?: string | null;
   case_number?: string | null;
   cnr_number?: string | null;
-  jurisdiction?: string;
+  jurisdiction: string;
   description?: string | null;
-  status?: MatterStatus;
-  primary_language?: MatterLanguage;
+  status: MatterStatus;
+  primary_language: MatterLanguage;
 }
 
 export interface MatterDeadlineCreate {
   trigger_date: string;
   offset_days: number;
-  day_basis?: DayBasis;
-  count_from_next_day?: boolean;
-  adjustment?: DeadlineAdjustmentInput;
+  day_basis: DayBasis;
+  count_from_next_day: boolean;
+  adjustment: DeadlineAdjustmentInput;
   holidays?: string[];
   title: string;
   matter_procedure_id?: string | null;
-  trigger_type?: string;
+  trigger_type: string;
   trigger_id?: string | null;
   source_name?: string | null;
   source_url?: string | null;
@@ -4521,8 +4663,8 @@ export interface MatterDeadlineCreate {
 
 export interface MatterGrantCreate {
   membership_id: string;
-  effect?: AccessEffect;
-  access_level?: MatterAccessLevel;
+  effect: AccessEffect;
+  access_level: MatterAccessLevel;
   allow_remote_ai?: boolean | null;
   allow_export?: boolean | null;
   expires_at?: string | null;
@@ -4558,7 +4700,15 @@ export interface MatterHealthRead {
   open_high_draft_findings: number;
   unreviewed_court_changes: number;
   open_evidence_gaps: number;
-  reasons: Record<string, unknown>[];
+  reasons: MatterHealthReason[];
+}
+
+export interface MatterHealthReason {
+  key: string;
+  count: number;
+  weight: number;
+  penalty: number;
+  label: string;
 }
 
 export type MatterLanguage = "en" | "hi" | "bilingual";
@@ -4567,7 +4717,7 @@ export interface MatterOpenRequest {
   title: string;
   description?: string | null;
   practice_area?: string | null;
-  primary_language?: string;
+  primary_language: string;
   engagement_id?: string | null;
   team_membership_ids?: string[];
 }
@@ -4579,7 +4729,7 @@ export interface MatterPlaybookCreate {
   description?: string | null;
   practice_area?: string | null;
   matter_type?: string | null;
-  version?: number;
+  version: number;
 }
 
 export interface MatterPlaybookItemCreate {
@@ -4589,7 +4739,7 @@ export interface MatterPlaybookItemCreate {
   title_hi?: string | null;
   stage?: string | null;
   position: number;
-  required?: boolean;
+  required: boolean;
   instructions?: string | null;
   metadata_json?: Record<string, unknown>;
 }
@@ -4649,16 +4799,16 @@ export interface MatterRead {
   court_name?: string | null;
   case_number?: string | null;
   cnr_number?: string | null;
-  jurisdiction?: string;
+  jurisdiction: string;
   description?: string | null;
-  status?: MatterStatus;
-  primary_language?: MatterLanguage;
+  status: MatterStatus;
+  primary_language: MatterLanguage;
   id: string;
   organization_id?: string | null;
   created_by_user_id?: string | null;
   created_at: string;
   updated_at: string;
-  document_count?: number;
+  document_count: number;
 }
 
 export interface MatterSecurityProfileRead {
@@ -4761,7 +4911,7 @@ export interface NoteCreate {
   title?: string | null;
   body: string;
   matter_id?: string | null;
-  is_private?: boolean;
+  is_private: boolean;
 }
 
 export type NotificationChannel = "in_app" | "email" | "console";
@@ -4820,7 +4970,7 @@ export type OcrPagePlanStatus = "ocr" | "skip_existing_text" | "skip_not_selecte
 
 export interface OfficialCaseImportRequest {
   record: CaseRecordData;
-  save_case?: boolean;
+  save_case: boolean;
 }
 
 export interface OfficialLegalImportRequest {
@@ -4843,8 +4993,8 @@ export interface OnboardingProgressRead {
 export interface OnboardingProgressUpdate {
   completed_steps?: string[] | null;
   current_step?: string | null;
-  complete?: boolean;
-  dismiss?: boolean;
+  complete: boolean;
+  dismiss: boolean;
 }
 
 export interface OnboardingRead {
@@ -4864,7 +5014,7 @@ export interface OnboardingUpdate {
   address_complete?: boolean | null;
   engagement_complete?: boolean | null;
   notes?: string | null;
-  mark_complete?: boolean;
+  mark_complete: boolean;
 }
 
 export interface OperationsDashboard {
@@ -4891,6 +5041,12 @@ export interface OperationsPreferenceUpdate {
   due_soon_hours?: number | null;
   overdue_escalation_hours?: number | null;
   channels_json?: string[] | null;
+}
+
+// NOTE: app__schemas__operations__TemplateSeedResult shares a class name with app__schemas__drafting__TemplateSeedResult; emitted as OperationsTemplateSeedResult.
+
+export interface OperationsTemplateSeedResult {
+  created: number;
 }
 
 export interface OrganizationRead {
@@ -4972,10 +5128,10 @@ export interface PaymentCreate {
   client_id: string;
   invoice_id?: string | null;
   amount: number | string;
-  currency?: string;
+  currency: string;
   payment_date: string;
-  method?: PaymentMethod;
-  status?: PaymentStatus;
+  method: PaymentMethod;
+  status: PaymentStatus;
   reference?: string | null;
   notes?: string | null;
 }
@@ -4986,7 +5142,7 @@ export interface PaymentIntentCreate {
   matter_id?: string | null;
   invoice_id?: string | null;
   amount: number | string;
-  currency?: string;
+  currency: string;
   expires_at?: string | null;
   metadata?: Record<string, unknown>;
 }
@@ -5011,17 +5167,17 @@ export type PaymentIntentStatus = "created" | "pending" | "succeeded" | "failed"
 
 export interface PaymentLinkRequest {
   amount_paise: number;
-  currency?: string;
+  currency: string;
   description: string;
   reference_id?: string | null;
   customer_name?: string | null;
   customer_email?: string | null;
   customer_phone?: string | null;
   expire_by?: number | null;
-  notify_email?: boolean;
-  notify_sms?: boolean;
-  allow_partial?: boolean;
-  internal_resource_type?: string | null;
+  notify_email: boolean;
+  notify_sms: boolean;
+  allow_partial: boolean;
+  internal_resource_type: string | null;
   internal_resource_id?: string | null;
 }
 
@@ -5029,8 +5185,8 @@ export type PaymentMethod = "bank_transfer" | "upi" | "cheque" | "cash" | "card"
 
 export interface PaymentProviderCreate {
   provider: PaymentProviderKind;
-  enabled?: boolean;
-  mode?: string;
+  enabled: boolean;
+  mode: string;
   public_config?: Record<string, unknown>;
   secret_env_prefix?: string | null;
   notes?: string | null;
@@ -5134,9 +5290,9 @@ export interface PilotReadinessUpdate {
 
 export interface PlaybookCreate {
   name: string;
-  owner_label?: string;
+  owner_label: string;
   contract_type: ContractType;
-  risk_profile?: ContractRiskProfile;
+  risk_profile: ContractRiskProfile;
   settings_json?: Record<string, unknown>;
   rules?: PlaybookRuleCreate[];
 }
@@ -5157,10 +5313,10 @@ export type PlaybookRequirement = "required" | "optional" | "prohibited";
 export interface PlaybookRuleCreate {
   code: string;
   clause_type: string;
-  requirement?: PlaybookRequirement;
-  preferred_variant?: string;
-  risk_level?: ContractRiskLevel;
-  guidance_en?: string;
+  requirement: PlaybookRequirement;
+  preferred_variant: string;
+  risk_level: ContractRiskLevel;
+  guidance_en: string;
   guidance_hi?: string | null;
   config_json?: Record<string, unknown>;
 }
@@ -5256,7 +5412,7 @@ export interface PortalMessageRead {
 export interface PortalRequestCreate {
   portal_access_id: string;
   matter_id?: string | null;
-  request_type?: string;
+  request_type: string;
   title: string;
   description?: string | null;
   due_at?: string | null;
@@ -5295,7 +5451,7 @@ export interface PortalShareCreate {
   resource_id?: string | null;
   title: string;
   message?: string | null;
-  can_download?: boolean;
+  can_download: boolean;
   metadata?: Record<string, unknown>;
 }
 
@@ -5319,7 +5475,7 @@ export interface PrepQuestionCreate {
   evidence_item_id?: string | null;
   question: string;
   purpose?: string | null;
-  question_type?: string;
+  question_type: string;
 }
 
 export interface PrepQuestionRead {
@@ -5342,22 +5498,35 @@ export interface PrincipalAdjustment {
   note?: string | null;
 }
 
+// NOTE: app__schemas__procedure__AgendaItem shares a class name with app__schemas__operations__AgendaItem; emitted as ProcedureAgendaItem.
+
+export interface ProcedureAgendaItem {
+  kind: string;
+  id: string;
+  matter_id: string;
+  title: string;
+  when: string;
+  status: string;
+  requires_review: boolean;
+  metadata?: Record<string, unknown>;
+}
+
 export interface ProcedurePackCreate {
   code: string;
   name_en: string;
   name_hi?: string | null;
-  jurisdiction?: string;
+  jurisdiction: string;
   proceeding_type: string;
   court_level?: string | null;
   description?: string | null;
-  version?: number;
-  status?: ProcedurePackStatus;
+  version: number;
+  status: ProcedurePackStatus;
   effective_from?: string | null;
   effective_to?: string | null;
   source_name?: string | null;
   source_url?: string | null;
   source_citation?: string | null;
-  verified?: boolean;
+  verified: boolean;
   metadata_json?: Record<string, unknown>;
   steps?: ProcedureStepInput[];
   deadline_rules?: DeadlineRuleInput[];
@@ -5403,7 +5572,7 @@ export interface ProcedureStepInput {
   name_en: string;
   name_hi?: string | null;
   description?: string | null;
-  required?: boolean;
+  required: boolean;
   dependency_codes_json?: string[];
   checklist_json?: string[];
   metadata_json?: Record<string, unknown>;
@@ -5437,7 +5606,7 @@ export interface PromoteDraftSectionRequest {
   section_id: string;
   collection_id?: string | null;
   title?: string | null;
-  kind?: KnowledgeAssetKind;
+  kind: KnowledgeAssetKind;
   practice_area?: string | null;
   matter_type?: string | null;
   tags?: string[];
@@ -5497,8 +5666,8 @@ export interface QueueUpdate {
 
 export interface RateCardCreate {
   name: string;
-  currency?: string;
-  is_default?: boolean;
+  currency: string;
+  is_default: boolean;
   notes?: string | null;
 }
 
@@ -5508,6 +5677,13 @@ export interface RateCreate {
   hourly_rate: number | string;
   active_from?: string | null;
   active_to?: string | null;
+}
+
+export interface ReadinessCheck {
+  key: string;
+  passed: boolean;
+  critical: boolean;
+  message: string;
 }
 
 export interface RebuildResultRead {
@@ -5521,7 +5697,7 @@ export interface RebuildResultRead {
   open_review_items: number;
   source_documents: number;
   source_pages: number;
-  rebuilt?: boolean;
+  rebuilt: boolean;
 }
 
 export interface RecentItemCreate {
@@ -5613,10 +5789,10 @@ export type RedlineStatus = "generated" | "superseded";
 export type RelativeUnit = "business_days" | "days" | "weeks" | "months" | "years";
 
 export interface ReleaseArtifactCreate {
-  kind?: string;
+  kind: string;
   filename: string;
   sha256: string;
-  size_bytes?: number;
+  size_bytes: number;
   storage_path?: string | null;
   metadata_json?: Record<string, unknown>;
 }
@@ -5670,6 +5846,17 @@ export interface ReleaseGateRead {
   updated_at: string;
 }
 
+export interface ReleaseGateSummary {
+  passed: boolean;
+  reasons: string[];
+  critical_security_failures: number;
+  stage_status: Record<string, string>;
+  performance_runs: number;
+  security_runs: number;
+  rollback_ready: boolean;
+  artifact_passed: boolean;
+}
+
 export interface ReleaseGateUpdate {
   min_overall_score?: number | null;
   max_critical_failures?: number | null;
@@ -5695,7 +5882,7 @@ export interface ReleasePipelineRead {
 export interface ReleaseRunCreate {
   build_ref?: string | null;
   commit_ref?: string | null;
-  environment?: string;
+  environment: string;
 }
 
 export interface ReleaseRunDetail {
@@ -5757,7 +5944,7 @@ export interface RemedyAnalysisRead {
 export interface RemedyAnalysisRequest {
   matter_id?: string | null;
   saved_case_id?: string | null;
-  language?: string;
+  language: string;
   as_of_date?: string | null;
 }
 
@@ -5770,7 +5957,7 @@ export interface RemedyAuthorityInput {
   citation?: string | null;
   proposition: string;
   source_url?: string | null;
-  verified?: boolean;
+  verified: boolean;
 }
 
 export interface RemedyAuthorityRead {
@@ -5798,7 +5985,7 @@ export interface RemedyCandidateRead {
   forum_json: Record<string, unknown>;
   deadline_json: Record<string, unknown>;
   maintainability_json: Record<string, unknown>;
-  required_documents_json: unknown[];
+  required_documents_json: RemedyDocumentRequirement[];
   procedural_steps_json: unknown[];
   risks_json: unknown[];
   drafting_json: Record<string, unknown>;
@@ -5815,9 +6002,14 @@ export interface RemedyCandidateReview {
 
 export type RemedyCandidateStatus = "possible" | "conditional" | "not_maintainable" | "needs_research" | "selected" | "dismissed";
 
+export interface RemedyDocumentRequirement {
+  name: string;
+  available: boolean;
+}
+
 export interface RemedyDraftCreate {
   requested_document_kind: string;
-  language?: string;
+  language: string;
   relief_requested?: string | null;
   additional_instructions?: string | null;
 }
@@ -5830,7 +6022,7 @@ export interface RemedyDraftLinkRead {
 }
 
 export interface RemedyMemoCreate {
-  language?: string;
+  language: string;
 }
 
 export interface RemedyMemoRead {
@@ -5856,15 +6048,15 @@ export interface RemedyRuleInput {
   remedy_name_hi?: string | null;
   description_en: string;
   description_hi?: string | null;
-  priority?: number;
+  priority: number;
   case_stage_patterns_json?: string[];
   status_patterns_json?: string[];
   court_level_patterns_json?: string[];
   order_type_patterns_json?: string[];
   act_patterns_json?: string[];
   section_patterns_json?: string[];
-  requires_final_order?: boolean;
-  requires_latest_order?: boolean;
+  requires_final_order: boolean;
+  requires_latest_order: boolean;
   forum_json?: Record<string, unknown>;
   limitation_json?: Record<string, unknown>;
   maintainability_json?: Record<string, unknown>;
@@ -5872,7 +6064,7 @@ export interface RemedyRuleInput {
   procedural_steps_json?: string[];
   risks_json?: string[];
   drafting_json?: Record<string, unknown>;
-  verified?: boolean;
+  verified: boolean;
   metadata_json?: Record<string, unknown>;
   authorities?: RemedyAuthorityInput[];
 }
@@ -5881,17 +6073,17 @@ export interface RemedyRulePackCreate {
   code: string;
   name_en: string;
   name_hi?: string | null;
-  jurisdiction?: string;
+  jurisdiction: string;
   proceeding_type?: string | null;
   court_level?: string | null;
-  version?: number;
-  status?: RemedyPackStatus;
+  version: number;
+  status: RemedyPackStatus;
   effective_from?: string | null;
   effective_to?: string | null;
   source_name?: string | null;
   source_url?: string | null;
   source_citation?: string | null;
-  verified?: boolean;
+  verified: boolean;
   metadata_json?: Record<string, unknown>;
   rules?: RemedyRuleInput[];
 }
@@ -5961,7 +6153,7 @@ export interface ResearchCollectionItemCreate {
   position: number;
   proposition?: string | null;
   note?: string | null;
-  verified?: boolean;
+  verified: boolean;
 }
 
 export interface ResearchCollectionItemRead {
@@ -5990,6 +6182,24 @@ export interface ResearchCollectionRead {
 
 export type ResearchCollectionStatus = "draft" | "approved" | "retired";
 
+// NOTE: app__schemas__research__SourceRead shares a class name with app__schemas__intelligence__SourceRead; emitted as ResearchSourceRead.
+
+export interface ResearchSourceRead {
+  id: string;
+  code: string;
+  name: string;
+  kind: string;
+  base_url: string | null;
+  jurisdiction: string;
+  official: boolean;
+  access_mode: string;
+  enabled: boolean;
+  notes: string | null;
+  metadata_json: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface RestoreDrillRead {
   id: string;
   organization_id: string;
@@ -6016,8 +6226,8 @@ export interface RestoreDrillReview {
 export interface RetentionPolicyCreate {
   resource_type: RetentionResourceType;
   retention_days: number;
-  enabled?: boolean;
-  auto_delete_enabled?: boolean;
+  enabled: boolean;
+  auto_delete_enabled: boolean;
   notes?: string | null;
 }
 
@@ -6133,6 +6343,14 @@ export interface RiskRead {
   metadata_json: Record<string, unknown>;
 }
 
+export interface RiskRebuildSummary {
+  created: number;
+  updated: number;
+  resolved: number;
+  active: number;
+  message?: string | null;
+}
+
 export interface RiskSignalRead {
   id: string;
   matter_id: string | null;
@@ -6165,7 +6383,7 @@ export interface RollbackPointCreate {
   release_artifact_id?: string | null;
   backup_run_id?: string | null;
   notes?: string | null;
-  verified?: boolean;
+  verified: boolean;
 }
 
 export interface RollbackPointRead {
@@ -6181,7 +6399,7 @@ export interface RuleDeadlineCreate {
   deadline_rule_id: string;
   trigger_date: string;
   matter_procedure_id?: string | null;
-  trigger_type?: string;
+  trigger_type: string;
   trigger_id?: string | null;
   holidays?: string[];
   notes?: string | null;
@@ -6189,7 +6407,7 @@ export interface RuleDeadlineCreate {
 
 export interface RuntimeReadiness {
   ready: boolean;
-  checks: Record<string, unknown>[];
+  checks: ReadinessCheck[];
   app_version: string;
   build_ref: string | null;
   commit_ref: string | null;
@@ -6197,12 +6415,22 @@ export interface RuntimeReadiness {
 
 export type SanitizationStatus = "not_reviewed" | "reviewed" | "not_required";
 
+export interface SavedCaseChange {
+  id: string;
+  field: string;
+  change_type: string;
+  old?: unknown;
+  new?: unknown;
+  summary: string;
+  detected_at: string;
+}
+
 export interface SavedCaseDetailRead {
   id: string;
   matter_id: string | null;
   record: CaseRecordData;
-  changes?: Record<string, unknown>[];
-  stale?: boolean;
+  changes?: SavedCaseChange[];
+  stale: boolean;
 }
 
 export interface SavedCaseSummaryRead {
@@ -6229,14 +6457,14 @@ export interface SavedSearchCreate {
   query: string;
   scopes?: SearchEntityType[];
   filters?: Record<string, unknown>;
-  pinned?: boolean;
+  pinned: boolean;
 }
 
 export interface SavedSearchRead {
   id: string;
   name: string;
   query: string;
-  scopes_json: unknown[];
+  scopes_json: SearchEntityType[];
   filters_json: Record<string, unknown>;
   pinned: boolean;
   last_run_at: string | null;
@@ -6250,8 +6478,14 @@ export interface SearchDuplicateItem {
   similarity: number;
   hamming_distance: number;
   shingle_jaccard: number;
-  left: Record<string, unknown>;
-  right: Record<string, unknown>;
+  left: SearchDuplicateSide;
+  right: SearchDuplicateSide;
+}
+
+export interface SearchDuplicateSide {
+  title: string;
+  href: string;
+  matter_id?: string | null;
 }
 
 export type SearchEntityType = "matter" | "client" | "document" | "fact" | "evidence" | "witness" | "contract" | "draft" | "deadline" | "hearing" | "task" | "invoice" | "statute" | "judgment" | "precedent" | "communication";
@@ -6288,7 +6522,7 @@ export interface SearchIndexJobRead {
 
 export interface SearchPreferenceRead {
   id: string;
-  default_scopes_json: unknown[];
+  default_scopes_json: SearchEntityType[];
   default_language: string;
   max_results: number;
   include_legal_corpus: boolean;
@@ -6297,7 +6531,7 @@ export interface SearchPreferenceRead {
 }
 
 export interface SearchPreferenceUpdate {
-  default_scopes_json?: string[] | null;
+  default_scopes_json?: SearchEntityType[] | null;
   default_language?: string | null;
   max_results?: number | null;
   include_legal_corpus?: boolean | null;
@@ -6310,7 +6544,7 @@ export interface SearchResult {
   entity_id: string;
   title: string;
   subtitle?: string | null;
-  snippet?: string;
+  snippet: string;
   href: string;
   score: number;
   badges?: string[];
@@ -6345,7 +6579,7 @@ export type SearchScope = "all" | "statutes" | "judgments";
 export interface SecretReferenceInput {
   secret_key: string;
   reference: string;
-  required?: boolean;
+  required: boolean;
 }
 
 export type SecretReferenceProvider = "environment" | "docker_secret" | "vault" | "cloud_secret_manager" | "kubernetes_secret" | "other";
@@ -6441,7 +6675,7 @@ export interface SignerCreate {
   name: string;
   email: string;
   role?: string | null;
-  signing_order?: number;
+  signing_order: number;
 }
 
 export interface SignerRead {
@@ -6456,7 +6690,7 @@ export interface SignerRead {
 }
 
 export interface SnapshotCreate {
-  kind?: SnapshotKind;
+  kind: SnapshotKind;
   notes?: string | null;
 }
 
@@ -6481,20 +6715,18 @@ export interface SourceRead {
   filename?: string | null;
   page_id: string | null;
   page_number: number | null;
-  relation?: SourceRelation;
+  relation: SourceRelation;
   quote: string;
   start_char: number | null;
   end_char: number | null;
   confidence: number;
 }
 
-// NOTE: app__schemas__research__SourceRead collides with app__schemas__intelligence__SourceRead; kept the first.
-
 export type SourceRelation = "supports" | "contradicts" | "context";
 
 export interface StageResultCreate {
   status: string;
-  duration_ms?: number;
+  duration_ms: number;
   details_json?: Record<string, unknown>;
   error?: string | null;
 }
@@ -6564,7 +6796,7 @@ export interface StatementRead {
 }
 
 export interface StatuteImportRequest {
-  source_code?: string;
+  source_code: string;
   external_id: string;
   title_en: string;
   title_hi?: string | null;
@@ -6574,7 +6806,7 @@ export interface StatuteImportRequest {
   enactment_date?: string | null;
   ministry?: string | null;
   department?: string | null;
-  jurisdiction?: string;
+  jurisdiction: string;
   state?: string | null;
   source_url?: string | null;
   metadata?: Record<string, unknown>;
@@ -6583,7 +6815,7 @@ export interface StatuteImportRequest {
 
 export interface StatuteImportSection {
   section_number: string;
-  provision_type?: string;
+  provision_type: string;
   heading_en?: string | null;
   heading_hi?: string | null;
   text_en?: string | null;
@@ -6631,6 +6863,20 @@ export interface StatuteSectionRead {
   metadata_json: Record<string, unknown>;
 }
 
+export interface SupervisionMember {
+  name: string;
+  role: string;
+  open: number;
+  overdue: number;
+  high: number;
+}
+
+export interface SupervisionSummary {
+  team: Record<string, SupervisionMember>;
+  total_open: number;
+  generated_at: string;
+}
+
 export interface SupportedClauseType {
   clause_type: ClauseType;
   heading_terms: string[];
@@ -6645,8 +6891,8 @@ export interface SupportedPatternsResponse {
 }
 
 export interface SweepRequest {
-  horizon_hours?: number;
-  escalate_overdue_hours?: number;
+  horizon_hours: number;
+  escalate_overdue_hours: number;
 }
 
 export interface SystemHealthDashboard {
@@ -6668,7 +6914,7 @@ export interface TaskCreate {
   lead_id?: string | null;
   assigned_membership_id?: string | null;
   due_at?: string | null;
-  priority?: CRMTaskPriority;
+  priority: CRMTaskPriority;
 }
 
 export interface TaskRead {
@@ -6710,10 +6956,14 @@ export interface TeamPerformanceRead {
 export interface TemplateField {
   key: string;
   label: string;
-  kind?: FieldKind;
-  required?: boolean;
-  max_length?: number;
+  kind: FieldKind;
+  required: boolean;
+  max_length: number;
   help_text?: string | null;
+}
+
+export interface TemplateSeedResult {
+  created: number;
 }
 
 export interface TimeEntryCreate {
@@ -6722,9 +6972,9 @@ export interface TimeEntryCreate {
   work_date: string;
   minutes: number;
   narrative: string;
-  billable?: boolean;
+  billable: boolean;
   hourly_rate?: number | null;
-  currency?: string;
+  currency: string;
 }
 
 export interface TimeEntryRead {
@@ -6750,8 +7000,8 @@ export interface TimelineEvent {
   end_date?: string | null;
   title: string;
   description?: string | null;
-  event_type?: TimelineEventType;
-  importance?: TimelineImportance;
+  event_type: TimelineEventType;
+  importance: TimelineImportance;
   parties?: string[];
   source_references?: TimelineSourceReference[];
   tags?: string[];
@@ -6807,8 +7057,8 @@ export interface TimelineSummary {
 
 export interface TokenDiff {
   operation: DiffOperation;
-  original?: string;
-  revised?: string;
+  original: string;
+  revised: string;
 }
 
 export interface TransferDecision {
@@ -6822,7 +7072,7 @@ export interface TransferRequestCreate {
   matter_id?: string | null;
   invoice_id?: string | null;
   amount: number | string;
-  currency?: string;
+  currency: string;
   justification: string;
 }
 
@@ -6870,15 +7120,15 @@ export interface UserCreateRequest {
   email: string;
   display_name: string;
   password: string;
-  locale?: string;
-  role?: OrganizationRole;
+  locale: string;
+  role: OrganizationRole;
 }
 
 export type UserStatus = "active" | "disabled";
 
 export interface ValidationCampaignCreate {
   name: string;
-  candidate_version?: string;
+  candidate_version: string;
   release_run_id?: string | null;
   environment_id?: string | null;
   build_ref?: string | null;
@@ -6922,9 +7172,9 @@ export interface ValidationDashboard {
 export interface ValidationDatasetCreate {
   kind: ValidationDatasetKind;
   name: string;
-  record_count?: number;
-  page_count?: number;
-  size_bytes?: number;
+  record_count: number;
+  page_count: number;
+  size_bytes: number;
   generation_seed?: number | null;
   manifest_path?: string | null;
   sha256: string;
@@ -6961,7 +7211,7 @@ export interface ValidationEvidenceCreate {
   label: string;
   storage_path?: string | null;
   sha256?: string | null;
-  size_bytes?: number;
+  size_bytes: number;
   metadata_json?: Record<string, unknown>;
 }
 
@@ -7000,7 +7250,7 @@ export interface ValidationScenarioRead {
 export interface ValidationScenarioResultCreate {
   scenario_id: string;
   status: ValidationRunStatus;
-  duration_ms?: number;
+  duration_ms: number;
   metrics_json?: Record<string, unknown>;
   details_json?: Record<string, unknown>;
   error?: string | null;
@@ -7078,7 +7328,7 @@ export interface WebhookEventRead {
 
 export interface WitnessCreate {
   name: string;
-  kind?: WitnessKind;
+  kind: WitnessKind;
   side?: string | null;
   role?: string | null;
   notes?: string | null;
@@ -7088,7 +7338,7 @@ export type WitnessKind = "fact" | "expert" | "formal" | "party" | "unknown";
 
 export interface WitnessLinkCreate {
   evidence_item_id: string;
-  relationship?: string;
+  relationship: string;
   rationale?: string | null;
 }
 
@@ -7138,7 +7388,7 @@ export interface WorkflowTaskCreate {
   title: string;
   description?: string | null;
   assigned_membership_id?: string | null;
-  priority?: WorkflowTaskPriority;
+  priority: WorkflowTaskPriority;
   due_at?: string | null;
 }
 

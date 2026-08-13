@@ -17,6 +17,7 @@ from app.schemas.release import (
     ReleaseDashboard,
     ReleasePipelineRead,
     ReleaseRunCreate,
+    ReleaseGateSummary,
     ReleaseRunDetail,
     ReleaseRunRead,
     ReleaseStageRead,
@@ -101,9 +102,9 @@ async def rollback_point(run_id: UUID, payload: RollbackPointCreate, actor: Acto
     return RollbackPointRead.model_validate(await service.create_rollback_point(db, actor, run_id, **payload.model_dump()))
 
 
-@router.post("/runs/{run_id}/evaluate")
+@router.post("/runs/{run_id}/evaluate", response_model=ReleaseGateSummary)
 async def evaluate(run_id: UUID, actor: ActorContext = Depends(require_actor), db: AsyncSession = Depends(get_db)):
-    return await service.evaluate_release(db, actor, run_id)
+    return ReleaseGateSummary.model_validate(await service.evaluate_release(db, actor, run_id))
 
 
 @router.post("/runs/{run_id}/approval", response_model=DeploymentApprovalRead)

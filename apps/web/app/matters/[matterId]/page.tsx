@@ -82,7 +82,7 @@ function confidence(value: number) {
   return `${Math.round(value * 100)}%`;
 }
 
-function SourceLine({ filename, page }: { filename: string | null; page: number | null }) {
+function SourceLine({ filename, page }: { filename?: string | null; page: number | null }) {
   return (
     <span className="source-ref">
       {filename ?? "Source document"}{page ? ` · p.${page}` : ""}
@@ -113,7 +113,7 @@ function DocumentsView({ matterId, documents }: { matterId: string; documents: L
                 </div>
                 <div><span className="quiet-badge">{methodLabel(document.extraction_method)}</span></div>
                 <div><span className="quiet-badge">{languageLabel(document.detected_language)}</span></div>
-                <div className="source-count">{Object.values(document.entity_counts).reduce((sum, count) => sum + count, 0)} entities</div>
+                <div className="source-count">{Object.values(document.entity_counts ?? {}).reduce((sum, count) => sum + count, 0)} entities</div>
                 <div><span className={`processing-badge ${document.processing_status}`}>{document.processing_status}</span></div>
               </div>
             ))}
@@ -148,13 +148,13 @@ function FactsView({ facts }: { facts: MatterFact[] }) {
               <div className="fact-meta">{fact.category.replaceAll("_", " ")} · confidence {confidence(fact.confidence)}</div>
             </div>
             <div className="fact-sources">
-              {fact.sources.slice(0, 3).map((source) => (
+              {(fact.sources ?? []).slice(0, 3).map((source) => (
                 <div className="source-snippet" key={source.id}>
                   <SourceLine filename={source.filename} page={source.page_number} />
                   <p>{source.quote}</p>
                 </div>
               ))}
-              {fact.sources.length > 3 ? <div className="more-sources">+{fact.sources.length - 3} more sources</div> : null}
+              {(fact.sources ?? []).length > 3 ? <div className="more-sources">+{(fact.sources ?? []).length - 3} more sources</div> : null}
             </div>
             <div><span className={`fact-status ${fact.status}`}>{fact.status}</span></div>
           </article>
@@ -183,7 +183,7 @@ function TimelineView({ timeline }: { timeline: TimelineEvent[] }) {
               <div className="timeline-title">{event.title}</div>
               <p>{event.description}</p>
               <div className="timeline-sources">
-                {event.sources.slice(0, 2).map((source) => (
+                {(event.sources ?? []).slice(0, 2).map((source) => (
                   <SourceLine key={source.id} filename={source.filename} page={source.page_number} />
                 ))}
               </div>
@@ -217,7 +217,7 @@ function ContradictionCard({ contradiction }: { contradiction: MatterContradicti
 }
 
 function EvidenceView({ evidence, contradictions }: { evidence: EvidenceMatrix | null; contradictions: MatterContradiction[] }) {
-  if (!evidence || !evidence.facts.length) {
+  if (!evidence || !(evidence.facts ?? []).length) {
     return <EmptyIntelligence title="No evidence matrix yet" copy="The matrix is generated from structured facts and their exact source pages." />;
   }
   const contradictionById = new Map(contradictions.map((item) => [item.id, item]));
@@ -230,15 +230,15 @@ function EvidenceView({ evidence, contradictions }: { evidence: EvidenceMatrix |
         </div>
         <div className="evidence-table">
           <div className="evidence-head"><span>Fact</span><span>Evidence</span><span>Review</span></div>
-          {evidence.facts.map(({ fact, contradiction_id, contradiction_severity }) => (
+          {(evidence.facts ?? []).map(({ fact, contradiction_id, contradiction_severity }) => (
             <div className="evidence-row" key={fact.id}>
               <div>
                 <div className="fact-label">{fact.label}</div>
                 <div className="fact-value small">{fact.value_text}</div>
               </div>
               <div>
-                <div className="evidence-source-count">{fact.sources.length} source{fact.sources.length === 1 ? "" : "s"}</div>
-                {fact.sources.slice(0, 2).map((source) => (
+                <div className="evidence-source-count">{(fact.sources ?? []).length} source{(fact.sources ?? []).length === 1 ? "" : "s"}</div>
+                {(fact.sources ?? []).slice(0, 2).map((source) => (
                   <SourceLine key={source.id} filename={source.filename} page={source.page_number} />
                 ))}
               </div>
@@ -265,10 +265,10 @@ function EvidenceView({ evidence, contradictions }: { evidence: EvidenceMatrix |
         </div>
         <div className="card statement-count-card">
           <div className="card-header"><div className="card-title">Statements</div></div>
-          {Object.entries(evidence.statement_counts).map(([kind, count]) => (
+          {Object.entries(evidence.statement_counts ?? {}).map(([kind, count]) => (
             <div className="count-row" key={kind}><span>{kind}</span><strong>{count}</strong></div>
           ))}
-          {!Object.keys(evidence.statement_counts).length ? <div className="empty-mini">No claims, admissions or denials detected yet.</div> : null}
+          {!Object.keys(evidence.statement_counts ?? {}).length ? <div className="empty-mini">No claims, admissions or denials detected yet.</div> : null}
         </div>
       </aside>
     </div>
@@ -420,7 +420,7 @@ export default async function MatterWorkspace({
     ? (requestedView as WorkspaceView)
     : "overview";
 
-  let matter: Matter | undefined;
+  let matter: Matter | null = null;
   let documents: LegalDocument[] = [];
   let summary: IntelligenceSummary | null = null;
   let facts: MatterFact[] = [];

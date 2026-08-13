@@ -100,6 +100,15 @@ class StatementRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class ContradictionValue(BaseModel):
+    """One conflicting value behind a contradiction, as stored in values_json."""
+
+    fact_id: str
+    value: str
+    display: str
+    confidence: float
+
+
 class ContradictionRead(BaseModel):
     id: UUID
     matter_id: UUID
@@ -109,8 +118,8 @@ class ContradictionRead(BaseModel):
     explanation: str
     severity: ContradictionSeverity
     status: ContradictionStatus
-    values_json: list
-    fact_ids_json: list
+    values_json: list[ContradictionValue]
+    fact_ids_json: list[str]
     metadata_json: dict
     created_at: datetime
     updated_at: datetime
