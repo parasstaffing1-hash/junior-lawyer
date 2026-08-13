@@ -72,6 +72,19 @@ class Settings(BaseSettings):
     # request is recorded.
     ai_remote_api_key_fallbacks: str | None = None
     ai_remote_model: str | None = None
+    # Batch 33 · WhatsApp reminders via the Meta Cloud API. Outside a 24-hour
+    # customer-service window Meta permits only a pre-approved template, and a
+    # nightly digest is always outside it — so the template name is required,
+    # not optional, and the sender refuses without it.
+    whatsapp_enabled: bool = False
+    whatsapp_phone_number_id: str | None = None
+    whatsapp_access_token: str | None = None
+    whatsapp_template_name: str | None = None
+    whatsapp_template_language: str = "en"
+    # Shared secret for the reminder cron endpoint, so a scheduler can trigger
+    # the run without holding a user session.
+    reminder_cron_token: str | None = None
+
     ai_default_max_sources: int = 12
     ai_default_max_input_tokens: int = 6000
     ai_default_max_output_tokens: int = 1200

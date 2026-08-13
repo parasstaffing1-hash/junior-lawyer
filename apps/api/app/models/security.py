@@ -144,6 +144,9 @@ class SecurityUser(Base, UUIDMixin, TimestampMixin):
         Enum(UserStatus, native_enum=False), default=UserStatus.ACTIVE, index=True
     )
     locale: Mapped[str] = mapped_column(String(20), default="en")
+    # E.164, for WhatsApp diary reminders. Optional: a lawyer who wants only
+    # email never provides one.
+    phone_e164: Mapped[str | None] = mapped_column(String(20))
     mfa_enrolled: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     failed_login_attempts: Mapped[int] = mapped_column(Integer, default=0)
     locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

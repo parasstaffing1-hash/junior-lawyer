@@ -1,10 +1,20 @@
+from datetime import date
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
+from app.core.config import settings
+from app.services.procedure import diary as diary_service
+from app.services.procedure import reminders as reminder_service
+from app.services.security.context import ActorContext
+from app.services.security.dependencies import require_actor
 from app.schemas.procedure import (
+    DiaryDigest,
+    DiarySyncResult,
+    ReminderRunRequest,
+    ReminderRunResult,
     AgendaItem,
     AttachProcedureRequest,
     ComplianceRead,
@@ -171,3 +181,48 @@ async def hearing_brief(hearing_id: UUID, db: AsyncSession = Depends(get_db)) ->
         open_contradictions=raw["open_contradictions"],
         disclaimer=raw["disclaimer"],
     )
+
+
+# --- diary ---------------------------------------------------------------
+
+
+@router.post("/diary/sync", response_model=DiarySyncResult)
+async def sync_diary(
+    actor: ActorContext = Depends(require_actor),
+    db: AsyncSession = Depends(get_db),
+) -> DiarySyncResult:
+    """Pull next-hearing dates from saved court records into the diary."""
+    return DiarySyncResult(**await diary_service.sync_saved_case_dates(db, actor.organization_id))
+
+
+@router.get("/diary", response_model=DiaryDigest)
+async def diary_for_day(
+    on_date: date | None = None,
+    language: str = Query(default="en", pattern="^(en|hi)$"),
+    actor: ActorContext = Depends(require_actor),
+    db: AsyncSession = Depends(get_db),
+) -> DiaryDigest:
+    """One day's listings, grouped by court, plus the message that would be sent."""
+    digest = await diary_service.daily_digest(db, actor.organization_id, on_date=on_date)
+    return DiaryDigest(
+        **digest, message=diary_service.render_digest(digest, language=language)
+    )
+
+
+@router.post("/diary/reminder", response_model=ReminderRunResult)
+async def run_reminder(
+    payload: ReminderRunRequest,
+    actor: ActorContext = Depends(require_actor),
+    db: AsyncSession = Depends(get_db),
+) -> ReminderRunResult:
+    """Compose tomorrow's reminder, and send it unless dry_run is set."""
+    run = await reminder_service.run_daily_reminder(
+        db,
+        actor,
+        on_date=payload.on_date,
+        language=payload.language,
+        channels=tuple(payload.channels),
+        sync_first=payload.sync_first,
+        dry_run=payload.dry_run,
+    )
+    return ReminderRunResult(**run.as_dict())

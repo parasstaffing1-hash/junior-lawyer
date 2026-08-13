@@ -2355,6 +2355,48 @@ export interface DeploymentStepUpdate {
 
 export type DeploymentStrategy = "rolling" | "blue_green" | "recreate";
 
+export interface DiaryCourt {
+  court_name: string;
+  items: DiaryItem[];
+}
+
+export interface DiaryDeadline {
+  deadline_id: string;
+  matter_id: string;
+  matter_title: string;
+  title: string;
+  requires_review: boolean;
+}
+
+export interface DiaryDigest {
+  date: string;
+  hearing_count: number;
+  deadline_count: number;
+  courts: DiaryCourt[];
+  deadlines: DiaryDeadline[];
+  message: string;
+}
+
+export interface DiaryItem {
+  hearing_id: string;
+  matter_id: string;
+  matter_title: string;
+  time: string;
+  courtroom?: string | null;
+  purpose?: string | null;
+  case_number?: string | null;
+  auto_captured: boolean;
+  source_stale: boolean;
+}
+
+export interface DiarySyncResult {
+  saved_cases_considered: number;
+  created: number;
+  updated: number;
+  skipped: number;
+  stale_sources: number;
+}
+
 export type DiffOperation = "equal" | "insert" | "delete" | "replace";
 
 export interface DirectionCreate {
@@ -6310,6 +6352,29 @@ export interface RemedyRulePackCreate {
   verified: boolean;
   metadata_json?: Record<string, unknown>;
   rules?: RemedyRuleInput[];
+}
+
+export interface ReminderOutcome {
+  channel: string;
+  recipient: string;
+  sent: boolean;
+  detail?: string | null;
+}
+
+export interface ReminderRunRequest {
+  on_date?: string | null;
+  language: string;
+  channels?: string[];
+  sync_first: boolean;
+  dry_run: boolean;
+}
+
+export interface ReminderRunResult {
+  date: string;
+  message: string;
+  hearing_count: number;
+  sent_count: number;
+  outcomes: ReminderOutcome[];
 }
 
 export interface RenderedAffidavitSection {

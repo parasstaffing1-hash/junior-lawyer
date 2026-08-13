@@ -353,3 +353,73 @@ class ProcedureStats(BaseModel):
     unreviewed_deadlines: int
     upcoming_hearings: int
     open_directions: int
+
+
+class DiarySyncResult(BaseModel):
+    """What a diary sync pulled from saved court records."""
+
+    saved_cases_considered: int
+    created: int
+    updated: int
+    skipped: int
+    # Saved cases whose source was never re-checked after going stale. Reported
+    # rather than hidden: the date may be out of date at the court.
+    stale_sources: int
+
+
+class DiaryItem(BaseModel):
+    hearing_id: str
+    matter_id: str
+    matter_title: str
+    time: str
+    courtroom: str | None = None
+    purpose: str | None = None
+    case_number: str | None = None
+    auto_captured: bool
+    source_stale: bool
+
+
+class DiaryCourt(BaseModel):
+    court_name: str
+    items: list[DiaryItem]
+
+
+class DiaryDeadline(BaseModel):
+    deadline_id: str
+    matter_id: str
+    matter_title: str
+    title: str
+    requires_review: bool
+
+
+class DiaryDigest(BaseModel):
+    date: date
+    hearing_count: int
+    deadline_count: int
+    courts: list[DiaryCourt]
+    deadlines: list[DiaryDeadline]
+    message: str
+
+
+class ReminderOutcome(BaseModel):
+    channel: str
+    recipient: str
+    sent: bool
+    detail: str | None = None
+
+
+class ReminderRunResult(BaseModel):
+    date: date
+    message: str
+    hearing_count: int
+    sent_count: int
+    outcomes: list[ReminderOutcome]
+
+
+class ReminderRunRequest(BaseModel):
+    on_date: date | None = None
+    language: str = Field(default="en", pattern="^(en|hi)$")
+    channels: list[str] = Field(default_factory=lambda: ["email"], max_length=2)
+    sync_first: bool = True
+    # Compose and return the message without sending it.
+    dry_run: bool = True
