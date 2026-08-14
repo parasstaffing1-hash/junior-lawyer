@@ -856,6 +856,41 @@ export interface CaseWorkspaceResult {
   title: string;
 }
 
+export interface CauseListCase {
+  reference: string;
+  matter_id?: string | null;
+  title?: string | null;
+  party_names?: string[];
+}
+
+export interface CauseListMatch {
+  reference: string;
+  matter_id?: string | null;
+  title?: string | null;
+  line_number: number;
+  line_text: string;
+  item_number?: string | null;
+  matched_on: string;
+  confident: boolean;
+}
+
+export interface CauseListMatchRequest {
+  cause_list_text: string;
+  cases: CauseListCase[];
+  list_date?: string | null;
+  court_name?: string | null;
+}
+
+export interface CauseListMatchResponse {
+  list_date?: string | null;
+  court_name?: string | null;
+  total_lines: number;
+  matches: CauseListMatch[];
+  unmatched_references: string[];
+  review_lines?: string[];
+  disclaimer: string;
+}
+
 export type ChangeSeverity = "info" | "medium" | "high";
 
 export interface ChecklistItemInput {
@@ -893,6 +928,26 @@ export interface ChecklistTemplateSummary {
   context_fields: ContextFieldDefinition[];
   item_count: number;
   source_note: string;
+}
+
+export interface ChequeTimelineRequest {
+  cheque_date: string;
+  return_memo_date: string;
+  notice_sent_date?: string | null;
+  notice_served_date?: string | null;
+  cheque_amount?: number | null;
+}
+
+export interface ChequeTimelineResponse {
+  steps: TimelineStep[];
+  notice_deadline: string;
+  complaint_window_opens?: string | null;
+  complaint_deadline?: string | null;
+  maintainable: boolean;
+  blocking_reason_en?: string | null;
+  blocking_reason_hi?: string | null;
+  warnings?: string[];
+  disclaimer: string;
 }
 
 export interface CitationExtractRequest {
@@ -3298,6 +3353,12 @@ export interface ExtractedDate {
   signals?: ExtractionSignal[];
 }
 
+export interface ExtractedDirection {
+  text: string;
+  party_hint?: string | null;
+  due_date?: string | null;
+}
+
 export interface ExtractedObligation {
   obligation_type: ObligationType;
   actor?: string | null;
@@ -4821,6 +4882,31 @@ export interface MFAStatusRead {
   recovery_codes_remaining: number;
 }
 
+export interface MaintenanceBand {
+  label_en: string;
+  label_hi: string;
+  monthly_amount: number;
+  share_of_net_income: number;
+  reasoning_en: string;
+}
+
+export interface MaintenanceEstimateRequest {
+  respondent_monthly_income: number;
+  statutory_deductions: number;
+  applicant_monthly_income: number;
+  dependants: number;
+  minor_children: number;
+  respondent_has_other_dependants: boolean;
+}
+
+export interface MaintenanceEstimateResponse {
+  net_monthly_income: number;
+  bands: MaintenanceBand[];
+  factors_en: string[];
+  disclaimer_en: string;
+  disclaimer_hi: string;
+}
+
 export type MatchBasis = "heading" | "body" | "heading_and_body";
 
 export interface MatchCondition {
@@ -5295,6 +5381,32 @@ export interface OperationsPreferenceUpdate {
 
 export interface OperationsTemplateSeedResult {
   created: number;
+}
+
+// NOTE: app__tools__order_sheet__models__ExtractedDate shares a class name with app__tools__key_dates_obligations__models__ExtractedDate; emitted as OrderSheetExtractedDate.
+
+export interface OrderSheetExtractedDate {
+  raw_text: string;
+  parsed_date?: string | null;
+  kind: string;
+  confident: boolean;
+}
+
+export interface OrderSheetRequest {
+  text: string;
+  order_date?: string | null;
+}
+
+export interface OrderSheetResponse {
+  next_hearing_date?: string | null;
+  next_hearing_confident: boolean;
+  purpose?: string | null;
+  dates?: OrderSheetExtractedDate[];
+  directions?: ExtractedDirection[];
+  adjourned: boolean;
+  disposed: boolean;
+  requires_review: boolean;
+  disclaimer: string;
 }
 
 export interface OrganizationRead {
@@ -7365,6 +7477,17 @@ export interface TimelineSourceReference {
   document_id?: string | null;
   page?: string | null;
   note?: string | null;
+}
+
+export interface TimelineStep {
+  key: string;
+  label_en: string;
+  label_hi: string;
+  due_date?: string | null;
+  completed: boolean;
+  overdue: boolean;
+  authority: string;
+  note_en?: string | null;
 }
 
 export interface TimelineSummary {

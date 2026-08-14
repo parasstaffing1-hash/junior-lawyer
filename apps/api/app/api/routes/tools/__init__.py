@@ -14,6 +14,8 @@ from app.api.routes.tools import (
     affidavit,
     bates_numbering,
     case_timeline,
+    cause_list_match,
+    cheque_timeline,
     claim_interest,
     client_matter_intake,
     contract_clause_extractor,
@@ -29,6 +31,8 @@ from app.api.routes.tools import (
     legal_notice,
     legal_ocr,
     limitation_period,
+    maintenance_estimate,
+    order_sheet,
     stamp_duty,
 )
 
@@ -36,6 +40,10 @@ router = APIRouter(prefix="/tools")
 
 _TOOL_ROUTERS = (
     (legal_deadline, "/legal-deadlines", "tools-legal-deadlines"),
+    (cause_list_match, "/cause-list", "tools-cause-list"),
+    (cheque_timeline, "/cheque-timeline", "tools-cheque-timeline"),
+    (maintenance_estimate, "/maintenance-estimate", "tools-maintenance-estimate"),
+    (order_sheet, "/order-sheet", "tools-order-sheet"),
     (limitation_period, "/limitation-periods", "tools-limitation-periods"),
     (court_fee, "/court-fees", "tools-court-fees"),
     (claim_interest, "/claim-interest", "tools-claim-interest"),
