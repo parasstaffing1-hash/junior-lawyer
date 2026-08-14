@@ -2051,3 +2051,65 @@ a.tool-card:hover { border-color: #cfd8d2; box-shadow: var(--shadow); }
   height: 17px;
   flex: none;
 }
+
+/* Acts shelf --------------------------------------------------------------- */
+.acts-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.acts-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.acts-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+}
+.acts-count { margin: 0 0 8px; font-size: 0.8rem; }
+.acts-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.acts-list li > button {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--line, var(--border));
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+}
+.acts-list li > button:hover { background: var(--surface-muted); }
+.acts-list small { color: var(--text-muted); font-size: 0.75rem; }
+.acts-hindi { color: var(--text-muted); font-size: 0.85rem; }
+.acts-empty {
+  border: 1px dashed var(--line, var(--border));
+  border-radius: 12px;
+  padding: 20px;
+}
+.acts-empty h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 15px; }
+.acts-empty svg { width: 18px; height: 18px; flex: none; }
+.acts-reader {
+  border: 1px solid var(--line, var(--border));
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--surface);
+  min-height: 240px;
+}
+.acts-reader-head h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; }
+.acts-reader-head svg { width: 18px; height: 18px; flex: none; }
+.acts-section-search { display: flex; gap: 8px; margin: 12px 0; }
+.acts-section-search input { flex: 1; }
+.acts-sections { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 14px; }
+.acts-sections p { margin: 4px 0 0; white-space: pre-wrap; line-height: 1.55; }
+
+@media (max-width: 900px) {
+  /* One column on a phone: the shelf first, the provision below it. */
+  .acts-layout { grid-template-columns: 1fr; }
+}

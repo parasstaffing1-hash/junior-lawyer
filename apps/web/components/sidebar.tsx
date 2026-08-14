@@ -12,6 +12,7 @@ const items = [
   { key:"search", label: "Search", hi:"खोज", href: "/search", icon: SearchIcon },
   { key:"tools", label: "Tools", hi:"उपकरण", href: "/tools", icon: GridIcon },
   { key:"clients", label: "Clients", hi:"मुवक्किल", href: "/clients", icon: UsersIcon },
+  { key:"acts", label: "Acts", hi:"अधिनियम", href: "/acts", icon: BookIcon },
   { key:"research", label: "Research", hi:"कानूनी शोध", href: "/research", icon: BookIcon },
   { key:"legal-data", label: "Legal data", hi:"कानूनी डेटा", href: "/legal-data", icon: BookIcon },
   { key:"evidence", label: "Evidence", hi:"साक्ष्य", href: "/evidence", icon: ScaleIcon },

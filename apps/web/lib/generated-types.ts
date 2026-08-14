@@ -6960,6 +6960,11 @@ export interface SecurityUserRead {
   updated_at: string;
 }
 
+export interface ShelfFacet {
+  name: string;
+  count: number;
+}
+
 export interface SignerCreate {
   name: string;
   email: string;
@@ -7084,6 +7089,13 @@ export interface StatementRead {
   updated_at: string;
 }
 
+export interface StatuteBrowse {
+  total: number;
+  limit: number;
+  offset: number;
+  acts: StatuteListItem[];
+}
+
 export interface StatuteImportRequest {
   source_code: string;
   external_id: string;
@@ -7114,6 +7126,19 @@ export interface StatuteImportSection {
   version_label?: string | null;
   source_url?: string | null;
   metadata?: Record<string, unknown>;
+}
+
+export interface StatuteListItem {
+  id: string;
+  title_en: string;
+  title_hi?: string | null;
+  short_title?: string | null;
+  act_number?: string | null;
+  act_year?: number | null;
+  jurisdiction: string;
+  state?: string | null;
+  is_active: boolean;
+  enactment_date?: string | null;
 }
 
 export interface StatuteRead {
@@ -7150,6 +7175,12 @@ export interface StatuteSectionRead {
   version_label: string | null;
   source_url: string | null;
   metadata_json: Record<string, unknown>;
+}
+
+export interface StatuteShelf {
+  total_acts: number;
+  jurisdictions: ShelfFacet[];
+  states: ShelfFacet[];
 }
 
 export interface SupervisionMember {

@@ -360,3 +360,107 @@ async def cited_by(db: AsyncSession, judgment_id: UUID) -> list[dict]:
         }
         for citation, citing in rows
     ]
+
+
+async def list_statutes(
+    db: AsyncSession,
+    *,
+    search: str | None = None,
+    jurisdiction: str | None = None,
+    state: str | None = None,
+    year: int | None = None,
+    active_only: bool = True,
+    limit: int = 50,
+    offset: int = 0,
+) -> tuple[list[Statute], int]:
+    """Browse the Acts shelf.
+
+    Filtering happens in SQL rather than in Python: the corpus is meant to hold
+    every bare act a practice needs, and pulling that into memory to filter it
+    would stop working exactly when the shelf becomes useful.
+    """
+    conditions = []
+    if active_only:
+        conditions.append(Statute.is_active.is_(True))
+    if jurisdiction:
+        conditions.append(Statute.jurisdiction == jurisdiction)
+    if state:
+        conditions.append(Statute.state == state)
+    if year:
+        conditions.append(Statute.act_year == year)
+    if search:
+        # Match the title in either language, the short title, or the act
+        # number — a lawyer looks up "138" and "एन.आई." as readily as a name.
+        needle = f"%{search.strip()}%"
+        conditions.append(
+            or_(
+                Statute.title_en.ilike(needle),
+                Statute.title_hi.ilike(needle),
+                Statute.short_title.ilike(needle),
+                Statute.act_number.ilike(needle),
+            )
+        )
+
+    total = await db.scalar(
+        select(func.count()).select_from(Statute).where(*conditions)
+    )
+    rows = await db.scalars(
+        select(Statute)
+        .where(*conditions)
+        .order_by(Statute.act_year.desc().nullslast(), Statute.title_en)
+        .limit(limit)
+        .offset(offset)
+    )
+    return list(rows.all()), int(total or 0)
+
+
+async def statute_shelf(db: AsyncSession) -> dict:
+    """Counts for the browse filters, so the interface shows what exists."""
+    jurisdictions = await db.execute(
+        select(Statute.jurisdiction, func.count())
+        .where(Statute.is_active.is_(True))
+        .group_by(Statute.jurisdiction)
+        .order_by(func.count().desc())
+    )
+    states = await db.execute(
+        select(Statute.state, func.count())
+        .where(Statute.is_active.is_(True), Statute.state.is_not(None))
+        .group_by(Statute.state)
+        .order_by(func.count().desc())
+    )
+    total = await db.scalar(
+        select(func.count()).select_from(Statute).where(Statute.is_active.is_(True))
+    )
+    return {
+        "total_acts": int(total or 0),
+        "jurisdictions": [
+            {"name": name, "count": count} for name, count in jurisdictions.all()
+        ],
+        "states": [{"name": name, "count": count} for name, count in states.all()],
+    }
+
+
+async def search_sections(
+    db: AsyncSession,
+    statute_id: UUID,
+    *,
+    query: str,
+    limit: int = 40,
+) -> list[StatuteSection]:
+    """Find a provision inside one act by number or wording."""
+    needle = f"%{query.strip()}%"
+    rows = await db.scalars(
+        select(StatuteSection)
+        .where(
+            StatuteSection.statute_id == statute_id,
+            or_(
+                StatuteSection.section_number.ilike(needle),
+                StatuteSection.heading_en.ilike(needle),
+                StatuteSection.heading_hi.ilike(needle),
+                StatuteSection.normalized_text.ilike(needle),
+            ),
+        )
+        .order_by(StatuteSection.sort_order)
+        .limit(limit)
+    )
+    return list(rows.all())

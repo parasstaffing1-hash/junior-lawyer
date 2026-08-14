@@ -86,6 +86,19 @@ export const transcribeAudio = (audio: Blob, mimeType: string): Promise<G.Transc
   return apiFetch("/ai/transcribe?allow_remote=true", { method: "POST", body: form });
 };
 
+export type StatuteListItem = G.StatuteListItem;
+export type StatuteBrowse = G.StatuteBrowse;
+export type StatuteShelf = G.StatuteShelf;
+export type StatuteSectionRecord = G.StatuteSectionRead;
+
+export const browseStatutes = (params: { search?: string; jurisdiction?: string; state?: string; year?: number; limit?: number; offset?: number } = {}): Promise<StatuteBrowse> =>
+  apiFetch(`/research/statutes${query({ search: params.search, jurisdiction: params.jurisdiction, state: params.state, year: params.year, limit: params.limit, offset: params.offset })}`);
+export const getStatuteShelf = (): Promise<StatuteShelf> => apiFetch("/research/statutes-shelf");
+export const getStatuteSections = (statuteId: string): Promise<StatuteSectionRecord[]> =>
+  apiFetch(`/research/statutes/${statuteId}/sections`);
+export const searchStatuteSections = (statuteId: string, q: string): Promise<StatuteSectionRecord[]> =>
+  apiFetch(`/research/statutes/${statuteId}/sections/search${query({ q })}`);
+
 export const getMFAStatus = (): Promise<G.MFAStatusRead> => apiFetch("/security/auth/mfa");
 export const startMFAEnrolment = (): Promise<G.MFAEnrolmentStart> => apiFetch("/security/auth/mfa/enrol", { method: "POST" });
 export const confirmMFAEnrolment = (code: string): Promise<G.MFAConfirmResponse> => apiFetch("/security/auth/mfa/confirm", jsonBody({ code }));

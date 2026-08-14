@@ -266,3 +266,40 @@ class JudgmentImportRequest(BaseModel):
     source_url: str | None = None
     metadata: dict = Field(default_factory=dict)
     paragraphs: list[JudgmentImportParagraph] = Field(default_factory=list)
+
+
+class StatuteListItem(BaseModel):
+    """One act on the shelf, without its text."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    title_en: str
+    title_hi: str | None = None
+    short_title: str | None = None
+    act_number: str | None = None
+    act_year: int | None = None
+    jurisdiction: str
+    state: str | None = None
+    is_active: bool
+    enactment_date: date | None = None
+
+
+class StatuteBrowse(BaseModel):
+    total: int
+    limit: int
+    offset: int
+    acts: list[StatuteListItem]
+
+
+class ShelfFacet(BaseModel):
+    name: str
+    count: int
+
+
+class StatuteShelf(BaseModel):
+    """What the corpus actually holds, so the browse filters reflect reality."""
+
+    total_acts: int
+    jurisdictions: list[ShelfFacet]
+    states: list[ShelfFacet]

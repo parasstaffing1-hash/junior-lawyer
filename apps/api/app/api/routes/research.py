@@ -1,12 +1,15 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
 from app.models.legal_corpus import LegalSource
 from app.schemas.research import (
+    StatuteBrowse,
+    StatuteListItem,
+    StatuteShelf,
     CitationGraphEdgeRead,
     CitationRead,
     CitationVerifyRequest,
@@ -132,3 +135,54 @@ async def judgment_cited_by(
     db: AsyncSession = Depends(get_db),
 ) -> list[CitationGraphEdgeRead]:
     return await service.cited_by(db, judgment_id)
+
+
+# --- the Acts shelf ----------------------------------------------------------
+
+
+@router.get("/statutes", response_model=StatuteBrowse)
+async def browse_statutes(
+    search: str | None = Query(default=None, max_length=200),
+    jurisdiction: str | None = Query(default=None, max_length=120),
+    state: str | None = Query(default=None, max_length=120),
+    year: int | None = Query(default=None, ge=1800, le=2200),
+    active_only: bool = True,
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+    db: AsyncSession = Depends(get_db),
+) -> StatuteBrowse:
+    """Browse and search the acts held in the corpus."""
+    rows, total = await service.list_statutes(
+        db,
+        search=search,
+        jurisdiction=jurisdiction,
+        state=state,
+        year=year,
+        active_only=active_only,
+        limit=limit,
+        offset=offset,
+    )
+    return StatuteBrowse(
+        total=total,
+        limit=limit,
+        offset=offset,
+        acts=[StatuteListItem.model_validate(row) for row in rows],
+    )
+
+
+@router.get("/statutes-shelf", response_model=StatuteShelf)
+async def statute_shelf(db: AsyncSession = Depends(get_db)) -> StatuteShelf:
+    """Counts by jurisdiction and state — an empty shelf says so plainly."""
+    return StatuteShelf(**await service.statute_shelf(db))
+
+
+@router.get("/statutes/{statute_id}/sections/search", response_model=list[StatuteSectionRead])
+async def search_statute_sections(
+    statute_id: UUID,
+    q: str = Query(min_length=1, max_length=200),
+    limit: int = Query(default=40, ge=1, le=100),
+    db: AsyncSession = Depends(get_db),
+) -> list[StatuteSectionRead]:
+    """Find a provision inside one act, by number or by wording."""
+    rows = await service.search_sections(db, statute_id, query=q, limit=limit)
+    return [StatuteSectionRead.model_validate(row) for row in rows]
