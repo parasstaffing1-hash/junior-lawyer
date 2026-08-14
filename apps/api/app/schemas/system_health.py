@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
+from app.models.system_health import HealthStatus
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -11,7 +12,7 @@ class HealthComponentRead(BaseModel):
     id: UUID
     component_key: str
     category: str
-    status: str
+    status: HealthStatus
     latency_ms: int | None
     message_en: str
     message_hi: str | None
@@ -24,7 +25,7 @@ class HealthRunRead(BaseModel):
     id: UUID
     organization_id: UUID
     trigger: str
-    status: str
+    status: HealthStatus
     started_at: datetime
     finished_at: datetime | None
     summary_json: dict

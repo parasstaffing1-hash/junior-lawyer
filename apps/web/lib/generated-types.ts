@@ -3510,7 +3510,7 @@ export interface HealthComponentRead {
   id: string;
   component_key: string;
   category: string;
-  status: string;
+  status: HealthStatus;
   latency_ms: number | null;
   message_en: string;
   message_hi: string | null;
@@ -3527,13 +3527,15 @@ export interface HealthRunRead {
   id: string;
   organization_id: string;
   trigger: string;
-  status: string;
+  status: HealthStatus;
   started_at: string;
   finished_at: string | null;
   summary_json: Record<string, unknown>;
   snapshot_hash: string | null;
   created_at: string;
 }
+
+export type HealthStatus = "healthy" | "degraded" | "down" | "unknown";
 
 export interface HearingBrief {
   matter_id: string;

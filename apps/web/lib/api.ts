@@ -1,12 +1,11 @@
 /**
  * Junior Lawyer API client.
  *
- * STATUS: partial. The transport layer, session auth and the /tools endpoints
- * are implemented and exercised by the Tools workspace. The remaining exports
- * below are declared placeholders: they exist so the app compiles and so the
- * real surface is enumerated in one place, but calling one throws rather than
- * silently returning empty data. Replace them endpoint by endpoint against
- * apps/api's OpenAPI schema (425 paths) as each workspace is wired up.
+ * Every export here calls a real endpoint; nothing throws NotImplementedError
+ * any more. What remains partial is typing, not behaviour: a handful of
+ * aliases below are still `any` because the route they describe assembles its
+ * response inline and therefore contributes no schema to the OpenAPI document.
+ * The fix for each is on the API — declare a response_model — not here.
  */
 export * from "@/lib/client";
 export * from "@/lib/tools";
@@ -176,7 +175,7 @@ function pending(name: string): Promise<never> {
 /* Response shapes still to be typed from the OpenAPI schema. */
 export type AIPrepareResponse = G.AIPrepareResponse;
 export type AIProviderStatus = G.AIProviderStatusRead;
-export type AIReasoningPayload = any;
+export type AIReasoningPayload = G.AIReasoningRequest;
 export type AIRun = G.AIRunRead;
 export type AITaskType = G.AITaskType;
 export type AgendaItem = G.ProcedureAgendaItem;
@@ -201,11 +200,11 @@ export type CRMLead = G.LeadRead;
 export type CRMOverview = G.CRMOverview;
 export type CRMTask = G.TaskRead;
 export type CaseCandidate = G.CaseCandidateRead;
-export type ClientHealthAnalyticsRecord = any;
+export type ClientHealthAnalyticsRecord = G.ClientHealthRead;
 export type ClientMoneyAccount = G.ClientMoneyAccountRead;
 export type ClientMoneyDashboard = G.ClientMoneyDashboard;
-export type ClientMoneyEntry = any;
-export type ClientMoneyTransfer = any;
+export type ClientMoneyEntry = G.ClientMoneyJournalEntryRead;
+export type ClientMoneyTransfer = G.TransferRequestRead;
 export type ComplianceStatus = G.ComplianceStatus;
 export type ContractCatalogItem = G.ContractCatalogItem;
 export type ContractDetail = G.ContractRead;
@@ -234,7 +233,7 @@ export type EvidenceBundleRecord = G.BundleRead;
 export type EvidenceDashboard = G.EvidenceDashboard;
 export type EvidenceGapRecord = G.GapRead;
 export type EvidenceGraph = G.EvidenceGraphRead;
-export type EvidenceRecord = any;
+export type EvidenceRecord = G.EvidenceItemRead;
 export type EvidenceWitnessRecord = G.WitnessRead;
 export type Hearing = G.HearingRead;
 export type IntegrationCatalogRecord = G.IntegrationCatalogItem;
@@ -258,7 +257,7 @@ export type LegalDraft = G.LegalDraftRead;
 export type LegalDraftLanguage = G.LegalDraftLanguage;
 export type LegalDraftListItem = G.LegalDraftListItem;
 export type LegalSourceRecord = G.ResearchSourceRead;
-export type LitigationIssueRecord = any;
+export type LitigationIssueRecord = G.IssueRead;
 export type Matter = G.MatterRead;
 export type MatterAccessDecision = G.AccessDecisionRead;
 export type MatterAccessLevel = G.MatterAccessLevel;
@@ -266,7 +265,7 @@ export type MatterDeadline = G.DeadlineRead;
 export type MatterHealthRecord = G.MatterHealthRead;
 export type MatterPlaybookRecord = G.MatterPlaybookRead;
 export type MatterProcedure = G.MatterProcedureRead;
-export type MatterSecurityGrant = any;
+export type MatterSecurityGrant = G.MatterGrantRead;
 export type MatterSecurityProfile = G.MatterSecurityProfileRead;
 export type OnboardingProgress = G.OnboardingProgressRead;
 export type OperationsAgendaItem = G.AgendaItem;
@@ -299,11 +298,11 @@ export type SearchDuplicateRecord = G.SearchDuplicateItem;
 export type SearchEntityType = G.SearchEntityType;
 export type SearchIndexHealth = G.SearchIndexHealth;
 export type SecurityAuditEntry = G.AuditEntryRead;
-export type SecurityAuditVerification = any;
+export type SecurityAuditVerification = G.AuditVerifyRead;
 export type SecurityMember = G.MembershipRead;
 export type SecurityOverview = G.SecurityOverviewRead;
 export type SystemHealthDashboardRecord = G.SystemHealthDashboard;
-export type SystemHealthStatus = any;
+export type SystemHealthStatus = "healthy" | "degraded" | "down" | "unknown";
 export type TeamPerformanceRecord = G.TeamPerformanceRead;
 export type UniversalSearchResponse = G.UniversalSearchResponse;
 export type UniversalSearchResult = G.SearchResult;
@@ -484,7 +483,7 @@ export const portalInvoiceSnapshot = (shareId: string): Promise<Record<string, u
 export const portalLogin = (payload: Record<string, unknown>): Promise<G.PortalSessionRead> => apiFetch("/portal/login", jsonBody(payload));
 export const portalSendMessage = (payload: Record<string, unknown>): Promise<G.PortalMessageRead> => apiFetch("/portal/messages", jsonBody(payload));
 export const portalUpdateRequest = (requestId: string, status: string): Promise<G.PortalRequestRead> => apiFetch(`/portal/requests/${requestId}`, patchBody({ status }));
-export const prepareAIReasoning = (payload: Record<string, unknown>): Promise<AIPrepareResponse> => apiFetch("/ai/prepare", jsonBody(payload));
+export const prepareAIReasoning = (payload: AIReasoningPayload): Promise<AIPrepareResponse> => apiFetch("/ai/prepare", jsonBody(payload));
 export const queueBackupRun = (policyId: string): Promise<BackupRunRecord> => apiFetch(`/system-health/backups/policies/${policyId}/run`, { method: "POST" });
 export const queueRestoreVerification = (runId: string): Promise<G.JobRead> => apiFetch(`/system-health/backups/runs/${runId}/verify`, { method: "POST" });
 export const reanalyzeContractReview = (reviewId: string): Promise<G.ContractReviewRead> => apiFetch(`/contract-reviews/${reviewId}/reanalyze`, { method: "POST" });
@@ -505,7 +504,7 @@ export const reviewContract = (contractId: string): Promise<G.ContractRead> => a
 export const reviewCourtChange = (changeId: string): Promise<G.CourtChangeRead> => apiFetch(`/operations/court-changes/${changeId}/review`, { method: "POST" });
 export const reviewLegalDataAmendment = (amendmentId: string, status: string): Promise<G.AmendmentRead> => apiFetch(`/legal-data/amendments/${amendmentId}`, patchBody({ status }));
 export const reviewRestoreDrill = (drillId: string, note: string): Promise<G.RestoreDrillRead> => apiFetch(`/system-health/restore-drills/${drillId}/review`, jsonBody({ note }));
-export const runAIReasoning = (payload: Record<string, unknown>): Promise<G.AIRunRead> => apiFetch("/ai/runs", jsonBody(payload));
+export const runAIReasoning = (payload: AIReasoningPayload): Promise<G.AIRunRead> => apiFetch("/ai/runs", jsonBody(payload));
 export const runLegalDataIntegritySweep = (): Promise<Record<string, unknown>> => apiFetch("/legal-data/integrity/sweep", { method: "POST" });
 export const runOperationsSweep = (): Promise<Record<string, unknown>> => apiFetch("/operations/sweep", { method: "POST" });
 export const runQASuite = (suiteId: string, triggeredBy: string): Promise<G.EvaluationRunRead> => apiFetch(`/qa/suites/${suiteId}/runs`, jsonBody({ triggered_by: triggeredBy }));
