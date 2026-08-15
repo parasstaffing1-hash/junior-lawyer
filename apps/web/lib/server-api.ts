@@ -12,8 +12,12 @@
 import { cookies } from "next/headers";
 
 import type {
+  AgentRecipeRead,
+  AgentRunDetail,
+  AgentRunRead,
   AIProviderStatusRead,
   AIRunRead,
+  MatterMemoryRead,
   ContractCatalogItem as ContractCatalogItemSchema,
   ContractListItem as ContractListItemSchema,
   ContractReviewListItem as ContractReviewListItemSchema,
@@ -121,6 +125,28 @@ export function getMatters() {
 /** `getMatters`, but an unreachable API throws rather than returning []. */
 export function getMattersOrThrow() {
   return getOrThrow<Matter[]>("/matters");
+}
+
+export type AgentRecipe = AgentRecipeRead;
+export type AgentRun = AgentRunRead;
+export type AgentRunWithSteps = AgentRunDetail;
+export type CaseMemory = MatterMemoryRead;
+
+export function getAgentRecipes() {
+  return get<AgentRecipe[]>("/agent/recipes", []);
+}
+
+export function getAgentRuns(matterId?: string) {
+  const query = matterId ? `?matter_id=${matterId}` : "";
+  return get<AgentRun[]>(`/agent/runs${query}`, []);
+}
+
+export function getAgentRun(runId: string) {
+  return get<AgentRunWithSteps | null>(`/agent/runs/${runId}`, null);
+}
+
+export function getCaseMemory(matterId: string) {
+  return get<CaseMemory | null>(`/agent/matters/${matterId}/memory`, null);
 }
 
 export function getMatter(matterId: string) {

@@ -21,6 +21,7 @@ from app.api.routes.contract_reviews import router as contract_reviews_router
 from app.api.routes.crm import router as crm_router
 from app.api.routes.documents import router as documents_router
 from app.api.routes.drafting import router as drafting_router
+from app.api.routes.agent import router as agent_router
 from app.api.routes.evidence import router as evidence_router
 from app.api.routes.experience import router as experience_router
 from app.api.routes.health import router as health_router
@@ -152,6 +153,7 @@ app.add_middleware(
 )
 
 app.include_router(health_router)
+app.include_router(agent_router, prefix=settings.api_v1_prefix)
 app.include_router(ai_router, prefix=settings.api_v1_prefix)
 app.include_router(analytics_router, prefix=settings.api_v1_prefix)
 app.include_router(billing_router, prefix=settings.api_v1_prefix)

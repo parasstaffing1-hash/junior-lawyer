@@ -2188,3 +2188,51 @@ a.tool-card:hover { border-color: #cfd8d2; box-shadow: var(--shadow); }
   .training-step-state { grid-column: 2; justify-self: start; }
   .training-date { max-width: none; }
 }
+
+/* Junior Lawyer Agent ------------------------------------------------------ */
+.agent-launch { margin-bottom: 18px; }
+.agent-launch-body { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; padding: 16px 20px 18px; }
+.agent-launch-body .tool-field { min-width: 260px; flex: 1; }
+.agent-launch-body select { height: 36px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 0 10px; font-size: 12px; width: 100%; }
+.agent-error { margin: 0 20px 16px; color: #95514c; font-size: 12px; font-weight: 620; }
+
+.agent-summary { margin-bottom: 18px; }
+
+.agent-steps { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 10px; }
+.agent-step { overflow: hidden; }
+.agent-step-head { display: grid; grid-template-columns: 28px minmax(0,1fr) auto; align-items: center; gap: 13px; padding: 14px 18px; }
+.agent-step-mark { width: 26px; height: 26px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--surface-subtle); color: var(--muted); font-size: 11px; font-weight: 650; }
+.agent-step-mark svg { width: 14px; height: 14px; }
+.agent-step.ok .agent-step-mark { border-color: #d9e6de; background: #f2f7f4; color: var(--accent); }
+.agent-step.warn .agent-step-mark { border-color: #e8dfcd; background: #fffaf0; color: #8d6c38; }
+.agent-step.bad .agent-step-mark { border-color: #ead8d5; background: #fff7f6; color: #96524c; }
+.agent-step-heading { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.agent-step-heading strong { font-size: 13px; font-weight: 650; }
+.agent-step-heading span { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; font-weight: 650; }
+.agent-step-state { color: var(--muted); font-size: 10px; font-weight: 620; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+.agent-step.ok .agent-step-state { color: var(--accent); }
+.agent-step.warn .agent-step-state { color: #8d6c38; }
+.agent-step.bad .agent-step-state { color: #96524c; }
+.agent-step-body { padding: 0 18px 16px; }
+.agent-step-body:empty { display: none; }
+.agent-step-note { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.agent-step-note.bad { color: #95514c; }
+.agent-step-prose { margin: 0; font-size: 12px; line-height: 1.75; white-space: pre-wrap; }
+
+.agent-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.agent-list li { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding-bottom: 8px; border-bottom: 1px solid #f0f0ec; }
+.agent-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+.agent-list strong { font-size: 12px; font-weight: 620; min-width: 0; }
+.agent-list span { color: var(--muted); font-size: 11px; white-space: nowrap; }
+
+.agent-approval { margin-top: 18px; }
+.agent-approval-body { padding: 16px 20px 18px; }
+.agent-approval-body p { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.agent-approval-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  .agent-step-head { grid-template-columns: 26px minmax(0,1fr); gap: 11px; }
+  .agent-step-state { grid-column: 2; justify-self: start; }
+  .agent-list li { flex-direction: column; gap: 3px; }
+  .agent-list span { white-space: normal; }
+}

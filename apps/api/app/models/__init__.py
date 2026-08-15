@@ -659,3 +659,18 @@ __all__ += [
     "RemedyCandidateStatus", "RemedyDraftLink", "RemedyMemo", "RemedyMemoStatus", "RemedyPackStatus", "RemedyRule",
     "RemedyRuleAuthority", "RemedyRulePack",
 ]
+
+from app.models.agent import (
+    AgentRecipe,
+    AgentRun,
+    AgentRunStatus,
+    AgentStep,
+    AgentStepKind,
+    AgentStepStatus,
+    MatterMemory,
+)
+
+__all__ += [
+    "AgentRecipe", "AgentRun", "AgentRunStatus", "AgentStep", "AgentStepKind", "AgentStepStatus",
+    "MatterMemory",
+]

@@ -8,6 +8,7 @@ import { useExperience } from "@/components/experience-provider";
 const items = [
   { key:"overview", label: "Overview", hi:"अवलोकन", href: "/", icon: HomeIcon },
   { key:"matters", label: "Matters", hi:"मामले", href: "/matters", icon: FolderIcon },
+  { key:"agent", label: "Agent", hi:"एजेंट", href: "/agent", icon: SparklesIcon },
   { key:"cases", label: "Case Lookup", hi:"केस खोज", href: "/cases", icon: ScaleIcon },
   { key:"search", label: "Search", hi:"खोज", href: "/search", icon: SearchIcon },
   { key:"tools", label: "Tools", hi:"उपकरण", href: "/tools", icon: GridIcon },

@@ -251,6 +251,83 @@ export interface AgendaItem {
   detail?: string | null;
 }
 
+export type AgentRecipe = "hearing_prep";
+
+export interface AgentRecipeRead {
+  recipe: AgentRecipe;
+  title: string;
+  description: string;
+  step_count: number;
+  deterministic_step_count: number;
+}
+
+export interface AgentRunCreate {
+  matter_id: string;
+  recipe: AgentRecipe;
+  output_language: string;
+}
+
+export interface AgentRunDetail {
+  id: string;
+  matter_id: string;
+  recipe: AgentRecipe;
+  title: string;
+  status: AgentRunStatus;
+  output_language: string;
+  summary_json?: Record<string, unknown>;
+  ai_available: boolean;
+  review_notes?: string | null;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
+  error_message?: string | null;
+  completed_at?: string | null;
+  created_at: string;
+  steps?: AgentStepRead[];
+}
+
+export interface AgentRunRead {
+  id: string;
+  matter_id: string;
+  recipe: AgentRecipe;
+  title: string;
+  status: AgentRunStatus;
+  output_language: string;
+  summary_json?: Record<string, unknown>;
+  ai_available: boolean;
+  review_notes?: string | null;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
+  error_message?: string | null;
+  completed_at?: string | null;
+  created_at: string;
+}
+
+export interface AgentRunReview {
+  approved: boolean;
+  notes?: string | null;
+  reviewer?: string | null;
+}
+
+export type AgentRunStatus = "running" | "awaiting_approval" | "approved" | "rejected" | "failed";
+
+export type AgentStepKind = "deterministic" | "ai";
+
+export interface AgentStepRead {
+  id: string;
+  ordinal: number;
+  step_key: string;
+  label: string;
+  kind: AgentStepKind;
+  status: AgentStepStatus;
+  output_json?: Record<string, unknown>;
+  ai_run_id?: string | null;
+  note?: string | null;
+  error_message?: string | null;
+  completed_at?: string | null;
+}
+
+export type AgentStepStatus = "pending" | "completed" | "skipped" | "failed";
+
 export interface AlertStatusRequest {
   status: LegalDataAlertStatus;
 }
@@ -4999,6 +5076,23 @@ export interface MatterHealthReason {
 }
 
 export type MatterLanguage = "en" | "hi" | "bilingual";
+
+export interface MatterMemoryRead {
+  id: string;
+  matter_id: string;
+  issues_json?: unknown[];
+  open_questions_json?: unknown[];
+  strategy_notes?: string | null;
+  snapshot_json?: Record<string, unknown>;
+  refreshed_at?: string | null;
+  updated_at: string;
+}
+
+export interface MatterMemoryUpdate {
+  issues?: unknown[] | null;
+  open_questions?: unknown[] | null;
+  strategy_notes?: string | null;
+}
 
 export interface MatterOpenRequest {
   title: string;
