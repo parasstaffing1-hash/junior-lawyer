@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { PlusIcon, ScaleIcon, SparklesIcon } from "@/components/icons";
 import { useExperience } from "@/components/experience-provider";
+import { formatEnum } from "@/lib/format";
 
 type UILanguage = "en" | "hi" | "bilingual";
 type Copy = { en: string; hi: string };
@@ -139,7 +140,7 @@ export default function HomeView({
                 </div>
               </div>
               <div className="matter-court">{matter.court}</div>
-              <div className="status">{matter.status.replace("_", " ")}</div>
+              <div className="status">{formatEnum(matter.status)}</div>
             </Link>
           )) : (
             <div className="empty-state">

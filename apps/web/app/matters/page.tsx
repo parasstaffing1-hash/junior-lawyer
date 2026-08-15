@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PlusIcon } from "@/components/icons";
+import { formatEnum, pluralize } from "@/lib/format";
 import { getMattersOrThrow, type Matter } from "@/lib/server-api";
 
 export default async function MattersPage() {
@@ -42,11 +43,11 @@ export default async function MattersPage() {
             <div>
               <div className="matter-title">{matter.title}</div>
               <div className="matter-meta">
-                {matter.case_number ?? matter.reference_number ?? "No case number"} · {matter.document_count} documents
+                {matter.case_number ?? matter.reference_number ?? "No case number"} · {pluralize(matter.document_count, "document")}
               </div>
             </div>
             <div className="matter-court">{matter.court_name ?? matter.jurisdiction}</div>
-            <div className="status">{matter.status.replace("_", " ")}</div>
+            <div className="status">{formatEnum(matter.status)}</div>
           </Link>
         )) : (
           <div className="empty-state">
