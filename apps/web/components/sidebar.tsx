@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArchiveIcon, BellIcon, BookIcon, CalendarIcon, DocumentIcon, FolderIcon, GridIcon, HomeIcon, PlusIcon, ScaleIcon, ShieldIcon, SparklesIcon, UsersIcon, ReceiptIcon, MessageIcon, SearchIcon, PulseIcon, XIcon } from "@/components/icons";
+import { ArchiveIcon, BellIcon, BookIcon, CalendarIcon, DocumentIcon, FolderIcon, GraduationIcon, GridIcon, HomeIcon, PlusIcon, ScaleIcon, ShieldIcon, SparklesIcon, UsersIcon, ReceiptIcon, MessageIcon, SearchIcon, PulseIcon, XIcon } from "@/components/icons";
 import { useExperience } from "@/components/experience-provider";
 
 const items = [
@@ -11,6 +11,7 @@ const items = [
   { key:"cases", label: "Case Lookup", hi:"केस खोज", href: "/cases", icon: ScaleIcon },
   { key:"search", label: "Search", hi:"खोज", href: "/search", icon: SearchIcon },
   { key:"tools", label: "Tools", hi:"उपकरण", href: "/tools", icon: GridIcon },
+  { key:"learn", label: "Training", hi:"प्रशिक्षण", href: "/learn", icon: GraduationIcon },
   { key:"clients", label: "Clients", hi:"मुवक्किल", href: "/clients", icon: UsersIcon },
   { key:"acts", label: "Acts", hi:"अधिनियम", href: "/acts", icon: BookIcon },
   { key:"research", label: "Research", hi:"कानूनी शोध", href: "/research", icon: BookIcon },
@@ -37,6 +38,13 @@ const items = [
   { key:"security", label: "Security", hi:"सुरक्षा", href: "/security", icon: ShieldIcon },
 ];
 
+/** Shortcuts under the main nav. `title` doubles as the name in the icon rail. */
+const library = [
+  { href: "/research", Icon: ScaleIcon, en: "Legal sources", hi: "कानूनी स्रोत" },
+  { href: "/knowledge", Icon: BookIcon, en: "Firm precedents", hi: "फर्म नज़ीरें" },
+  { href: "/contracts", Icon: GridIcon, en: "Clause library", hi: "क्लॉज़ लाइब्रेरी" },
+];
+
 function visibleLabel(label:string, hi:string, language:string) {
   if (language === "hi") return hi;
   if (language === "bilingual") return `${label} · ${hi}`;
@@ -58,9 +66,10 @@ export function Sidebar({ mobileOpen=false, onClose }: { mobileOpen?: boolean; o
       <nav className="sidebar-scroll">{items.map((item) => { const Icon=item.icon; const active=item.href==='/'?pathname==='/':pathname===item.href||pathname.startsWith(`${item.href}/`); const label=visibleLabel(item.label,item.hi,preferences.ui_language); return <Link aria-current={active?'page':undefined} title={label} className={`nav-item${active?' active':''}`} href={item.href} key={item.key}><Icon/><span>{label}</span></Link>; })}</nav>
       <div className="sidebar-bottom">
         <div className="nav-label">{preferences.ui_language==='hi'?'पुस्तकालय':'Library'}</div>
-        <Link className="nav-item" href="/research"><ScaleIcon/><span>{visibleLabel('Legal sources','कानूनी स्रोत',preferences.ui_language)}</span></Link>
-        <Link className="nav-item" href="/knowledge"><BookIcon/><span>{visibleLabel('Firm precedents','फर्म नज़ीरें',preferences.ui_language)}</span></Link>
-        <Link className="nav-item" href="/contracts"><GridIcon/><span>{visibleLabel('Clause library','क्लॉज़ लाइब्रेरी',preferences.ui_language)}</span></Link>
+        {library.map(({ href, Icon, en, hi }) => {
+          const label = visibleLabel(en, hi, preferences.ui_language);
+          return <Link className="nav-item" title={label} href={href} key={href}><Icon/><span>{label}</span></Link>;
+        })}
       </div>
     </aside>
   </>;

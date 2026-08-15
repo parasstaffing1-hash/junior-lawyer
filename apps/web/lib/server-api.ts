@@ -55,12 +55,28 @@ export type ContractCatalogItem = ContractCatalogItemSchema;
 export type ContractReviewListItem = ContractReviewListItemSchema;
 export type { LegalDraftListItem };
 
-async function get<T>(path: string, fallback: T): Promise<T> {
+async function cookieHeader(): Promise<string> {
   const cookieStore = await cookies();
-  const header = cookieStore
+  return cookieStore
     .getAll()
     .map((entry) => `${entry.name}=${entry.value}`)
     .join("; ");
+}
+
+/**
+ * Raised when the API could not be reached at all, so a caller can tell an
+ * outage apart from a genuinely empty list. `get` still swallows this; only
+ * `getOrThrow` surfaces it.
+ */
+export class ApiUnreachableError extends Error {
+  constructor(message = `API is unreachable at ${INTERNAL_URL}`) {
+    super(message);
+    this.name = "ApiUnreachableError";
+  }
+}
+
+async function get<T>(path: string, fallback: T): Promise<T> {
+  const header = await cookieHeader();
 
   let response: Response;
   try {
@@ -78,8 +94,33 @@ async function get<T>(path: string, fallback: T): Promise<T> {
   return (await response.json()) as T;
 }
 
+/**
+ * Same request as `get`, but a dead API raises instead of masquerading as an
+ * empty result. For pages that render an explicit "API not connected" notice.
+ */
+async function getOrThrow<T>(path: string): Promise<T> {
+  const header = await cookieHeader();
+
+  let response: Response;
+  try {
+    response = await fetch(`${INTERNAL_URL}${PREFIX}${path}`, {
+      headers: header ? { cookie: header } : {},
+      cache: "no-store",
+    });
+  } catch {
+    throw new ApiUnreachableError();
+  }
+  if (!response.ok) throw new Error(`API responded ${response.status}`);
+  return (await response.json()) as T;
+}
+
 export function getMatters() {
   return get<Matter[]>("/matters", []);
+}
+
+/** `getMatters`, but an unreachable API throws rather than returning []. */
+export function getMattersOrThrow() {
+  return getOrThrow<Matter[]>("/matters");
 }
 
 export function getMatter(matterId: string) {

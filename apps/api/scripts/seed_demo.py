@@ -10,11 +10,14 @@ client, matter and document records.
 from __future__ import annotations
 
 import io
+import os
 import sys
 
 import requests
 
-BASE = "http://127.0.0.1:8000/api/v1"
+# Port 8000 is the default, but a machine may already have it taken; point the
+# script at a running API with JL_API_BASE=http://127.0.0.1:8010/api/v1.
+BASE = os.environ.get("JL_API_BASE", "http://127.0.0.1:8000/api/v1")
 FIRM = {
     "organization_name": "Example Chambers (DEMO)",
     "organization_slug": "example-chambers",

@@ -20,6 +20,8 @@ export const PlusIcon = (p: IconProps) => <IconBase {...p}><path d="M12 5v14M5 1
 export const SparklesIcon = (p: IconProps) => <IconBase {...p}><path d="m12 3 1.4 4.1L17.5 8.5l-4.1 1.4L12 14l-1.4-4.1-4.1-1.4 4.1-1.4z"/><path d="m18.5 14 .8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></IconBase>;
 export const ShieldIcon = (p: IconProps) => <IconBase {...p}><path d="M12 3.5 19 6v5.2c0 4.6-2.8 7.5-7 9.3-4.2-1.8-7-4.7-7-9.3V6z"/><path d="m9 12 2 2 4-4"/></IconBase>;
 export const LockIcon = (p: IconProps) => <IconBase {...p}><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></IconBase>;
+export const CheckIcon = (p: IconProps) => <IconBase {...p}><path d="m5 12.5 4.5 4.5L19 7.5"/></IconBase>;
+export const GraduationIcon = (p: IconProps) => <IconBase {...p}><path d="M12 4.5 22 9l-10 4.5L2 9z"/><path d="M6.5 11v5c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-5"/></IconBase>;
 export const UsersIcon = (p: IconProps) => <IconBase {...p}><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"/><circle cx="9.5" cy="7" r="3.5"/><path d="M17 10a3 3 0 0 0 0-6M21 20v-1.5a4 4 0 0 0-3-3.7"/></IconBase>;
 
 export const ReceiptIcon = (p: IconProps) => <IconBase {...p}><path d="M6 3.5h12v17l-2-1.2-2 1.2-2-1.2-2 1.2-2-1.2-2 1.2z"/><path d="M9 8h6M9 12h6M9 16h4"/></IconBase>;

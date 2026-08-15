@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { PlusIcon } from "@/components/icons";
-import { getMatters, type Matter } from "@/lib/server-api";
+import { getMattersOrThrow, type Matter } from "@/lib/server-api";
 
 export default async function MattersPage() {
   let matters: Matter[] = [];
   let apiError = "";
 
   try {
-    matters = await getMatters();
+    matters = await getMattersOrThrow();
   } catch (error) {
     apiError = error instanceof Error ? error.message : "Unable to reach the API";
   }
@@ -28,7 +28,7 @@ export default async function MattersPage() {
       {apiError ? (
         <div className="notice-panel">
           <strong>API is not connected.</strong>
-          <span>{apiError}. Start the FastAPI server on port 8000 to load live matters.</span>
+          <span>{apiError}. Start the FastAPI server to load live matters.</span>
         </div>
       ) : null}
 
