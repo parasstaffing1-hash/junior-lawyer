@@ -89,6 +89,7 @@ class AgentRunCreate(BaseModel):
 
 
 class AgentRunReview(BaseModel):
+    """The reviewer is taken from the session, not from here."""
+
     approved: bool
     notes: str | None = None
-    reviewer: str | None = Field(default=None, max_length=250)

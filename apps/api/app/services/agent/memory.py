@@ -56,7 +56,7 @@ async def build_snapshot(db: AsyncSession, matter_id: UUID) -> dict:
     review_items = await intelligence_service.list_review_items(db, matter_id)
     deadlines = await procedure_service.list_deadlines(db, matter_id=matter_id)
 
-    unresolved = [c for c in contradictions if getattr(c, "status", "") != "resolved"]
+    unresolved = [c for c in contradictions if str(c.status) != "resolved"]
     return {
         "fact_count": len(facts),
         "timeline_count": len(timeline),
@@ -64,15 +64,10 @@ async def build_snapshot(db: AsyncSession, matter_id: UUID) -> dict:
         "unresolved_contradiction_count": len(unresolved),
         "review_item_count": len(review_items),
         "deadline_count": len(deadlines),
-        "first_event": timeline[0].occurred_on.isoformat()
-        if timeline and getattr(timeline[0], "occurred_on", None)
-        else None,
-        "last_event": timeline[-1].occurred_on.isoformat()
-        if timeline and getattr(timeline[-1], "occurred_on", None)
-        else None,
+        "first_event": timeline[0].event_date.isoformat() if timeline else None,
+        "last_event": timeline[-1].event_date.isoformat() if timeline else None,
         "top_contradictions": [
-            {"label": getattr(c, "label", ""), "severity": str(getattr(c, "severity", ""))}
-            for c in unresolved[:5]
+            {"label": c.label, "severity": str(c.severity)} for c in unresolved[:5]
         ],
     }
 

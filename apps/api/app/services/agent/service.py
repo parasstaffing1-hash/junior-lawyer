@@ -74,9 +74,9 @@ async def _step_procedural_history(db: AsyncSession, matter_id: UUID) -> dict:
     timeline = await intelligence_service.list_timeline(db, matter_id)
     events = [
         {
-            "on": e.occurred_on.isoformat() if getattr(e, "occurred_on", None) else None,
-            "label": getattr(e, "label", "") or getattr(e, "title", ""),
-            "kind": str(getattr(e, "event_type", "") or ""),
+            "on": e.event_date.isoformat() if e.event_date else None,
+            "label": e.title,
+            "kind": e.event_type,
         }
         for e in timeline
     ]
@@ -91,10 +91,10 @@ async def _step_limitation(db: AsyncSession, matter_id: UUID) -> dict:
     today = date.today()
     rows = []
     for d in deadlines:
-        due = getattr(d, "due_on", None)
+        due = d.due_date
         rows.append(
             {
-                "label": getattr(d, "label", "") or getattr(d, "title", ""),
+                "label": d.title,
                 "due_on": due.isoformat() if due else None,
                 "days_remaining": (due - today).days if due else None,
                 "status": str(procedure_service.deadline_status(d, today)),
@@ -131,21 +131,15 @@ async def _step_upcoming(db: AsyncSession, matter_id: UUID) -> dict:
 async def _step_gaps(db: AsyncSession, matter_id: UUID) -> dict:
     contradictions = await intelligence_service.list_contradictions(db, matter_id)
     review_items = await intelligence_service.list_review_items(db, matter_id)
-    unresolved = [c for c in contradictions if str(getattr(c, "status", "")) != "resolved"]
+    unresolved = [c for c in contradictions if str(c.status) != "resolved"]
     return {
         "unresolved_contradiction_count": len(unresolved),
         "review_item_count": len(review_items),
         "contradictions": [
-            {
-                "label": getattr(c, "label", ""),
-                "severity": str(getattr(c, "severity", "")),
-                "explanation": getattr(c, "explanation", None),
-            }
+            {"label": c.label, "severity": str(c.severity), "explanation": c.explanation}
             for c in unresolved[:10]
         ],
-        "review_items": [
-            {"label": getattr(r, "label", "") or getattr(r, "title", "")} for r in review_items[:10]
-        ],
+        "review_items": [{"label": r.title, "reason": r.reason} for r in review_items[:10]],
     }
 
 
