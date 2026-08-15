@@ -233,6 +233,7 @@ export type EvidenceBundleRecord = G.BundleRead;
 export type EvidenceDashboard = G.EvidenceDashboard;
 export type EvidenceGapRecord = G.GapRead;
 export type EvidenceGraph = G.EvidenceGraphRead;
+export type IssueStanding = G.IssueStandingRead;
 export type EvidenceRecord = G.EvidenceItemRead;
 export type EvidenceWitnessRecord = G.WitnessRead;
 export type Hearing = G.HearingRead;
@@ -416,6 +417,7 @@ export const getEvidenceBundles = (matterId: string): Promise<G.BundleRead[]> =>
 export const getEvidenceDashboard = (matterId: string): Promise<EvidenceDashboard> => apiFetch(`/evidence/matters/${matterId}/dashboard`);
 export const getEvidenceGaps = (matterId: string): Promise<G.GapRead[]> => apiFetch(`/evidence/matters/${matterId}/gaps`);
 export const getEvidenceGraph = (matterId: string): Promise<G.EvidenceGraphRead> => apiFetch(`/evidence/matters/${matterId}/graph`);
+export const getIssueStanding = (matterId: string): Promise<G.IssueStandingRead[]> => apiFetch(`/evidence/matters/${matterId}/standing`);
 export const getEvidenceItems = (matterId: string): Promise<G.EvidenceItemRead[]> => apiFetch(`/evidence/matters/${matterId}/items`);
 export const getEvidenceWitnesses = (matterId: string): Promise<G.WitnessRead[]> => apiFetch(`/evidence/matters/${matterId}/witnesses`);
 export const getHearings = (matterId?: string): Promise<G.HearingRead[]> => apiFetch(`/procedure/hearings${query({ matter_id: matterId })}`);

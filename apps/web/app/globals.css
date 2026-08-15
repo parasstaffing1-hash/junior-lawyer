@@ -2236,3 +2236,26 @@ a.tool-card:hover { border-color: #cfd8d2; box-shadow: var(--shadow); }
   .agent-list li { flex-direction: column; gap: 3px; }
   .agent-list span { white-space: normal; }
 }
+
+/* Issue standing ----------------------------------------------------------- */
+.standing-row { padding: 16px 20px; border-bottom: 1px solid #f0f0ec; }
+.standing-row:last-child { border-bottom: 0; }
+.standing-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+.standing-head strong { display: block; font-size: 13px; font-weight: 650; }
+.standing-head small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+.standing-score { text-align: right; white-space: nowrap; }
+.standing-score strong { font-size: 20px; font-weight: 700; color: var(--accent); }
+.standing-score span { margin-left: 5px; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
+.standing-unknown { color: var(--muted); font-size: 11px; font-style: italic; }
+.standing-bar { height: 4px; margin: 10px 0 9px; border-radius: 99px; background: #ead8d5; overflow: hidden; }
+.standing-bar-support { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width 220ms ease; }
+.standing-counts { display: flex; flex-wrap: wrap; gap: 14px; color: var(--muted); font-size: 11px; }
+.standing-counts .standing-warn { color: #95514c; font-weight: 620; }
+.standing-gaps { list-style: none; margin: 10px 0 0; padding: 10px 12px; border: 1px solid #ead8d5; border-radius: 9px; background: #fff9f8; display: grid; gap: 7px; }
+.standing-gaps strong { display: block; font-size: 11px; font-weight: 620; }
+.standing-gaps span { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+
+@media (max-width: 640px) {
+  .standing-head { flex-direction: column; gap: 6px; }
+  .standing-score { text-align: left; }
+}

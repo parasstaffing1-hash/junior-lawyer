@@ -3,15 +3,15 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import {
   EvidenceBundleRecord, EvidenceDashboard, EvidenceGapRecord, EvidenceGraph, EvidenceRecord,
-  EvidenceWitnessRecord, LitigationIssueRecord, Matter, WitnessPrepQuestionRecord,
+  EvidenceWitnessRecord, IssueStanding, LitigationIssueRecord, Matter, WitnessPrepQuestionRecord,
   createEvidenceBundle, createEvidenceWitness, createLitigationIssue, evidenceBundleDownloadUrl,
   finalizeEvidenceBundle, generateWitnessPrep, getEvidenceBundles, getEvidenceDashboard, getEvidenceGaps, getEvidenceGraph,
-  getEvidenceItems, getEvidenceWitnesses, getLitigationIssues, getMatters, getWitnessPrep,
+  getEvidenceItems, getEvidenceWitnesses, getIssueStanding, getLitigationIssues, getMatters, getWitnessPrep,
   rebuildEvidence, updateEvidenceGap, updateEvidenceItem,
 } from "@/lib/api";
 import { ArchiveIcon, DocumentIcon, ScaleIcon, UsersIcon } from "@/components/icons";
 
-type Tab="evidence"|"issues"|"witnesses"|"gaps"|"bundles"|"graph";
+type Tab="evidence"|"standing"|"issues"|"witnesses"|"gaps"|"bundles"|"graph";
 const nice=(v:string)=>v.replaceAll("_"," ").replace(/\b\w/g,c=>c.toUpperCase());
 const pct=(v:number)=>`${Math.round(v*100)}%`;
 
@@ -20,10 +20,11 @@ export function EvidenceWorkspace(){
   const [dashboard,setDashboard]=useState<EvidenceDashboard|null>(null); const [items,setItems]=useState<EvidenceRecord[]>([]);
   const [issues,setIssues]=useState<LitigationIssueRecord[]>([]); const [witnesses,setWitnesses]=useState<EvidenceWitnessRecord[]>([]);
   const [gaps,setGaps]=useState<EvidenceGapRecord[]>([]); const [bundles,setBundles]=useState<EvidenceBundleRecord[]>([]); const [graph,setGraph]=useState<EvidenceGraph|null>(null);
+  const [standing,setStanding]=useState<IssueStanding[]>([]);
   const [tab,setTab]=useState<Tab>("evidence"); const [busy,setBusy]=useState(false); const [error,setError]=useState<string|null>(null); const [message,setMessage]=useState<string|null>(null);
   const [prepWitness,setPrepWitness]=useState<EvidenceWitnessRecord|null>(null); const [questions,setQuestions]=useState<WitnessPrepQuestionRecord[]>([]);
 
-  const loadMatter=useCallback(async(id:string)=>{ if(!id)return; try{const [d,e,i,w,g,b,gr]=await Promise.all([getEvidenceDashboard(id),getEvidenceItems(id),getLitigationIssues(id),getEvidenceWitnesses(id),getEvidenceGaps(id),getEvidenceBundles(id),getEvidenceGraph(id)]);setDashboard(d);setItems(e);setIssues(i);setWitnesses(w);setGaps(g);setBundles(b);setGraph(gr);setError(null);}catch(e){setError(e instanceof Error?e.message:"Unable to load evidence workspace");}},[]);
+  const loadMatter=useCallback(async(id:string)=>{ if(!id)return; try{const [d,e,i,w,g,b,gr,st]=await Promise.all([getEvidenceDashboard(id),getEvidenceItems(id),getLitigationIssues(id),getEvidenceWitnesses(id),getEvidenceGaps(id),getEvidenceBundles(id),getEvidenceGraph(id),getIssueStanding(id)]);setDashboard(d);setItems(e);setIssues(i);setWitnesses(w);setGaps(g);setBundles(b);setGraph(gr);setStanding(st);setError(null);}catch(e){setError(e instanceof Error?e.message:"Unable to load evidence workspace");}},[]);
   useEffect(()=>{void (async()=>{try{const m=await getMatters();setMatters(m);const id=m[0]?.id||"";setMatterId(id);if(id)await loadMatter(id);}catch(e){setError(e instanceof Error?e.message:"Unable to load matters");}})();},[loadMatter]);
   const matter=useMemo(()=>matters.find(m=>m.id===matterId)||null,[matters,matterId]);
   async function choose(id:string){setMatterId(id);await loadMatter(id)}
@@ -42,7 +43,26 @@ export function EvidenceWorkspace(){
     {message?<div className="success-panel evidence-message">{message}</div>:null}{error?<div className="notice-panel evidence-message"><strong>Attention</strong><span>{error}</span></div>:null}
     <section className="card evidence-picker"><label>Matter<select value={matterId} onChange={e=>void choose(e.target.value)}>{matters.map(m=><option key={m.id} value={m.id}>{m.title}</option>)}</select></label><div><strong>{matter?.case_number||"Case number not recorded"}</strong><span>{matter?.court_name||"Court not recorded"}</span></div></section>
     <div className="metrics evidence-metrics"><div className="metric"><div className="metric-label">Evidence</div><div className="metric-value">{dashboard?.evidence_items||0}</div><div className="metric-note">{dashboard?.reviewed_items||0} lawyer reviewed</div></div><div className="metric"><div className="metric-label">Issues</div><div className="metric-value">{dashboard?.issues||0}</div><div className="metric-note">source mapped</div></div><div className="metric"><div className="metric-label">Witnesses</div><div className="metric-value">{dashboard?.witnesses||0}</div><div className="metric-note">discovered + manual</div></div><div className="metric"><div className="metric-label">Open gaps</div><div className="metric-value">{dashboard?.open_gaps||0}</div><div className="metric-note">{dashboard?.contradictions||0} contradictions</div></div></div>
-    <div className="workspace-tabs">{(["evidence","issues","witnesses","gaps","bundles","graph"] as Tab[]).map(t=><button key={t} className={`workspace-tab ${tab===t?"active":""}`} onClick={()=>setTab(t)}>{nice(t)}</button>)}</div>
+    <div className="workspace-tabs">{(["evidence","standing","issues","witnesses","gaps","bundles","graph"] as Tab[]).map(t=><button key={t} className={`workspace-tab ${tab===t?"active":""}`} onClick={()=>setTab(t)}>{nice(t)}</button>)}</div>
+
+    {tab==="standing"?<section className="card"><div className="card-header"><div><div className="card-title">How each issue stands</div><div className="quiet-text">Recorded support against recorded contradiction, weighted by evidence strength and link confidence. This describes the file as it stands — it is not a prediction of the outcome.</div></div></div>{standing.length?standing.map(s=>{
+      const openGaps=s.open_gaps??[]; const dependsOn=s.depends_on_witnesses??[];
+      const evidenced=s.support_ratio!==null&&s.support_ratio!==undefined;
+      return <div className="standing-row" key={s.issue_id}>
+        <div className="standing-head">
+          <div><strong>{s.title}</strong><small>{s.code}{s.burden_side?` · burden: ${s.burden_side}`:""} · P{s.priority}</small></div>
+          <div className="standing-score">{evidenced?<><strong>{pct(s.support_ratio as number)}</strong><span>support</span></>:<span className="standing-unknown">Not yet evidenced</span>}</div>
+        </div>
+        <div className="standing-bar" aria-hidden="true"><span className="standing-bar-support" style={{width:`${Math.round((s.support_ratio??0)*100)}%`}}/></div>
+        <div className="standing-counts">
+          <span>{s.supporting_count} supporting</span>
+          <span>{s.contradicting_count} contradicting</span>
+          {openGaps.length?<span className="standing-warn">{openGaps.length} missing</span>:null}
+          {dependsOn.length?<span>depends on {dependsOn.map(w=>w.name).join(", ")}</span>:null}
+        </div>
+        {openGaps.length?<ul className="standing-gaps">{openGaps.map(g=><li key={g.gap_id}><strong>{g.title}</strong>{g.suggested_action?<span>{g.suggested_action}</span>:null}</li>)}</ul>:null}
+      </div>;
+    }):<div className="empty-state compact"><div className="empty-state-title">No issues recorded yet</div><p>Add issues under the Issues tab, then link evidence to them.</p></div>}</section>:null}
 
     {tab==="evidence"?<section className="card"><div className="card-header"><div><div className="card-title">Evidence register</div><div className="quiet-text">Classification is a review aid. Authenticity and admissibility remain lawyer-controlled.</div></div></div>{items.length?items.map(item=><div className="evidence-row" key={item.id}><div className="evidence-icon"><DocumentIcon/></div><div><div className="evidence-title"><strong>{item.title}</strong><span>{nice(item.kind)}</span></div><p>{item.summary||"No extracted preview"}</p><small>Classifier {pct(item.confidence)} · strength {nice(item.strength)} · authenticity {item.authenticity_checked?"checked":"not checked"} · admissibility {item.admissibility_checked?"checked":"not checked"}</small></div><div>{item.review_status==="reviewed"?<span className="verified-badge">Reviewed</span>:<button className="text-button" disabled={busy} onClick={()=>void review(item)}>Mark reviewed</button>}</div></div>):<div className="empty-state"><ArchiveIcon/><div className="empty-state-title">No evidence register yet</div><p>Run Rebuild evidence map after documents are processed.</p></div>}</section>:null}
 

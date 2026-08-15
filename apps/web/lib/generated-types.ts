@@ -4100,6 +4100,23 @@ export interface IssueCreate {
   priority: number;
 }
 
+export interface IssueEvidenceRef {
+  evidence_item_id: string;
+  title: string;
+  kind: string;
+  strength: string;
+  link_confidence: number;
+  weight: number;
+  rationale?: string | null;
+}
+
+export interface IssueGapRef {
+  gap_id: string;
+  title: string;
+  severity: string;
+  suggested_action?: string | null;
+}
+
 export interface IssueLinkCreate {
   issue_id: string;
   link_type: EvidenceLinkType;
@@ -4128,6 +4145,32 @@ export interface IssueRead {
   source: string;
   metadata_json: Record<string, unknown>;
   created_at: string;
+}
+
+export interface IssueStandingRead {
+  issue_id: string;
+  code: string;
+  title: string;
+  burden_side?: string | null;
+  priority: number;
+  support_ratio?: number | null;
+  support_weight: number;
+  contradict_weight: number;
+  supporting_count: number;
+  contradicting_count: number;
+  supporting?: IssueEvidenceRef[];
+  contradicting?: IssueEvidenceRef[];
+  open_gaps?: IssueGapRef[];
+  depends_on_witnesses?: IssueWitnessRef[];
+  evidence_recorded: boolean;
+}
+
+export interface IssueWitnessRef {
+  witness_id: string;
+  name: string;
+  kind: string;
+  side?: string | null;
+  supports_items: number;
 }
 
 export type ItemStatus = "present" | "completed" | "pending" | "missing" | "not_applicable";

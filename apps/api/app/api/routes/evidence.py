@@ -9,9 +9,11 @@ from app.db.session import get_db
 from app.schemas.evidence import (
     BundleCreate, BundleRead, EvidenceDashboard, EvidenceGraphRead, EvidenceItemRead, EvidenceItemUpdate,
     ExhibitCreate, ExhibitRead, ExhibitUpdate, GapRead, GapUpdate, IssueCreate, IssueLinkCreate, IssueLinkRead,
-    IssueRead, PrepQuestionCreate, PrepQuestionRead, WitnessCreate, WitnessLinkCreate, WitnessLinkRead, WitnessRead,
+    IssueRead, IssueStandingRead, PrepQuestionCreate, PrepQuestionRead, WitnessCreate, WitnessLinkCreate,
+    WitnessLinkRead, WitnessRead,
 )
 from app.services.evidence import service
+from app.services.evidence import standing as standing_service
 from app.services.security.context import ActorContext
 from app.services.security.dependencies import require_actor
 
@@ -76,6 +78,12 @@ async def patch_gap(gap_id:UUID,payload:GapUpdate,actor:ActorContext=Depends(req
 @router.get("/matters/{matter_id}/graph",response_model=EvidenceGraphRead)
 async def graph(matter_id:UUID,actor:ActorContext=Depends(require_actor),db:AsyncSession=Depends(get_db)):
     return EvidenceGraphRead(**await service.graph(db,actor,matter_id))
+
+@router.get("/matters/{matter_id}/standing",response_model=list[IssueStandingRead])
+async def standing(matter_id:UUID,actor:ActorContext=Depends(require_actor),db:AsyncSession=Depends(get_db)):
+    """Per-issue rollup over the evidence graph. Describes the file as recorded,
+    not the likely outcome."""
+    return await standing_service.issue_standing(db,actor,matter_id)
 
 @router.get("/matters/{matter_id}/exhibits",response_model=list[ExhibitRead])
 async def exhibits(matter_id:UUID,actor:ActorContext=Depends(require_actor),db:AsyncSession=Depends(get_db)):

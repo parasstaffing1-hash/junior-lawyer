@@ -240,3 +240,52 @@ class EvidenceDashboard(BaseModel):
     contradictions: int
     proposed_exhibits: int
     reviewed_items: int
+
+
+class IssueEvidenceRef(BaseModel):
+    evidence_item_id: str
+    title: str
+    kind: str
+    strength: str
+    link_confidence: float
+    weight: float
+    rationale: str | None = None
+
+
+class IssueGapRef(BaseModel):
+    gap_id: str
+    title: str
+    severity: str
+    suggested_action: str | None = None
+
+
+class IssueWitnessRef(BaseModel):
+    witness_id: str
+    name: str
+    kind: str
+    side: str | None = None
+    supports_items: int
+
+
+class IssueStandingRead(BaseModel):
+    """How one issue stands on the evidence recorded so far.
+
+    `support_ratio` is null when nothing has been linked either way — unknown
+    rather than unsupported. It describes the file, not the likely outcome.
+    """
+
+    issue_id: str
+    code: str
+    title: str
+    burden_side: str | None = None
+    priority: int
+    support_ratio: float | None = None
+    support_weight: float
+    contradict_weight: float
+    supporting_count: int
+    contradicting_count: int
+    supporting: list[IssueEvidenceRef] = Field(default_factory=list)
+    contradicting: list[IssueEvidenceRef] = Field(default_factory=list)
+    open_gaps: list[IssueGapRef] = Field(default_factory=list)
+    depends_on_witnesses: list[IssueWitnessRef] = Field(default_factory=list)
+    evidence_recorded: bool
